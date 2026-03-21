@@ -1,15 +1,17 @@
-﻿import React from 'react';
+﻿import React from "react";
 
-const Input = ({ type = 'text', name, placeholder, value, onChange, required = false }) => {
+const Input = ({ ...props }) => {
   return (
     <input
-      type={type}
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      required={required}
-      className="input-field"
+      {...props}
+      style={{
+        width: "100%",
+        padding: "12px",
+        border: "1px solid #ddd",
+        borderRadius: "6px",
+        marginBottom: "15px",
+        fontSize: "14px",
+      }}
     />
   );
 };

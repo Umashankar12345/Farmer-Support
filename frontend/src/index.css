@@ -1,16 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-dark-bg dark:text-dark-text transition-colors duration-300;
+    font-family: 'Inter', sans-serif;
+  }
 }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f7fa;
+@layer components {
+
+  /* Glassmorphism Utilities */
+  .glass {
+    @apply bg-white/70 dark:bg-slate-800/60 backdrop-blur-lg border border-white/20 dark:border-slate-700/30 shadow-xl;
+  }
+
+  .glass-card {
+    @apply glass rounded-2xl p-6 transition-all duration-300;
+  }
+
+  /* Card hover lift effect */
+  .lift-card {
+    @apply transition-all duration-300;
+  }
+
+  .lift-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.12),
+      0 0 30px -5px rgba(16, 185, 129, 0.08);
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-slate-400 dark:hover:bg-slate-600;
+  }
+
+  /* Selection Color */
+  ::selection {
+    @apply bg-primary-500/30 text-primary-900 dark:text-primary-100;
+  }
+}
+
+/* Animations */
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+/* Voice Waveform Animation */
+@keyframes voiceWave {
+
+  0%,
+  100% {
+    height: 8px;
+  }
+
+  25% {
+    height: 24px;
+  }
+
+  50% {
+    height: 48px;
+  }
+
+  75% {
+    height: 16px;
+  }
+}
+
+.voice-bar {
+  animation: voiceWave 1s ease-in-out infinite;
+}
+
+.voice-bar:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.voice-bar:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.voice-bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.voice-bar:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.voice-bar:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+.voice-bar:nth-child(6) {
+  animation-delay: 0.5s;
+}
+
+.voice-bar:nth-child(7) {
+  animation-delay: 0.6s;
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Leaflet map z-index fix */
+.leaflet-container {
+  z-index: 1 !important;
 }

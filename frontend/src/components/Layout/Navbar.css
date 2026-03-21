@@ -1,0 +1,312 @@
+/* Navbar.css - Proper CSS file */
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.modal-body {
+  padding: 30px 20px;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  display: flex;
+  gap: 12px;
+}
+
+/* Camera & Upload Instructions */
+.camera-instructions,
+.upload-instructions {
+  text-align: center;
+}
+
+.camera-icon-container,
+.upload-icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.camera-icon-container {
+  background: #dbeafe;
+}
+
+.upload-icon-container {
+  background: #f3e8ff;
+}
+
+.camera-instructions h4,
+.upload-instructions h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.camera-instructions p,
+.upload-instructions p {
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* Tips & Requirements */
+.camera-tips,
+.upload-requirements {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: left;
+  margin-top: 20px;
+}
+
+.camera-tips p,
+.upload-requirements p {
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 12px 0;
+}
+
+.camera-tips ul,
+.upload-requirements ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.camera-tips li,
+.upload-requirements li {
+  margin-bottom: 6px;
+}
+
+/* File Upload Area */
+.upload-form {
+  margin-top: 24px;
+}
+
+.file-upload-area {
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 40px 20px;
+  background: #f9fafb;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.file-upload-area:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.file-upload-area svg {
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+.file-upload-area p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.file-upload-area input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  flex: 1;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-secondary:hover {
+  background: #d1d5db;
+}
+
+/* Action buttons in Navbar */
+.camera-action-btn,
+.upload-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  background: none;
+  color: #374151;
+}
+
+.camera-action-btn {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.camera-action-btn:hover {
+  background: #dbeafe;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.upload-action-btn {
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+  color: #7c3aed;
+}
+
+.upload-action-btn:hover {
+  background: #ede9fe;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+}
+
+/* Mobile action buttons */
+.mobile-action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 16px;
+  }
+  
+  .modal-content {
+    max-height: 85vh;
+  }
+  
+  .camera-instructions,
+  .upload-instructions {
+    padding: 20px 16px;
+  }
+  
+  .camera-tips,
+  .upload-requirements {
+    padding: 16px;
+  }
+  
+  .file-upload-area {
+    padding: 30px 16px;
+  }
+  
+  .modal-footer {
+    padding: 16px;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    padding: 10px 20px;
+    font-size: 0.8125rem;
+  }
+  
+  .mobile-action-buttons {
+    grid-template-columns: 1fr;
+  }
+}
