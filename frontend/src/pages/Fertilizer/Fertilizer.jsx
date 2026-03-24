@@ -63,8 +63,8 @@ const Fertilizer = () => {
                   key={crop.id}
                   onClick={() => setSelectedCrop(crop.id)}
                   className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${selectedCrop === crop.id
-                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200'
-                      : 'bg-slate-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/30'
+                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200'
+                    : 'bg-slate-50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/30'
                     }`}
                 >
                   <span className="flex items-center gap-3">
@@ -176,25 +176,25 @@ const Fertilizer = () => {
                         </div>
                       </div>
                     </div>
+                  </GlassCard>
                 </motion.div>
-                                </motion.div>
-                            ))}
-        </div>
-      </AnimatePresence>
+              ))}
+            </div>
+          </AnimatePresence>
 
-      {filteredData.length === 0 && (
-        <div className="py-20 text-center">
-          <div className="bg-slate-100 dark:bg-slate-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Search className="w-10 h-10 text-slate-400" />
-          </div>
-          <h3 className="text-xl font-bold text-slate-800 dark:text-white">No results found</h3>
-          <p className="text-slate-500">Try adjusting your search or selecting a different crop.</p>
+          {filteredData.length === 0 && (
+            <div className="py-20 text-center">
+              <div className="bg-slate-100 dark:bg-slate-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-10 h-10 text-slate-400" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 dark:text-white">No results found</h3>
+              <p className="text-slate-500">Try adjusting your search or selecting a different crop.</p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
-            </div >
-        </div >
-    );
+  );
 };
 
 export default Fertilizer;
