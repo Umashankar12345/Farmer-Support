@@ -1,10 +1,11 @@
-﻿exports.getDashboardData = async (req, res) => {
+﻿// Sample data for dashboard
+exports.getDashboardData = async (req, res) => {
   try {
     const dashboardData = {
       weather: {
         location: "Kochi",
-        temperature: "30°C",
         condition: "light rain",
+        temperature: "30°C",
         wind: "11 km/h",
         humidity: "85%",
         forecast: [
@@ -16,49 +17,43 @@
         ]
       },
       pestAdvisory: {
-        crop: "Paddy",
-        pest: "Brown Plant Hopper",
-        alert: "High Alert",
+        title: "Paddy: Brown Plant Hopper",
         description: "High humidity and dense planting can lead to outbreaks. Look for yellowing patches.",
-        recommendation: "Use appropriate pesticides and maintain proper spacing."
+        alertLevel: "High Alert"
       },
       schemes: [
         {
           id: 1,
-          name: "PM-KISAN Scheme",
-          description: "Financial support for farmers.",
-          link: "#"
+          title: "PM-KISAN Scheme",
+          description: "Financial support for farmers with direct benefit transfer.",
+          buttonText: "Apply Now"
         },
         {
           id: 2,
-          name: "PM Krishi Sinchai Yojana",
-          description: "\"Per drop, more crop.\"",
-          link: "#"
+          title: "PM Krishi Sinchai Yojana",
+          description: "\"Per drop, more crop\" - Micro irrigation for water conservation.",
+          buttonText: "Apply Now"
         },
         {
           id: 3,
-          name: "Soil Health Card",
-          description: "Know your soil's health.",
-          link: "#"
+          title: "Soil Health Card",
+          description: "Get detailed report on your soil's health and nutrient status.",
+          buttonText: "Get Details"
         }
       ],
-      sidebarMenu: [
-        { name: "Dashboard", icon: "📊", active: true },
-        { name: "My Farm", icon: "🏡" },
-        { name: "Farm Mechanization", icon: "🚜" },
-        { name: "Crop Sown Analysis", icon: "📈" },
-        { name: "Crop Production", icon: "🌾" },
-        { name: "Fertilizer Recommendations", icon: "🧪" },
-        { name: "Post & Disease", icon: "🦠" },
-        { name: "Drought", icon: "🌵" },
-        { name: "Community Forum", icon: "💬" }
+      recommendations: [
+        { id: 1, crop: "Paddy", fertilizer: "Urea", quantity: "100 kg/ha", time: "Before sowing" },
+        { id: 2, crop: "Wheat", fertilizer: "DAP", quantity: "80 kg/ha", time: "During sowing" },
+        { id: 3, crop: "Cotton", fertilizer: "NPK", quantity: "120 kg/ha", time: "After 30 days" }
       ]
     };
-    
-    res.json(dashboardData);
-    
+
+    res.json({
+      success: true,
+      data: dashboardData
+    });
   } catch (error) {
-    console.error('Dashboard error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Dashboard data error:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 };

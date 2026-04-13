@@ -8,18 +8,16 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "axios": "^1.13.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.22.1",
+    "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^7.8.8"
+    "mongoose": "^8.20.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+    "nodemon": "^3.1.11"
+  }
 }
