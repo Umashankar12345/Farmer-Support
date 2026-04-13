@@ -1,0 +1,26 @@
+# Node modules (NEVER commit these)
+node_modules/
+*/node_modules/
+backened/node_modules/
+frontend/node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
