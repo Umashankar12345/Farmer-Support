@@ -1,4 +1,4 @@
-﻿const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
@@ -7,6 +7,11 @@ const UserSchema = new mongoose.Schema({
     required: true
   },
   registrationNo: {
+    type: String,
+    unique: true,
+    sparse: true // Allows null/optional while maintaining uniqueness
+  },
+  phone: {
     type: String,
     required: true,
     unique: true
@@ -20,6 +25,12 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  farmSize: {
+    type: String
+  },
+  location: {
+    type: String
   },
   createdAt: {
     type: Date,

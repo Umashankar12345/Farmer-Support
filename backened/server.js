@@ -48,7 +48,17 @@ app.get('/', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => {
   console.log(`🚀 Krishi Server running on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n❌ Port ${PORT} is already in use.`);
+    console.error(`   Run this to fix it:\n   netstat -ano | findstr :${PORT}\n   taskkill /PID <PID> /F\n`);
+    process.exit(1);
+  } else {
+    throw err;
+  }
 });

@@ -1,4 +1,4 @@
-﻿const User = require('../models/User');
+const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 // Generate JWT Token
@@ -11,25 +11,28 @@ const generateToken = (id) => {
 // Register new user
 exports.register = async (req, res) => {
   try {
-    const { name, registrationNo, email, password } = req.body;
+    const { name, email, phone, password, farmSize, location, registrationNo } = req.body;
 
-    // Check if user exists
+    // Check if user exists (checking email and phone)
     const userExists = await User.findOne({ 
-      $or: [{ email }, { registrationNo }] 
+      $or: [{ email }, { phone }] 
     });
 
     if (userExists) {
       return res.status(400).json({ 
-        error: 'User already exists with this email or registration number' 
+        error: 'User already exists with this email or phone number' 
       });
     }
 
     // Create user
     const user = await User.create({
       name,
-      registrationNo,
       email,
-      password
+      phone,
+      password,
+      farmSize: farmSize || '',
+      location: location || '',
+      registrationNo: registrationNo || `FS-${Date.now()}` // Fallback for required unique field if needed
     });
 
     res.status(201).json({
@@ -39,12 +42,14 @@ exports.register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        registrationNo: user.registrationNo
+        phone: user.phone,
+        farmSize: user.farmSize,
+        location: user.location
       }
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: error.message || 'Server error' });
   }
 };
 

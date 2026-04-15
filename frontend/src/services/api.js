@@ -1,4 +1,4 @@
-﻿const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:5000/api';
 
 export const apiRequest = async (endpoint, method = 'GET', data = null) => {
   const token = localStorage.getItem('token');
@@ -22,7 +22,19 @@ export const apiRequest = async (endpoint, method = 'GET', data = null) => {
   
   try {
     const response = await fetch(`${API_URL}${endpoint}`, config);
-    const result = await response.json();
+    
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    let result;
+    
+    if (contentType && contentType.includes('application/json')) {
+      result = await response.json();
+    } else {
+      // Handle non-JSON response (e.g. HTML error page)
+      const text = await response.text();
+      console.error('Non-JSON response received:', text.substring(0, 100));
+      throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+    }
     
     if (!response.ok) {
       if (response.status === 401) {
@@ -30,7 +42,7 @@ export const apiRequest = async (endpoint, method = 'GET', data = null) => {
         localStorage.removeItem('user');
         window.location.href = '/login';
       }
-      throw new Error(result.message || 'Request failed');
+      throw new Error(result.error || result.message || 'Request failed');
     }
     
     return result;
