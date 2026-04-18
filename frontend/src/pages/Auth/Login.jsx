@@ -102,7 +102,13 @@ const Login = () => {
     try {
       await authAPI.verifyOTP({ otp });
       // In a real flow, OTP verification would return a token
-      // For now, we simulate success
+      // For now, we simulate success by setting a mock session
+      localStorage.setItem('token', 'mock-otp-token');
+      localStorage.setItem('user', JSON.stringify({ 
+        firstName: 'OTP', 
+        lastName: 'User', 
+        phone: formData.phone 
+      }));
       setStep(99);
     } catch (err) {
       setOtpError(true);
@@ -131,6 +137,13 @@ const Login = () => {
     setStep(0); // Mock connecting state
     setTimeout(() => {
       setLoading(false);
+      // Set mock session for Google login
+      localStorage.setItem('token', 'mock-google-token');
+      localStorage.setItem('user', JSON.stringify({ 
+        firstName: 'Google', 
+        lastName: 'User',
+        email: 'google.user@example.com'
+      }));
       setStep(99);
     }, 1500);
   };
