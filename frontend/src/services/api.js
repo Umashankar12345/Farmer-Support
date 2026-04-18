@@ -22,18 +22,14 @@ export const apiRequest = async (endpoint, method = 'GET', data = null) => {
   
   try {
     const response = await fetch(`${API_URL}${endpoint}`, config);
-    
-    // Check if response is JSON
     const contentType = response.headers.get('content-type');
     let result;
     
     if (contentType && contentType.includes('application/json')) {
       result = await response.json();
     } else {
-      // Handle non-JSON response (e.g. HTML error page)
       const text = await response.text();
-      console.error('Non-JSON response received:', text.substring(0, 100));
-      throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+      throw new Error(`Server error: ${response.status}`);
     }
     
     if (!response.ok) {
@@ -55,6 +51,12 @@ export const apiRequest = async (endpoint, method = 'GET', data = null) => {
 export const authAPI = {
   signup: (userData) => apiRequest('/auth/signup', 'POST', userData),
   login: (credentials) => apiRequest('/auth/login', 'POST', credentials),
+  sendOTP: (phoneData) => apiRequest('/auth/send-otp', 'POST', phoneData),
+  verifyOTP: (otpData) => apiRequest('/auth/verify-otp', 'POST', otpData),
+};
+
+export const locationAPI = {
+  reverseGeocode: (lat, lng) => apiRequest(`/location/reverse?lat=${lat}&lng=${lng}`),
 };
 
 export const dashboardAPI = {

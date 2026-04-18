@@ -37,6 +37,7 @@ app.use('/api/weather', require('./routes/weatherRoutes'));
 app.use('/api/query', require('./routes/queryRoutes'));
 app.use('/api/schemes', require('./routes/schemeRoutes'));
 app.use('/api/market', require('./routes/marketRoutes'));
+app.use('/api/location', require('./routes/locationRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
 // Basic health check

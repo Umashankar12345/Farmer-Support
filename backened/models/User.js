@@ -2,14 +2,26 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
-  name: {
+  firstName: {
     type: String,
     required: true
+  },
+  lastName: {
+    type: String
+  },
+  role: {
+    type: String,
+    enum: ['Farmer', 'Dealer', 'Officer'],
+    default: 'Farmer'
   },
   registrationNo: {
     type: String,
     unique: true,
-    sparse: true // Allows null/optional while maintaining uniqueness
+    sparse: true
+  },
+  dialCode: {
+    type: String,
+    default: '+91'
   },
   phone: {
     type: String,
@@ -27,9 +39,16 @@ const UserSchema = new mongoose.Schema({
     required: true
   },
   farmSize: {
-    type: String
+    type: Number,
+    default: 0
   },
   location: {
+    type: String
+  },
+  crop: {
+    type: String
+  },
+  state: {
     type: String
   },
   createdAt: {
