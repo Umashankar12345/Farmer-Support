@@ -63,3 +63,7 @@ export const locationAPI = {
 export const dashboardAPI = {
   getDashboard: () => apiRequest('/dashboard/data'),
 };
+
+export const queryAPI = {
+  askAI: (queryData) => apiRequest('/query/ask', 'POST', queryData),
+};
