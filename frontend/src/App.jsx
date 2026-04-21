@@ -6,12 +6,12 @@ import MyFarm from './pages/MyFarm/MyFarm';
 import WeatherPage from './pages/Weather/Weather';
 import SchemesPage from './pages/Schemes/SchemesPage';
 import Analytics from './pages/Analytics/Analytics';
+import SupportPage from './pages/Support/SupportPage';
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import Navbar from './components/Layout/Navbar';
 import Sidebar from './components/Layout/Sidebar';
 import PerformanceTicker from './pages/Dashboard/components/PerformanceTicker';
-
 import GenericPlaceholder from './pages/Placeholder/GenericPlaceholder';
 
 const ProtectedRoute = ({ children }) => {
@@ -48,11 +48,7 @@ function App() {
             <GenericPlaceholder title="Pest Alert System" description="Real-time pest outbreak monitoring" icon="🐛" />
           </ProtectedRoute>
         } />
-        <Route path="/support" element={
-          <ProtectedRoute>
-            <GenericPlaceholder title="Govt Relations" description="Connect with district agriculture officers" icon="👨‍💼" />
-          </ProtectedRoute>
-        } />
+        <Route path="/support" element={<ProtectedRoute><SupportPage /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
