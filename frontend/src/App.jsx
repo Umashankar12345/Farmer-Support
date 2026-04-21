@@ -7,6 +7,7 @@ import WeatherPage from './pages/Weather/Weather';
 import SchemesPage from './pages/Schemes/SchemesPage';
 import Analytics from './pages/Analytics/Analytics';
 import SupportPage from './pages/Support/SupportPage';
+import PestAlertPage from './pages/Pest/PestAlertPage';
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import Navbar from './components/Layout/Navbar';
@@ -43,11 +44,7 @@ function App() {
         <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
         
         {/* Placeholder Routes for Sidebar */}
-        <Route path="/pest" element={
-          <ProtectedRoute>
-            <GenericPlaceholder title="Pest Alert System" description="Real-time pest outbreak monitoring" icon="🐛" />
-          </ProtectedRoute>
-        } />
+        <Route path="/pest" element={<ProtectedRoute><PestAlertPage /></ProtectedRoute>} />
         <Route path="/support" element={<ProtectedRoute><SupportPage /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" />} />
