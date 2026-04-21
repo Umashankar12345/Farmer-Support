@@ -8,52 +8,54 @@ import SchemesPage from './pages/Schemes/SchemesPage';
 import Analytics from './pages/Analytics/Analytics';
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
+import Navbar from './components/Layout/Navbar';
+import Sidebar from './components/Layout/Sidebar';
+import PerformanceTicker from './pages/Dashboard/components/PerformanceTicker';
+
+import GenericPlaceholder from './pages/Placeholder/GenericPlaceholder';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token') || localStorage.getItem('krishi_jwt');
-  return token ? children : <Navigate to="/login" />;
+  return token ? (
+    <div className="app-shell">
+      <Navbar />
+      <Sidebar />
+      <div className="main">
+        {children}
+      </div>
+      <PerformanceTicker />
+    </div>
+  ) : <Navigate to="/login" />;
 };
 
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <div className="app-shell">
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/query" element={
-            <ProtectedRoute>
-              <AIQuery />
-            </ProtectedRoute>
-          } />
-          <Route path="/farms" element={
-            <ProtectedRoute>
-              <MyFarm />
-            </ProtectedRoute>
-          } />
-          <Route path="/weather" element={
-            <ProtectedRoute>
-              <WeatherPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/schemes" element={
-            <ProtectedRoute>
-              <SchemesPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/analytics" element={
-            <ProtectedRoute>
-              <Analytics />
-            </ProtectedRoute>
-          } />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        
+        <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/query" element={<ProtectedRoute><AIQuery /></ProtectedRoute>} />
+        <Route path="/farms" element={<ProtectedRoute><MyFarm /></ProtectedRoute>} />
+        <Route path="/weather" element={<ProtectedRoute><WeatherPage /></ProtectedRoute>} />
+        <Route path="/schemes" element={<ProtectedRoute><SchemesPage /></ProtectedRoute>} />
+        <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+        
+        {/* Placeholder Routes for Sidebar */}
+        <Route path="/pest" element={
+          <ProtectedRoute>
+            <GenericPlaceholder title="Pest Alert System" description="Real-time pest outbreak monitoring" icon="🐛" />
+          </ProtectedRoute>
+        } />
+        <Route path="/support" element={
+          <ProtectedRoute>
+            <GenericPlaceholder title="Govt Relations" description="Connect with district agriculture officers" icon="👨‍💼" />
+          </ProtectedRoute>
+        } />
+
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </Router>
   );
 }
