@@ -100,19 +100,14 @@ const Login = () => {
     setLoading(true);
     setOtpError(false);
     try {
-      await authAPI.verifyOTP({ otp });
-      // In a real flow, OTP verification would return a token
-      // For now, we simulate success by setting a mock session
-      localStorage.setItem('token', 'mock-otp-token');
-      localStorage.setItem('user', JSON.stringify({ 
-        firstName: 'OTP', 
-        lastName: 'User', 
-        phone: formData.phone 
-      }));
+      const response = await authAPI.verifyOTP({ otp });
+      // The backend now returns a real token even in demo mode
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
       setStep(99);
     } catch (err) {
       setOtpError(true);
-      setError('Incorrect OTP. Please try again.');
+      setError(err.message || 'Incorrect OTP. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -132,20 +127,20 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     setLoading(true);
-    setStep(0); // Mock connecting state
-    setTimeout(() => {
-      setLoading(false);
-      // Set mock session for Google login
-      localStorage.setItem('token', 'mock-google-token');
-      localStorage.setItem('user', JSON.stringify({ 
-        firstName: 'Google', 
-        lastName: 'User',
-        email: 'google.user@example.com'
-      }));
+    setError('');
+    try {
+      // Call the simulated backend Google login
+      const response = await authAPI.googleLogin();
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
       setStep(99);
-    }, 1500);
+    } catch (err) {
+      setError('Google login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

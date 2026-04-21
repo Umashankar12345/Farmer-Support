@@ -35,13 +35,44 @@ exports.verifyOTP = async (req, res) => {
     if (otp === '000000') {
       return res.status(400).json({ error: 'Incorrect OTP. Please try again.' });
     }
+
+    // For demo purposes, we'll return a token for a 'Demo User'
+    // In a real app, you'd find/create a user by their phone number
+    const demoUserId = '65f1a1a1a1a1a1a1a1a1a1a1'; // Hardcoded dummy ID for demo
     
     res.json({
       success: true,
-      message: 'OTP verified successfully'
+      message: 'OTP verified successfully',
+      token: generateToken(demoUserId),
+      user: {
+        id: demoUserId,
+        firstName: 'OTP',
+        lastName: 'Demo User',
+        role: 'Farmer'
+      }
     });
   } catch (error) {
     res.status(500).json({ error: 'Verification failed' });
+  }
+};
+
+// Simulated Google Login for demo
+exports.googleLoginSim = async (req, res) => {
+  try {
+    const demoUserId = '65f1a1a1a1a1a1a1a1a1a1a2';
+    res.json({
+      success: true,
+      token: generateToken(demoUserId),
+      user: {
+        id: demoUserId,
+        firstName: 'Google',
+        lastName: 'Demo User',
+        email: 'google.demo@example.com',
+        role: 'Farmer'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Google login simulation failed' });
   }
 };
 

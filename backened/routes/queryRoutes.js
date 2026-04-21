@@ -10,10 +10,12 @@ router.post('/ask', verifyJWT, async (req, res) => {
     const { query, farmContext, language = 'en' } = req.body;
 
     // If no real key, return a mock response
-    if (!process.env.GROQ_API_KEY) {
-      return res.json({ 
-        response: `[DEMO MODE] For your 5.2 Ha farm in Rajasthan, I recommend monitoring for Yellow Rust on your Wheat (Raj-3077) as humidity is above 75%. Consider a light irrigation early tomorrow.` 
-      });
+    if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === 'gsk_placeholder') {
+      let advice = `[DEMO MODE] As your Digital Krishi Officer, I've analyzed your query about "${query}". `;
+      advice += `For your ${farmContext.crops.join(' & ')} farm in ${farmContext.location}, I recommend checking soil moisture levels. `;
+      advice += `Current conditions suggest a high probability of pest activity. Consider a preventive spray of Neem oil.`;
+      
+      return res.json({ response: advice });
     }
 
     const systemPrompt = `You are a professional Digital Krishi Officer (Agricultural Advisor). 

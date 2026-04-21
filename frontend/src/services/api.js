@@ -53,6 +53,7 @@ export const authAPI = {
   login: (credentials) => apiRequest('/auth/login', 'POST', credentials),
   sendOTP: (phoneData) => apiRequest('/auth/send-otp', 'POST', phoneData),
   verifyOTP: (otpData) => apiRequest('/auth/verify-otp', 'POST', otpData),
+  googleLogin: () => apiRequest('/auth/google', 'POST'),
 };
 
 export const locationAPI = {
