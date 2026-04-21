@@ -33,7 +33,7 @@ export default function Dashboard() {
       <Navbar />
       <div className="flex pt-16">
         <Sidebar />
-        
+
         <main className="flex-1 p-6 pb-20 overflow-y-auto">
           {/* Hero Section */}
           <header className="mb-6 flex justify-between items-end">
@@ -42,9 +42,9 @@ export default function Dashboard() {
               <p className="text-[#4a7c5c] text-xs font-semibold mt-1">Executive Dashboard &nbsp;·&nbsp; Monday, 14 Apr 2025 &nbsp;·&nbsp; Rajasthan</p>
             </div>
             <div className="flex gap-2">
-               <button className="bg-[#0d5c2e] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-[#1a8a47] transition-all">+ Add Field</button>
-               <button className="bg-[#ef4444] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:opacity-80 transition-all">📷 AI Scan</button>
-               <button className="bg-[#111827] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:opacity-80 transition-all">🎙 AgriVoice</button>
+              <button className="bg-[#0d5c2e] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-[#1a8a47] transition-all">+ Add Field</button>
+              <button className="bg-[#ef4444] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:opacity-80 transition-all">📷 AI Scan</button>
+              <button className="bg-[#111827] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:opacity-80 transition-all">🎙 AgriVoice</button>
             </div>
           </header>
 
@@ -59,45 +59,45 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left/Main Column */}
             <div className="lg:col-span-2 space-y-6">
-                <CropHealthBars liveData={stats.cropHealth} />
-                <WeatherStrip forecast={forecast} />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <FarmMiniMap />
-                   <AlertFeed alerts={stats.alerts} />
-                </div>
+              <CropHealthBars liveData={stats.cropHealth} />
+              <WeatherStrip forecast={forecast} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FarmMiniMap />
+                <AlertFeed alerts={stats.alerts} />
+              </div>
             </div>
 
             {/* Right/Secondary Column */}
             <div className="lg:col-span-1 space-y-6">
-                <SchemeMiniWidget />
-                <SoilMiniWidget />
-                <MandiWidget />
-                
-                {/* Dashboard Embedded Chat Mock */}
-                <div className="bg-[#1a2e1a] p-5 rounded-3xl shadow-xl text-white">
-                   <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 bg-[#22c55e] rounded-lg flex items-center justify-center font-black">AV</div>
-                      <div>
-                         <p className="text-xs font-bold">AgriVoice Chat</p>
-                         <p className="text-[9px] text-[#86efac] font-bold">● Online · Gemini AI</p>
-                      </div>
-                   </div>
-                   <div className="bg-white/10 rounded-2xl p-3 mb-3 text-[11px] leading-relaxed">
-                      Namaste! 🙏 I'm AgriVoice. Ask about crops, weather, fertilizers or pests.
-                   </div>
-                   <div className="flex gap-2">
-                      <input 
-                        className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-[10px] outline-none focus:border-[#22c55e]" 
-                        placeholder="Ask anything..."
-                      />
-                      <button className="bg-[#22c55e] w-10 h-10 rounded-xl flex items-center justify-center font-bold">→</button>
-                   </div>
+              <SchemeMiniWidget />
+              <SoilMiniWidget />
+              <MandiWidget />
+
+              {/* Dashboard Embedded Chat Mock */}
+              <div className="bg-[#1a2e1a] p-5 rounded-3xl shadow-xl text-white">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 bg-[#22c55e] rounded-lg flex items-center justify-center font-black">AV</div>
+                  <div>
+                    <p className="text-xs font-bold">AgriVoice Chat</p>
+                    <p className="text-[9px] text-[#86efac] font-bold">● Online · Gemini AI</p>
+                  </div>
                 </div>
+                <div className="bg-white/10 rounded-2xl p-3 mb-3 text-[11px] leading-relaxed">
+                  Namaste! 🙏 I'm AgriVoice. Ask about crops, weather, fertilizers or pests.
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-[10px] outline-none focus:border-[#22c55e]"
+                    placeholder="Ask anything..."
+                  />
+                  <button className="bg-[#22c55e] w-10 h-10 rounded-xl flex items-center justify-center font-bold">→</button>
+                </div>
+              </div>
             </div>
           </div>
         </main>
       </div>
-      
+
       <PerformanceTicker metrics={stats.performance} />
     </div>
   );

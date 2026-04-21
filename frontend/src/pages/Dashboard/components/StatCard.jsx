@@ -2,7 +2,7 @@ import React from 'react';
 
 const StatCard = ({ icon, value, label, change, trend, progress }) => {
   const trendColor = trend === 'up' ? 'text-green-500' : 'text-red-500';
-  
+
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all group overflow-hidden relative">
       <div className={`absolute top-0 left-0 w-full h-1 ${trend === 'up' ? 'bg-green-500' : 'bg-blue-500'}`}></div>
@@ -22,8 +22,8 @@ const StatCard = ({ icon, value, label, change, trend, progress }) => {
       </div>
       {progress !== undefined && (
         <div className="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-          <div 
-            className="bg-green-500 h-1.5 rounded-full" 
+          <div
+            className="bg-green-500 h-1.5 rounded-full"
             style={{ width: `${progress}%` }}
           ></div>
         </div>

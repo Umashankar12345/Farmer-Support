@@ -1,56 +1,63 @@
 import React, { useState, useEffect } from 'react';
 
+const TICKERS = [
+  'Forecast: 80% chance of light rain tomorrow evening.',
+  'Alert: PM-KISAN 16th installment credited to your account.',
+  'Tip: High moisture detected, skip morning irrigation for Farm A.',
+  'Market: Mustard prices up 2.4% today at Alwar mandi.',
+  'Advisory: Apply Zinc Sulphate to boost mustard yield by 12%.',
+  'Weather: Heavy rain expected Wed-Thu. Harvest wheat by Tuesday.'
+];
+
 const Navbar = () => {
   const [time, setTime] = useState(new Date());
-  const [insightIdx, setInsightIdx] = useState(0);
-
-  const insights = [
-    "Tip: High moisture detected, skip morning irrigation for Farm A.",
-    "Alert: PM-KISAN 16th installment credited to your account.",
-    "Forecast: 80% chance of light rain tomorrow evening.",
-    "Market: Wheat prices up by ₹150/quintal in Jaipur Mandi."
-  ];
+  const [tickerIndex, setTickerIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
-    const insightTimer = setInterval(() => {
-      setInsightIdx(prev => (prev + 1) % insights.length);
-    }, 8000);
+    const tickerTimer = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % TICKERS.length);
+    }, 7000);
     return () => {
       clearInterval(timer);
-      clearInterval(insightTimer);
+      clearInterval(tickerTimer);
     };
   }, []);
 
-  return (
-    <nav className="h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-8 fixed top-0 right-0 left-0 z-40">
-      <div className="flex items-center gap-4">
-        <div className="text-xl font-black bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent">
-          DIGITAL KRISHI
-        </div>
-        <div className="hidden md:flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full border border-green-100">
-          <span className="animate-bounce">💡</span>
-          <span className="text-xs font-bold text-green-700 transition-all duration-500">{insights[insightIdx]}</span>
-        </div>
-      </div>
+  const formatTime = (n) => {
+    let h = n.getHours(), m = n.getMinutes(), s = n.getSeconds(), ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h < 10 ? '0' : ''}${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s} ${ap}`;
+  };
 
-      <div className="flex items-center gap-6">
-        <div className="hidden sm:flex flex-col items-end">
-          <p className="text-xs font-bold text-gray-900">{time.toLocaleTimeString()}</p>
-          <p className="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">{time.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
+  const formatDate = (n) => {
+    const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    return `${days[n.getDay()]}, ${n.getDate()} ${months[n.getMonth()]}`;
+  };
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  return (
+    <div className="topbar">
+      <div className="top-brand">DIGITAL KRISHI</div>
+      <div className="top-ticker">
+        <div className="ticker-dot"></div>
+        <span>{TICKERS[tickerIndex]}</span>
+      </div>
+      <div className="top-right">
+        <div className="top-time">
+          <div className="t1">{formatTime(time)}</div>
+          <div className="t2">{formatDate(time)}</div>
         </div>
-        
-        <div className="flex items-center gap-3 border-l pl-6 border-gray-100">
-          <button className="relative w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors">
-            <span>🔔</span>
-            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-          </button>
-          <div className="w-10 h-10 bg-gradient-to-tr from-green-500 to-emerald-400 rounded-xl shadow-lg flex items-center justify-center text-white font-bold ring-2 ring-white ring-offset-1">
-            US
-          </div>
+        <div className="top-notif">
+          🔔<div className="notif-badge"></div>
+        </div>
+        <div className="top-avatar">
+          {user.firstName ? user.firstName.substring(0, 2).toUpperCase() : 'US'}
         </div>
       </div>
-    </nav>
+    </div>
   );
 };
 

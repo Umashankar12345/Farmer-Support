@@ -61,5 +61,5 @@ export const locationAPI = {
 };
 
 export const dashboardAPI = {
-  getDashboard: () => apiRequest('/dashboard'),
+  getDashboard: () => apiRequest('/dashboard/data'),
 };

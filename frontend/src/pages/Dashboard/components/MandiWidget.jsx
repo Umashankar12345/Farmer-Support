@@ -19,11 +19,11 @@ const MandiWidget = ({ prices = [] }) => {
         {activePrices.map((p, i) => (
           <div key={i} className="flex justify-between items-center py-2.5 group">
             <div className="flex items-center gap-2">
-               <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition-colors">🌾</div>
-               <div>
-                  <p className="text-xs font-bold text-gray-900">{p.crop}</p>
-                  <p className="text-[9px] text-gray-400 font-bold uppercase">{p.mandi}</p>
-               </div>
+              <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition-colors">🌾</div>
+              <div>
+                <p className="text-xs font-bold text-gray-900">{p.crop}</p>
+                <p className="text-[9px] text-gray-400 font-bold uppercase">{p.mandi}</p>
+              </div>
             </div>
             <div className="text-right">
               <p className="text-sm font-black text-gray-900">{p.price}</p>

@@ -42,7 +42,7 @@ export default function CropHealthBars({ liveData = [] }) {
         </h3>
         <span className="px-2 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded uppercase tracking-tighter">AI Analyzed</span>
       </div>
-      
+
       <div className="space-y-6">
         {health.map((crop, idx) => (
           <div key={idx} className="group">
@@ -54,7 +54,7 @@ export default function CropHealthBars({ liveData = [] }) {
               <strong className={`text-sm ${getTextColor(crop.score)}`}>{crop.score.toFixed(1)}%</strong>
             </div>
             <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-              <div 
+              <div
                 className={`h-2.5 rounded-full transition-all duration-1000 ${getColor(crop.score)}`}
                 style={{ width: `${crop.score}%` }}
               />

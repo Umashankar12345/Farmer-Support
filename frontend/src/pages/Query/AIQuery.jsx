@@ -64,7 +64,7 @@ export default function AIQuery() {
       <Navbar />
       <div className="flex flex-1 pt-16">
         <Sidebar />
-        
+
         <main className="flex-1 p-8 flex flex-col max-w-5xl mx-auto w-full">
           <header className="mb-6">
             <h1 className="text-3xl font-black text-gray-900 tracking-tight">AgriVoice AI</h1>
@@ -76,14 +76,13 @@ export default function AIQuery() {
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[80%] p-4 rounded-2xl ${
-                    msg.role === 'user' 
-                      ? 'bg-[#0d5c2e] text-white rounded-tr-none' 
+                  <div className={`max-w-[80%] p-4 rounded-2xl ${msg.role === 'user'
+                      ? 'bg-[#0d5c2e] text-white rounded-tr-none'
                       : 'bg-[#f0fdf4] text-[#0f2d1a] rounded-tl-none border border-[#d1fae5] shadow-sm'
-                  }`}>
+                    }`}>
                     <p className="text-sm leading-relaxed">{msg.text}</p>
                     <span className="text-[10px] mt-2 block opacity-50 font-bold uppercase tracking-wider">
-                      {msg.role === 'user' ? 'You' : 'Agri AI'} • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      {msg.role === 'user' ? 'You' : 'Agri AI'} • {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                 </div>
@@ -104,8 +103,8 @@ export default function AIQuery() {
             <div className="p-6 bg-gray-50/50 border-t border-gray-100">
               <div className="flex flex-wrap gap-2 mb-4">
                 {QUICK_QUERIES.map((q, i) => (
-                  <button 
-                    key={i} 
+                  <button
+                    key={i}
                     onClick={() => handleSend(q)}
                     className="text-[10px] font-bold bg-white border border-[#d1fae5] px-3 py-1.5 rounded-full hover:border-[#22c55e] hover:text-[#0d5c2e] transition-all shadow-sm"
                   >
@@ -115,22 +114,21 @@ export default function AIQuery() {
               </div>
 
               <div className="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-lg border border-gray-200">
-                <button 
+                <button
                   onClick={handleVoice}
-                  className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all ${
-                    voiceActive ? 'bg-red-500 text-white animate-pulse' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-                  }`}
+                  className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all ${voiceActive ? 'bg-red-500 text-white animate-pulse' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                    }`}
                 >
                   <span className="text-xl">{voiceActive ? '🛑' : '🎙️'}</span>
                 </button>
-                <input 
+                <input
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSend()}
                   placeholder="Ask in Hindi, Tamil, Telugu or English..."
                   className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium"
                 />
-                <button 
+                <button
                   onClick={() => handleSend()}
                   disabled={!input.trim()}
                   className="px-6 h-12 bg-[#0d5c2e] text-white rounded-xl font-bold text-sm hover:bg-[#1a8a47] transition-all disabled:opacity-50"
@@ -140,7 +138,7 @@ export default function AIQuery() {
               </div>
             </div>
           </div>
-          
+
           <DiseaseDetector />
         </main>
       </div>

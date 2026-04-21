@@ -1,5 +1,6 @@
-﻿// Sample data for dashboard
+// Sample data for dashboard
 exports.getDashboardData = async (req, res) => {
+  console.log('GET /api/dashboard/data request received');
   try {
     const dashboardData = {
       weather: {

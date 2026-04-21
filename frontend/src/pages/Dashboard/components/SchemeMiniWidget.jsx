@@ -15,11 +15,11 @@ const SchemeMiniWidget = () => {
       </div>
       <p className="text-xl font-black">₹6,000 / year</p>
       <p className="text-[9px] opacity-70 mt-1">Next installment: ₹2,000 in 18 days</p>
-      
+
       <div className="mt-4">
         <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
-          <div 
-            className="bg-green-500 h-full transition-all duration-1000 ease-out" 
+          <div
+            className="bg-green-500 h-full transition-all duration-1000 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>

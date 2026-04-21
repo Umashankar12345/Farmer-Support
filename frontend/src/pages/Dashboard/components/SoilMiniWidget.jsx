@@ -2,28 +2,28 @@ import React from 'react';
 
 const SoilMiniWidget = () => {
   const params = [
-    { label: 'Nitrogen', val: 'Low', color: 'bg-red-500', w: '42%' },
-    { label: 'Phosphorus', val: 'Med', color: 'bg-yellow-500', w: '70%' },
-    { label: 'Potassium', val: 'High', color: 'bg-green-500', w: '88%' },
-    { label: 'pH Level', val: '6.8', color: 'bg-blue-500', w: '62%' }
+    { label: 'Nitrogen', val: 'Low', color: 'var(--red)', w: '42%' },
+    { label: 'Phosphorus', val: 'Med', color: 'var(--amber)', w: '70%' },
+    { label: 'Potassium', val: 'High', color: 'var(--g3)', w: '88%' },
+    { label: 'pH Level', val: '6.8', color: 'var(--blue)', w: '62%' }
   ];
 
   return (
-    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Soil Health</h3>
-        <span className="bg-amber-50 text-amber-600 text-[10px] font-bold px-1.5 py-0.5 rounded">Jan 2025</span>
+    <div className="card">
+      <div className="card-title">
+        <span>🧪 Soil Health Card</span>
+        <span className="badge b-amber">JAN 2025</span>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
         {params.map((p, i) => (
-          <div key={i} className="flex flex-col gap-1">
-             <div className="flex justify-between items-center">
-                <span className="text-[9px] text-gray-400 font-bold uppercase">{p.label}</span>
-                <span className="text-[10px] font-black text-gray-900">{p.val}</span>
-             </div>
-             <div className="w-full h-1.5 bg-gray-50 rounded-full overflow-hidden">
-                <div className={`h-full ${p.color} transition-all duration-1000`} style={{ width: p.w }}></div>
-             </div>
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--muted)', textTransform: 'uppercase' }}>{p.label}</div>
+              <div style={{ fontSize: '10px', fontWeight: 800, color: p.color }}>{p.val}</div>
+            </div>
+            <div className="hbar-track" style={{ height: '5px' }}>
+              <div className="hbar-fill" style={{ width: p.w, background: p.color, height: '100%' }}></div>
+            </div>
           </div>
         ))}
       </div>
