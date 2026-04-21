@@ -1,28 +1,35 @@
 import React from 'react';
 
-const SoilMiniWidget = () => {
-  const params = [
-    { label: 'Nitrogen', val: 'Low', color: 'var(--red)', w: '42%' },
-    { label: 'Phosphorus', val: 'Med', color: 'var(--amber)', w: '70%' },
-    { label: 'Potassium', val: 'High', color: 'var(--g3)', w: '88%' },
-    { label: 'pH Level', val: '6.8', color: 'var(--blue)', w: '62%' }
-  ];
+const SoilMiniWidget = ({ data = {} }) => {
+  const getStatusClass = (val) => {
+    if (val === 'Low') return 'bg-red-50 text-red-700 border-red-100';
+    if (val === 'Med') return 'bg-amber-50 text-amber-700 border-amber-100';
+    if (val === 'High') return 'bg-green-50 text-green-700 border-green-100';
+    return 'bg-blue-50 text-blue-700 border-blue-100';
+  };
 
   return (
-    <div className="card">
-      <div className="card-title">
-        <span>🧪 Soil Health Card</span>
-        <span className="badge b-amber">JAN 2025</span>
+    <div className="bg-white p-4 rounded-2xl border border-[#cde4c6] shadow-sm">
+      <div className="flex justify-between items-center mb-4">
+        <h4 className="text-[#14301f] text-[12px] font-extrabold uppercase flex items-center gap-2">
+          🧪 Soil Health Card
+        </h4>
+        <span className="text-[10px] text-[#1a7a3a] font-bold">soilhealth.dac.gov.in</span>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-        {params.map((p, i) => (
-          <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--muted)', textTransform: 'uppercase' }}>{p.label}</div>
-              <div style={{ fontSize: '10px', fontWeight: 800, color: p.color }}>{p.val}</div>
-            </div>
-            <div className="hbar-track" style={{ height: '5px' }}>
-              <div className="hbar-fill" style={{ width: p.w, background: p.color, height: '100%' }}></div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {[
+          { label: 'Nitrogen (N)', val: data.N },
+          { label: 'Phosphorus (P)', val: data.P },
+          { label: 'Potassium (K)', val: data.K },
+          { label: 'pH Level', val: data.pH },
+        ].map((item, idx) => (
+          <div key={idx} className="group">
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter mb-1">
+              {item.label}
+            </p>
+            <div className={`text-[12px] font-black px-3 py-1.5 rounded-lg border inline-block w-full text-center ${getStatusClass(item.val)}`}>
+              {item.val || '--'}
             </div>
           </div>
         ))}

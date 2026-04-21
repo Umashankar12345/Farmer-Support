@@ -1,36 +1,46 @@
 import React from 'react';
+import { MSP_DATA } from '../../../constants/stateData';
 
-const MandiWidget = ({ prices = [] }) => {
-  const demoPrices = [
-    { crop: 'Wheat', mandi: 'Jaipur', price: '₹2,080', trend: '▲ +1.2%' },
-    { crop: 'Mustard', mandi: 'Alwar', price: '₹5,280', trend: '▲ +2.4%' },
-    { crop: 'Rice', mandi: 'Kota', price: '₹2,050', trend: '▼ -0.8%' }
-  ];
-
-  const activePrices = prices.length > 0 ? prices : demoPrices;
-
+const MandiWidget = ({ crops = [] }) => {
   return (
-    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
+    <div className="bg-white p-4 rounded-2xl border border-[#cde4c6] shadow-sm">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Live Mandi Prices</h3>
-        <span className="bg-green-50 text-green-600 text-[10px] font-bold px-1.5 py-0.5 rounded">eNAM</span>
+        <h3 className="text-[12px] font-extrabold text-[#14301f] uppercase tracking-tight">
+          📋 MSP Rates 2024–25
+        </h3>
+        <span className="text-[10px] text-gray-400 font-bold">CACP • GOI</span>
       </div>
-      <div className="divide-y divide-gray-50">
-        {activePrices.map((p, i) => (
-          <div key={i} className="flex justify-between items-center py-2.5 group">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition-colors">🌾</div>
-              <div>
-                <p className="text-xs font-bold text-gray-900">{p.crop}</p>
-                <p className="text-[9px] text-gray-400 font-bold uppercase">{p.mandi}</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-black text-gray-900">{p.price}</p>
-              <p className={`text-[9px] font-bold ${p.trend.includes('▲') ? 'text-green-500' : 'text-red-500'}`}>{p.trend}</p>
-            </div>
-          </div>
-        ))}
+      
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-[11px]">
+          <thead className="border-b border-gray-100">
+            <tr>
+              <th className="pb-2 text-[10px] text-gray-400 font-bold uppercase">Crop</th>
+              <th className="pb-2 text-[10px] text-gray-400 font-bold uppercase">Season</th>
+              <th className="pb-2 text-[10px] text-gray-400 font-bold uppercase text-right">₹ / Quintal</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {crops.map((cropName, idx) => {
+              // Try to find the crop in MSP_DATA
+              const baseName = Object.keys(MSP_DATA).find(k => cropName.toLowerCase().includes(k.toLowerCase()));
+              const msp = MSP_DATA[baseName] || { s: 'Annual', v: null };
+              
+              return (
+                <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                  <td className="py-2.5 font-bold text-gray-800">{cropName}</td>
+                  <td className="py-2.5 text-gray-500 font-medium">{msp.s}</td>
+                  <td className="py-2.5 font-black text-[#1a7a3a] text-right">
+                    {msp.v ? `₹${msp.v.toLocaleString('en-IN')}` : 'Market-led'}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-4 pt-3 border-t border-gray-50 text-[9px] text-gray-400 italic">
+        Source: CACP, Ministry of Agriculture & Farmers Welfare · agricoop.gov.in
       </div>
     </div>
   );

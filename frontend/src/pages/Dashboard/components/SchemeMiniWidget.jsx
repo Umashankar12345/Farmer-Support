@@ -1,30 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import SchemeCard from './SchemeCard';
 
-const SchemeMiniWidget = () => {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    setTimeout(() => setProgress(66), 400);
-  }, []);
-
+const SchemeMiniWidget = ({ pmfbyData = {} }) => {
   return (
-    <div className="bg-gradient-to-br from-blue-900 to-blue-800 p-4 rounded-2xl shadow-lg text-white">
-      <div className="flex justify-between items-start mb-1">
-        <h4 className="text-[10px] font-bold opacity-80 uppercase tracking-widest">PM-KISAN Samman Nidhi</h4>
-        <div className="bg-green-500 w-2 h-2 rounded-full animate-pulse"></div>
-      </div>
-      <p className="text-xl font-black">₹6,000 / year</p>
-      <p className="text-[9px] opacity-70 mt-1">Next installment: ₹2,000 in 18 days</p>
+    <div className="flex flex-col gap-4">
+      {/* PM-KISAN - Standard for all */}
+      <SchemeCard 
+        title="PM-KISAN Samman Nidhi"
+        amount="₹6,000 / year"
+        subText="Next installment: ₹2,000 in 18 days"
+        progress={66}
+        progressLabel="2 of 3 installments received"
+        bgColor="#14301f"
+        accentColor="#5ee08a"
+        url="pmkisan.gov.in"
+      />
 
-      <div className="mt-4">
-        <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
-          <div
-            className="bg-green-500 h-full transition-all duration-1000 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <p className="text-[8px] opacity-60 mt-1 uppercase font-bold tracking-tighter">2 of 3 installments received</p>
-      </div>
+      {/* PMFBY - State specific */}
+      <SchemeCard 
+        title="PMFBY Crop Insurance"
+        amount={pmfbyData.pa || '₹1.5% Premium'}
+        subText={pmfbyData.ps || 'Kharif 2024 — active'}
+        progress={pmfbyData.pp || 0}
+        progressLabel={pmfbyData.pl || 'pmfby.gov.in'}
+        bgColor="#0d2b4a"
+        accentColor="#60aff5"
+        url="pmfby.gov.in"
+      />
     </div>
   );
 };

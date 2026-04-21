@@ -1,91 +1,137 @@
-import React from 'react';
-import { useWeather } from '../../hooks/useWeather';
-import { useLiveStats } from '../../hooks/useLiveStats';
+import React, { useState, useEffect, useCallback } from 'react';
+import { STATE_DATA } from '../../constants/stateData';
 import StatCard from './components/StatCard';
-import WeatherStrip from './components/WeatherStrip';
 import CropHealthBars from './components/CropHealthBars';
-import AlertFeed from './components/AlertFeed';
-import FarmMiniMap from './components/FarmMiniMap';
 import MandiWidget from './components/MandiWidget';
 import SoilMiniWidget from './components/SoilMiniWidget';
 import SchemeMiniWidget from './components/SchemeMiniWidget';
 
 export default function Dashboard() {
-  const { stats, loading } = useLiveStats(4000);
-  const { forecast } = useWeather('Rajasthan');
+  const [selectedStateCode, setSelectedStateCode] = useState('RJ');
+  const [weather, setWeather] = useState({ temp: '--', rain: 'fetching...', loading: true });
+  const [syncing, setSyncing] = useState(false);
 
-  if (loading && !stats.activeCrops) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="flex flex-col items-center">
-          <div className="w-12 h-12 border-4 border-[var(--g2)] border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-[var(--muted)] font-bold animate-pulse text-[10px] tracking-widest uppercase">Syncing Dashboard...</p>
-        </div>
-      </div>
-    );
-  }
+  const activeState = STATE_DATA[selectedStateCode];
+
+  const fetchWeather = useCallback(async (lat, lon) => {
+    setWeather(prev => ({ ...prev, loading: true, rain: 'fetching...' }));
+    try {
+      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation&timezone=Asia%2FKolkata`);
+      const data = await res.json();
+      if (data.current) {
+        setWeather({
+          temp: `${Math.round(data.current.temperature_2m)}°C`,
+          rain: data.current.precipitation > 0 ? `${data.current.precipitation.toFixed(1)} mm rain` : 'No rain now',
+          loading: false
+        });
+      }
+    } catch (err) {
+      console.error('Weather fetch failed', err);
+      setWeather({ temp: '--°C', rain: 'unavailable', loading: false });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchWeather(activeState.lat, activeState.lon);
+  }, [activeState, fetchWeather]);
+
+  const handleStateChange = (code) => {
+    setSyncing(true);
+    setSelectedStateCode(code);
+    setTimeout(() => setSyncing(false), 500); // Realistic sync animation
+  };
 
   return (
-    <>
-      {/* Hero Section */}
-      <header style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <div className={`transition-opacity duration-300 ${syncing ? 'opacity-40' : 'opacity-100'}`}>
+      {/* Executive Header */}
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#d4e8d0] shadow-sm">
         <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.5px' }}>Hey, Umashankar Kumar 👋</h1>
-          <p style={{ color: 'var(--muted)', fontSize: '11px', fontWeight: 600, marginTop: '2px' }}>Executive Dashboard · Monday, 14 Apr 2025 · Rajasthan</p>
+          <h1 className="text-2xl font-black text-[#111] tracking-tight">Hey, Umashankar Kumar 👋</h1>
+          <p className="text-[11.5px] text-[#555] font-bold mt-1 uppercase tracking-wider">
+            Executive Dashboard · {new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })} · 
+            <span className="text-[#14301f] ml-1">{activeState.name}</span>
+          </p>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button className="btn btn-green">+ ADD FIELD</button>
-          <button className="btn" style={{ background: 'var(--red)', color: '#fff' }}>📷 AI SCAN</button>
+        
+        <div className="flex items-center gap-3 bg-[#f0fdf4] px-4 py-2.5 rounded-xl border-2 border-[#1a8a47]">
+           <label htmlFor="state-select" className="text-[11px] font-black text-[#14301f] uppercase">📍 Select State</label>
+           <select 
+             id="state-select"
+             className="bg-transparent font-bold text-[13px] text-[#14301f] outline-none cursor-pointer"
+             value={selectedStateCode}
+             onChange={(e) => handleStateChange(e.target.value)}
+           >
+             {Object.keys(STATE_DATA).map(code => (
+               <option key={code} value={code}>{STATE_DATA[code].name}</option>
+             ))}
+           </select>
         </div>
       </header>
 
-      {/* Stats Row */}
-      <div className="grid grid-4" style={{ marginBottom: '24px' }}>
-        <StatCard icon="🌾" value="14.2 T" label="Projected Yield" change="+8.4%" trend="up" />
-        <StatCard icon="💧" value="62%" label="Soil Humidity" trend="up" />
-        <StatCard icon="💰" value="₹12.5L" label="Est. Revenue" change="+14.2%" trend="up" />
-        <StatCard icon="🚨" value="03" label="Active Alerts" trend="down" />
+      {/* Top Banner Tip */}
+      <div className="mb-6 bg-[#14301f] text-[#9fd4b4] py-2 px-6 rounded-3xl text-center text-[11px] font-bold tracking-wide border-b-2 border-[#1a8a47]">
+        💡 {activeState.tip}
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '2fr 1fr' }}>
-        {/* Left/Main Column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <CropHealthBars liveData={stats.cropHealth} />
-          <WeatherStrip forecast={forecast} />
-          <div className="grid grid-2">
-            <FarmMiniMap />
-            <AlertFeed alerts={stats.alerts} />
-          </div>
+      {/* 5-Metric Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <StatCard icon="🌾" label="Projected Yield" value={activeState.yield} subValue={`${activeState.yc} vs last yr`} trend="up" />
+        <StatCard icon="💧" label="Soil Humidity" value={activeState.hum} subValue={activeState.hn} trend="up" colorClass="text-blue-600" />
+        <StatCard icon="💰" label="Est. Revenue" value={activeState.rev} subValue={`${activeState.rc} vs last yr`} trend="up" />
+        <StatCard 
+          icon="🌡️" 
+          label="Live Temp / Rain" 
+          value={weather.temp} 
+          subValue={
+            <div className="flex items-center gap-1.5 justify-center lg:justify-start">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              {weather.rain}
+            </div>
+          } 
+          colorClass="text-blue-500" 
+        />
+        <StatCard icon="🔔" label="Active Alerts" value={activeState.al} subValue={activeState.an} trend="down" colorClass="text-orange-600" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content (Left) */}
+        <div className="lg:col-span-2 space-y-6">
+          <CropHealthBars crops={activeState.crops} stateName={activeState.name} />
+          <MandiWidget crops={activeState.crops.map(c => c.n.split(' ')[0])} />
         </div>
 
-        {/* Right/Secondary Column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <SchemeMiniWidget />
-          <SoilMiniWidget />
-          <MandiWidget />
-
-          {/* Quick Chat Widget */}
-          <div className="card" style={{ background: 'var(--g1)', color: '#fff', border: 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-              <div style={{ width: '32px', height: '32px', background: 'var(--g3)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>AV</div>
-              <div>
-                <p style={{ fontSize: '11px', fontWeight: 800 }}>AgriVoice Chat</p>
-                <p style={{ fontSize: '9px', color: '#86efac', fontWeight: 700 }}>● Online Agent</p>
-              </div>
-            </div>
-            <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px', fontSize: '11px', lineHeight: 1.5, marginBottom: '12px' }}>
-              Namaste! 🙏 I'm AgriVoice. Ask me anything about your crops or weather alerts.
-            </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input 
-                style={{ flex: 1, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', padding: '0 12px', color: '#fff', fontSize: '11px', height: '36px', outline: 'none' }}
-                placeholder="Ask anything..."
-              />
-              <button className="btn btn-green" style={{ width: '36px', height: '36px', padding: 0 }}>→</button>
+        {/* Sidebar (Right) */}
+        <div className="space-y-6">
+          <SchemeMiniWidget pmfbyData={activeState} />
+          <SoilMiniWidget data={activeState.soil} />
+          
+          {/* State Helpline */}
+          <div className="bg-white p-5 rounded-2xl border border-[#cde4c6] shadow-sm">
+            <h4 className="text-[#14301f] text-[13px] font-black uppercase mb-3 flex items-center gap-2">📞 State Agri Helpline</h4>
+            <div className="text-[12px] leading-relaxed text-[#222] font-semibold space-y-2">
+               {activeState.hl.split('\n').map((line, i) => (
+                 <p key={i}>{line}</p>
+               ))}
+               <p className="text-[10px] text-gray-400 mt-4 italic font-medium uppercase tracking-tighter">Verified by State Dept.</p>
             </div>
           </div>
         </div>
       </div>
-    </>
+
+      {/* Live System Status Bar */}
+      <footer className="mt-8 flex items-center gap-6 bg-[#14301f] text-[#5ee08a] px-6 py-2 rounded-xl text-[10px] font-black tracking-widest overflow-hidden relative">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+          ● SYSTEM LIVE
+        </div>
+        <div className="h-3 w-[1px] bg-[#1a8a47]"></div>
+        <div>STATE: {selectedStateCode}</div>
+        <div className="h-3 w-[1px] bg-[#1a8a47]"></div>
+        <div>WEATHER: OPEN-METEO.COM</div>
+        <div className="h-3 w-[1px] bg-[#1a8a47]"></div>
+        <div>MSP: CACP 2024-25</div>
+        <div className="ml-auto opacity-40">V3.1-STABLE · © 2026 DIGITAL KRISHI</div>
+      </footer>
+    </div>
   );
 }

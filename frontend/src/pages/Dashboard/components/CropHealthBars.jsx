@@ -1,62 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-// Health values fluctuate every 6s simulating live sensor data
-export default function CropHealthBars({ liveData = [] }) {
-  const [health, setHealth] = useState(liveData);
+const CropHealthBars = ({ crops = [], stateName = '' }) => {
+  const getProgressColor = (pct) => {
+    if (pct >= 85) return 'bg-[#16a34a]';
+    if (pct >= 70) return 'bg-[#d97706]';
+    return 'bg-[#dc2626]';
+  };
 
-  useEffect(() => {
-    if (liveData.length === 0) {
-      // Initialize with demo data if none provided
-      const demoData = [
-        { name: 'Wheat (Raj-3077)', score: 88, zone: 'A1' },
-        { name: 'Mustard (Pusa)', score: 72, zone: 'B2' },
-        { name: 'Millet (Bajra)', score: 91, zone: 'C1' },
-        { name: 'Chickpea', score: 64, zone: 'D4' }
-      ];
-      setHealth(demoData);
-    } else {
-      setHealth(liveData);
-    }
-  }, [liveData]);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setHealth(prev => prev.map(crop => ({
-        ...crop,
-        score: Math.max(55, Math.min(99,
-          crop.score + (Math.random() - 0.5) * 2
-        ))
-      })));
-    }, 6000);
-    return () => clearInterval(id);
-  }, []);
-
-  const getColor = s => s >= 80 ? 'bg-green-500' : s >= 65 ? 'bg-yellow-500' : 'bg-red-500';
-  const getTextColor = s => s >= 80 ? 'text-green-600' : s >= 65 ? 'text-yellow-600' : 'text-red-600';
+  const getTextColor = (pct) => {
+    if (pct >= 85) return 'text-[#16a34a]';
+    if (pct >= 70) return 'text-[#d97706]';
+    return 'text-[#dc2626]';
+  };
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
+    <div className="bg-white p-5 rounded-2xl border border-[#cde4c6] shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="font-bold text-gray-800 flex items-center gap-2">
-          <span>🌿</span> Crop Health Index
-        </h3>
-        <span className="px-2 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded uppercase tracking-tighter">AI Analyzed</span>
+        <h4 className="text-[#14301f] text-[13px] font-extrabold flex items-center gap-2">
+          🌿 Crop Health Index — <span className="text-[#1a8a4a]">{stateName}</span>
+        </h4>
+        <span className="text-[9.5px] bg-[#e0f5e7] text-[#1a7a3a] px-2 py-1 rounded-md font-bold uppercase tracking-wider">
+          AI ANALYSED
+        </span>
       </div>
 
-      <div className="space-y-6">
-        {health.map((crop, idx) => (
+      <div className="space-y-4">
+        {crops.map((crop, idx) => (
           <div key={idx} className="group">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-gray-700">{crop.name}</span>
-                <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded uppercase">Zone {crop.zone}</span>
+            <div className="flex justify-between items-end mb-1.5">
+              <div>
+                <span className="text-[12px] font-bold text-gray-800">{crop.n}</span>
+                <span className="text-[10.5px] text-gray-400 font-medium ml-2">{crop.z}</span>
               </div>
-              <strong className={`text-sm ${getTextColor(crop.score)}`}>{crop.score.toFixed(1)}%</strong>
+              <span className={`text-[12px] font-black ${getTextColor(crop.p)}`}>
+                {crop.p}%
+              </span>
             </div>
-            <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-              <div
-                className={`h-2.5 rounded-full transition-all duration-1000 ${getColor(crop.score)}`}
-                style={{ width: `${crop.score}%` }}
+            <div className="h-[7px] bg-[#e8ede6] rounded-full overflow-hidden">
+              <div 
+                className={`h-full transition-all duration-700 ease-out rounded-full ${getProgressColor(crop.p)}`}
+                style={{ width: `${crop.p}%` }}
               />
             </div>
           </div>
@@ -64,4 +47,6 @@ export default function CropHealthBars({ liveData = [] }) {
       </div>
     </div>
   );
-}
+};
+
+export default CropHealthBars;
