@@ -5,6 +5,7 @@ import CropHealthBars from './components/CropHealthBars';
 import MandiWidget from './components/MandiWidget';
 import SoilMiniWidget from './components/SoilMiniWidget';
 import SchemeMiniWidget from './components/SchemeMiniWidget';
+import OfflineBanner from '../../components/Offline/OfflineBanner';
 
 export default function Dashboard() {
   const [selectedStateCode, setSelectedStateCode] = useState('RJ');
@@ -43,6 +44,7 @@ export default function Dashboard() {
 
   return (
     <div className={`transition-opacity duration-300 ${syncing ? 'opacity-40' : 'opacity-100'}`}>
+      <OfflineBanner />
       {/* Executive Header */}
       <header className="mb-6 flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#d4e8d0] shadow-sm">
         <div>

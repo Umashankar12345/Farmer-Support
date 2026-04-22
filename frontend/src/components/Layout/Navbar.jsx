@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import NotificationPanel from '../Notifications/NotificationPanel';
+
 const TICKERS = [
   'Forecast: 80% chance of light rain tomorrow evening.',
   'Alert: PM-KISAN 16th installment credited to your account.',
@@ -12,6 +14,7 @@ const TICKERS = [
 const Navbar = () => {
   const [time, setTime] = useState(new Date());
   const [tickerIndex, setTickerIndex] = useState(0);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -39,25 +42,28 @@ const Navbar = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   return (
-    <div className="topbar">
-      <div className="top-brand">DIGITAL KRISHI</div>
-      <div className="top-ticker">
-        <div className="ticker-dot"></div>
-        <span>{TICKERS[tickerIndex]}</span>
+    <>
+      <div className="topbar">
+        <div className="top-brand">DIGITAL KRISHI</div>
+        <div className="top-ticker">
+          <div className="ticker-dot"></div>
+          <span>{TICKERS[tickerIndex]}</span>
+        </div>
+        <div className="top-right">
+          <div className="top-time">
+            <div className="t1">{formatTime(time)}</div>
+            <div className="t2">{formatDate(time)}</div>
+          </div>
+          <div className="top-notif" onClick={() => setIsNotifOpen(true)}>
+            🔔<div className="notif-badge"></div>
+          </div>
+          <div className="top-avatar">
+            {user.firstName ? user.firstName.substring(0, 2).toUpperCase() : 'US'}
+          </div>
+        </div>
       </div>
-      <div className="top-right">
-        <div className="top-time">
-          <div className="t1">{formatTime(time)}</div>
-          <div className="t2">{formatDate(time)}</div>
-        </div>
-        <div className="top-notif">
-          🔔<div className="notif-badge"></div>
-        </div>
-        <div className="top-avatar">
-          {user.firstName ? user.firstName.substring(0, 2).toUpperCase() : 'US'}
-        </div>
-      </div>
-    </div>
+      <NotificationPanel isOpen={isNotifOpen} onClose={() => setIsNotifOpen(false)} />
+    </>
   );
 };
 

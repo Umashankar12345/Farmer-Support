@@ -27,6 +27,19 @@ const Sidebar = () => {
       ]
     },
     {
+      title: 'Advanced Features',
+      items: [
+        { name: 'Crop Recommender', icon: '🌱', path: '/crop-rec' },
+        { name: 'Income / ROI', icon: '📊', path: '/roi' },
+        { name: 'NDVI Satellite', icon: '🛰', path: '/ndvi' },
+        { name: 'Yield Prediction', icon: '📈', path: '/yield' },
+        { name: 'Community Feed', icon: '🤝', path: '/community' },
+        { name: 'Farm Passport', icon: '🆔', path: '/passport' },
+        { name: 'Farmer Journey', icon: '🚀', path: '/onboard' },
+        { name: 'Offline Mode', icon: '📵', path: '/offline' },
+      ]
+    },
+    {
       title: 'Support',
       items: [
         { name: 'Gov Schemes', icon: '🏛️', path: '/schemes' },

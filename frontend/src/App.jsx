@@ -15,6 +15,16 @@ import Sidebar from './components/Layout/Sidebar';
 import PerformanceTicker from './pages/Dashboard/components/PerformanceTicker';
 import GenericPlaceholder from './pages/Placeholder/GenericPlaceholder';
 
+// New Features
+import CropRecommender from './pages/Features/CropRecommender';
+import ROICalculator from './pages/Features/ROICalculator';
+import NDVISatellite from './pages/Features/NDVISatellite';
+import YieldPrediction from './pages/Features/YieldPrediction';
+import CommunityFeed from './pages/Features/CommunityFeed';
+import FarmPassport from './pages/Features/FarmPassport';
+import OnboardingJourney from './pages/Features/OnboardingJourney';
+import OfflineMode from './pages/Features/OfflineMode';
+
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token') || localStorage.getItem('krishi_jwt');
   return token ? (
@@ -43,9 +53,15 @@ function App() {
         <Route path="/schemes" element={<ProtectedRoute><SchemesPage /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
         
-        {/* Placeholder Routes for Sidebar */}
-        <Route path="/pest" element={<ProtectedRoute><PestAlertPage /></ProtectedRoute>} />
-        <Route path="/support" element={<ProtectedRoute><SupportPage /></ProtectedRoute>} />
+        {/* Advanced Features */}
+        <Route path="/crop-rec" element={<ProtectedRoute><CropRecommender /></ProtectedRoute>} />
+        <Route path="/roi" element={<ProtectedRoute><ROICalculator /></ProtectedRoute>} />
+        <Route path="/ndvi" element={<ProtectedRoute><NDVISatellite /></ProtectedRoute>} />
+        <Route path="/yield" element={<ProtectedRoute><YieldPrediction /></ProtectedRoute>} />
+        <Route path="/community" element={<ProtectedRoute><CommunityFeed /></ProtectedRoute>} />
+        <Route path="/passport" element={<ProtectedRoute><FarmPassport /></ProtectedRoute>} />
+        <Route path="/onboard" element={<ProtectedRoute><OnboardingJourney /></ProtectedRoute>} />
+        <Route path="/offline" element={<ProtectedRoute><OfflineMode /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
