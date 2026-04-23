@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import NotificationPanel from '../Notifications/NotificationPanel';
 
 const TICKERS = [
@@ -12,6 +12,7 @@ const TICKERS = [
 ];
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [time, setTime] = useState(new Date());
   const [tickerIndex, setTickerIndex] = useState(0);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -39,6 +40,13 @@ const Navbar = () => {
     return `${days[n.getDay()]}, ${n.getDate()} ${months[n.getMonth()]}`;
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('krishi_jwt');
+    navigate('/login');
+  };
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   return (
@@ -57,7 +65,7 @@ const Navbar = () => {
           <div className="top-notif" onClick={() => setIsNotifOpen(true)}>
             🔔<div className="notif-badge"></div>
           </div>
-          <div className="top-avatar">
+          <div className="top-avatar" title="Click to Logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>
             {user.firstName ? user.firstName.substring(0, 2).toUpperCase() : 'US'}
           </div>
         </div>
