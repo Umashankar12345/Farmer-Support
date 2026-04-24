@@ -55,18 +55,37 @@ export default function Dashboard() {
           </p>
         </div>
         
-        <div className="flex items-center gap-3 bg-[#f0fdf4] px-4 py-2.5 rounded-xl border-2 border-[#1a8a47]">
-           <label htmlFor="state-select" className="text-[11px] font-black text-[#14301f] uppercase">📍 Select State</label>
-           <select 
-             id="state-select"
-             className="bg-transparent font-bold text-[13px] text-[#14301f] outline-none cursor-pointer"
-             value={selectedStateCode}
-             onChange={(e) => handleStateChange(e.target.value)}
-           >
-             {Object.keys(STATE_DATA).map(code => (
-               <option key={code} value={code}>{STATE_DATA[code].name}</option>
-             ))}
-           </select>
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Language Selector */}
+          <div className="flex items-center gap-2 bg-[#f0f9ff] px-3 py-2 rounded-xl border-2 border-[#0369a1]">
+             <span className="text-sm">🌐</span>
+             <select 
+               className="bg-transparent font-bold text-[12px] text-[#0c4a6e] outline-none cursor-pointer"
+               defaultValue="en"
+             >
+               <option value="en">English</option>
+               <option value="hi">हिन्दी (Hindi)</option>
+               <option value="mr">मराठी (Marathi)</option>
+               <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+               <option value="te">తెలుగు (Telugu)</option>
+               <option value="ta">தமிழ் (Tamil)</option>
+             </select>
+          </div>
+
+          {/* State Selector */}
+          <div className="flex items-center gap-3 bg-[#f0fdf4] px-4 py-2.5 rounded-xl border-2 border-[#1a8a47]">
+             <label htmlFor="state-select" className="text-[11px] font-black text-[#14301f] uppercase">📍 Select State</label>
+             <select 
+               id="state-select"
+               className="bg-transparent font-bold text-[13px] text-[#14301f] outline-none cursor-pointer"
+               value={selectedStateCode}
+               onChange={(e) => handleStateChange(e.target.value)}
+             >
+               {Object.keys(STATE_DATA).map(code => (
+                 <option key={code} value={code}>{STATE_DATA[code].name}</option>
+               ))}
+             </select>
+          </div>
         </div>
       </header>
 
