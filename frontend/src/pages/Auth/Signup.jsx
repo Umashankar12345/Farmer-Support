@@ -6,6 +6,7 @@ import PasswordStrengthBar from './components/PasswordStrengthBar';
 import FarmSizeCounter from './components/FarmSizeCounter';
 import RolePicker from './components/RolePicker';
 import { authAPI, locationAPI } from '../../services/api';
+import './Auth.css';
 
 const Signup = () => {
   const navigate = useNavigate();

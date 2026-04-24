@@ -3,7 +3,7 @@ import { MSP_DATA } from '../../../constants/stateData';
 
 const MandiWidget = ({ crops = [] }) => {
   return (
-    <div className="bg-white p-4 rounded-2xl border border-[#cde4c6] shadow-sm">
+    <div className="glass-card p-4 rounded-2xl border border-white/40 hover-lift transition-all">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-[12px] font-extrabold text-[#14301f] uppercase tracking-tight">
           📋 MSP Rates 2024–25

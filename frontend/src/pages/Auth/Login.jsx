@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import StepProgress from './components/StepProgress';
 import OTPInput from './components/OTPInput';
 import { authAPI } from '../../services/api';
+import './Auth.css';
 
 const Login = () => {
   const navigate = useNavigate();

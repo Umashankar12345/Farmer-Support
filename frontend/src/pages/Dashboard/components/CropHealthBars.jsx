@@ -14,7 +14,7 @@ const CropHealthBars = ({ crops = [], stateName = '' }) => {
   };
 
   return (
-    <div className="bg-white p-5 rounded-2xl border border-[#cde4c6] shadow-sm">
+    <div className="glass-card p-5 rounded-2xl border border-white/40 hover-lift transition-all">
       <div className="flex justify-between items-center mb-6">
         <h4 className="text-[#14301f] text-[13px] font-extrabold flex items-center gap-2">
           🌿 Crop Health Index — <span className="text-[#1a8a4a]">{stateName}</span>

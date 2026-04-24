@@ -4,7 +4,7 @@ const StatCard = ({ icon, value, label, subValue, trend, colorClass }) => {
   const isUp = trend === 'up';
   
   return (
-    <div className="bg-white p-5 rounded-2xl border border-[#cde4c6] shadow-sm hover:shadow-md transition-all group">
+    <div className="glass-card p-5 rounded-2xl border border-white/40 hover-lift transition-all group">
       <div className="flex justify-between items-start">
         <div className="text-2xl mb-3 bg-gray-50 w-11 h-11 flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform">
           {icon}
