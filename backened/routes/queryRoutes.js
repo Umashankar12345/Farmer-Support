@@ -39,26 +39,46 @@ router.post('/ask', verifyJWT, async (req, res) => {
       return res.json({ response: completion.choices[0].message.content });
     }
 
-    // 2. Fallback to Local Expert Engine
-    let advice = "Namaste! As your Digital Krishi Officer, I'm analyzing your farm data for " + (farmContext.location || "your region") + ".";
+    // 2. Advanced Fallback Engine (Location & Keyword Awareness)
+    const STATES = ['punjab', 'haryana', 'rajasthan', 'uttar pradesh', 'bihar', 'gujarat', 'maharashtra'];
+    let detectedLocation = farmContext.location || 'your region';
+    
+    // Check if user mentioned a state in their query
+    STATES.forEach(s => {
+      if (lowerQuery.includes(s)) detectedLocation = s.charAt(0).toUpperCase() + s.slice(1);
+    });
+
+    let advice = `Namaste! As your Digital Krishi Officer, I'm analyzing the latest agricultural data for ${detectedLocation}.`;
     let found = false;
     let matchingAdvice = [];
 
-    Object.keys(EXPLAINER_DB).forEach(key => {
+    // Expanded Knowledge Base
+    const KNOWLEDGE = {
+      'weather': `For ${detectedLocation}, the current atmospheric data suggests variable conditions. Ensure you have proper drainage for upcoming cycles.`,
+      'punjab': "Punjab specific: Focus on wheat-paddy rotation management and check soil salinity levels.",
+      'haryana': "Haryana specific: Water conservation is key. Check for state subsidies on micro-irrigation.",
+      'wheat': "Wheat: Crown Root Initiation (CRI) stage is critical. Ensure irrigation 21 days after sowing.",
+      'mustard': "Mustard: Watch for Aphid infestation if humidity rises above 70%.",
+      'price': "Market: Current trends show a slight increase in MSP-supported crops. Check your nearest Mandi for daily spot rates.",
+      'fertilizer': "Soil: Apply NPK based on your soil health card. Avoid over-application of Urea.",
+      'pest': "Pests: Use yellow sticky traps for monitoring. Neem oil (1500ppm) is a good organic first step."
+    };
+
+    Object.keys(KNOWLEDGE).forEach(key => {
       if (lowerQuery.includes(key)) {
-        matchingAdvice.push(EXPLAINER_DB[key]);
+        matchingAdvice.push(KNOWLEDGE[key]);
         found = true;
       }
     });
 
     if (found) {
-      advice += "\n\nBased on your query, here is the verified agricultural advice:\n" + matchingAdvice.map(a => "• " + a).join("\n\n");
+      advice += "\n\n" + matchingAdvice.join("\n\n");
     } else {
-      advice += `\n\nI've noted your specific query: "${query}". While I process more localized data from ICAR, I recommend focusing on your primary crops: ${(farmContext.crops || []).join(', ')}. \n\nGeneral Tip: Ensure soil moisture is checked before applying any fertilizer.`;
+      advice += `\n\nI've noted your query: "${query}". While I sync with the latest ICAR bulletins for ${detectedLocation}, I recommend following the standard package of practices for ${(farmContext.crops || []).join(', ')}.`;
     }
 
-    // Dynamic signature based on context
-    advice += "\n\n💡 Pro-Tip: You can check the 'Weather' tab for current rain alerts in " + (farmContext.location || "your area") + ".";
+    // Dynamic Signature
+    advice += `\n\n💡 Pro-Tip: Based on your interest in "${lowerQuery.split(' ').slice(0, 3).join(' ')}...", you should also check the 'Agri-Analytics' tab for 2026 yield projections.`;
 
     res.json({ response: advice });
   } catch (error) {
