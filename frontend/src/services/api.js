@@ -33,9 +33,10 @@ export const apiRequest = async (endpoint, method = 'GET', data = null) => {
     }
     
     if (!response.ok) {
-      if (response.status === 401) {
+      if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('krishi_jwt');
         window.location.href = '/login';
       }
       throw new Error(result.error || result.message || 'Request failed');

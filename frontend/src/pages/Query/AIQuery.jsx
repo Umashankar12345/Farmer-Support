@@ -52,7 +52,7 @@ export default function AIQuery() {
       // 4. Add AI response
       setMessages([...newMessages, { role: 'ai', text: result.response }]);
     } catch (error) {
-      setMessages([...newMessages, { role: 'ai', text: "I'm sorry, I encountered a connection error. Please ensure the backend is running and try again." }]);
+      setMessages([...newMessages, { role: 'ai', text: "I'm sorry, I encountered an error. Please try logging out and logging back in, or check if your internet is working." }]);
     } finally {
       setLoading(false);
     }
