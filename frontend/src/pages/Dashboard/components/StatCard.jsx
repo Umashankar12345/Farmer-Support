@@ -1,6 +1,6 @@
 import React from 'react';
 
-const StatCard = ({ icon, value, label, subValue, trend, colorClass }) => {
+const StatCard = ({ icon, value, label, subValue, trend, colorClass, t }) => {
   const isUp = trend === 'up';
   
   return (
@@ -11,7 +11,7 @@ const StatCard = ({ icon, value, label, subValue, trend, colorClass }) => {
         </div>
         {trend && (
           <div className={`text-[10px] font-bold px-2 py-1 rounded-full ${isUp ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
-            {isUp ? '↑ GAIN' : '↓ WATCH'}
+            {isUp ? `↑ ${t.gain}` : `↓ ${t.watch}`}
           </div>
         )}
       </div>

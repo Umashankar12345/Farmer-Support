@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { STATE_DATA } from '../../constants/stateData';
+import { TRANSLATIONS } from '../../constants/translations';
 import StatCard from './components/StatCard';
 import CropHealthBars from './components/CropHealthBars';
 import MandiWidget from './components/MandiWidget';
@@ -9,9 +10,11 @@ import OfflineBanner from '../../components/Offline/OfflineBanner';
 
 export default function Dashboard() {
   const [selectedStateCode, setSelectedStateCode] = useState('RJ');
+  const [lang, setLang] = useState('en');
   const [weather, setWeather] = useState({ temp: '--', rain: 'fetching...', loading: true });
   const [syncing, setSyncing] = useState(false);
 
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
   const activeState = STATE_DATA[selectedStateCode];
 
   const fetchWeather = useCallback(async (lat, lon) => {
@@ -22,7 +25,7 @@ export default function Dashboard() {
       if (data.current) {
         setWeather({
           temp: `${Math.round(data.current.temperature_2m)}°C`,
-          rain: data.current.precipitation > 0 ? `${data.current.precipitation.toFixed(1)} mm rain` : 'No rain now',
+          rain: data.current.precipitation > 0 ? `${data.current.precipitation.toFixed(1)} mm ${t.now}` : `No rain ${t.now}`,
           loading: false
         });
       }
@@ -30,7 +33,7 @@ export default function Dashboard() {
       console.error('Weather fetch failed', err);
       setWeather({ temp: '--°C', rain: 'unavailable', loading: false });
     }
-  }, []);
+  }, [t.now]);
 
   useEffect(() => {
     fetchWeather(activeState.lat, activeState.lon);
@@ -39,7 +42,14 @@ export default function Dashboard() {
   const handleStateChange = (code) => {
     setSyncing(true);
     setSelectedStateCode(code);
-    setTimeout(() => setSyncing(false), 500); // Realistic sync animation
+    setTimeout(() => setSyncing(false), 500);
+  };
+
+  const handleLangChange = (code) => {
+    setSyncing(true);
+    setLang(code);
+    localStorage.setItem('krishi_lang', code);
+    setTimeout(() => setSyncing(false), 300);
   };
 
   return (
@@ -48,9 +58,9 @@ export default function Dashboard() {
       {/* Executive Header */}
       <header className="mb-6 flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#d4e8d0] shadow-sm">
         <div>
-          <h1 className="text-2xl font-black text-[#111] tracking-tight">Hey, Umashankar Kumar 👋</h1>
+          <h1 className="text-2xl font-black text-[#111] tracking-tight">{t.greeting} Umashankar Kumar 👋</h1>
           <p className="text-[11.5px] text-[#555] font-bold mt-1 uppercase tracking-wider">
-            Executive Dashboard · {new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })} · 
+            {t.dashboard} · {new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })} · 
             <span className="text-[#14301f] ml-1">{activeState.name}</span>
           </p>
         </div>
@@ -61,7 +71,8 @@ export default function Dashboard() {
              <span className="text-sm">🌐</span>
              <select 
                className="bg-transparent font-bold text-[12px] text-[#0c4a6e] outline-none cursor-pointer"
-               defaultValue="en"
+               value={lang}
+               onChange={(e) => handleLangChange(e.target.value)}
              >
                <option value="en">English</option>
                <option value="hi">हिन्दी (Hindi)</option>
@@ -74,7 +85,7 @@ export default function Dashboard() {
 
           {/* State Selector */}
           <div className="flex items-center gap-3 bg-[#f0fdf4] px-4 py-2.5 rounded-xl border-2 border-[#1a8a47]">
-             <label htmlFor="state-select" className="text-[11px] font-black text-[#14301f] uppercase">📍 Select State</label>
+             <label htmlFor="state-select" className="text-[11px] font-black text-[#14301f] uppercase">📍 {t.selectState}</label>
              <select 
                id="state-select"
                className="bg-transparent font-bold text-[13px] text-[#14301f] outline-none cursor-pointer"
@@ -96,12 +107,12 @@ export default function Dashboard() {
 
       {/* 5-Metric Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <StatCard icon="🌾" label="Projected Yield" value={activeState.yield} subValue={`${activeState.yc} vs last yr`} trend="up" />
-        <StatCard icon="💧" label="Soil Humidity" value={activeState.hum} subValue={activeState.hn} trend="up" colorClass="text-blue-600" />
-        <StatCard icon="💰" label="Est. Revenue" value={activeState.rev} subValue={`${activeState.rc} vs last yr`} trend="up" />
+        <StatCard icon="🌾" label={t.yield} value={activeState.yield} subValue={`${activeState.yc} ${t.vsLastYr}`} trend="up" t={t} />
+        <StatCard icon="💧" label={t.humidity} value={activeState.hum} subValue={activeState.hn} trend="up" colorClass="text-blue-600" t={t} />
+        <StatCard icon="💰" label={t.revenue} value={activeState.rev} subValue={`${activeState.rc} ${t.vsLastYr}`} trend="up" t={t} />
         <StatCard 
           icon="🌡️" 
-          label="Live Temp / Rain" 
+          label={t.temp} 
           value={weather.temp} 
           subValue={
             <div className="flex items-center gap-1.5 justify-center lg:justify-start">
@@ -110,14 +121,15 @@ export default function Dashboard() {
             </div>
           } 
           colorClass="text-blue-500" 
+          t={t}
         />
-        <StatCard icon="🔔" label="Active Alerts" value={activeState.al} subValue={activeState.an} trend="down" colorClass="text-orange-600" />
+        <StatCard icon="🔔" label={t.alerts} value={activeState.al} subValue={activeState.an} trend="down" colorClass="text-orange-600" t={t} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content (Left) */}
         <div className="lg:col-span-2 space-y-6">
-          <CropHealthBars crops={activeState.crops} stateName={activeState.name} />
+          <CropHealthBars crops={activeState.crops} stateName={activeState.name} label={t.healthIndex} badge={t.aiAnalysed} />
           <MandiWidget crops={activeState.crops.map(c => c.n.split(' ')[0])} />
         </div>
 
@@ -128,12 +140,11 @@ export default function Dashboard() {
           
           {/* State Helpline */}
           <div className="bg-white p-5 rounded-2xl border border-[#cde4c6] shadow-sm">
-            <h4 className="text-[#14301f] text-[13px] font-black uppercase mb-3 flex items-center gap-2">📞 State Agri Helpline</h4>
+            <h4 className="text-[#14301f] text-[13px] font-black uppercase mb-3 flex items-center gap-2">📞 {t.helpline}</h4>
             <div className="text-[12px] leading-relaxed text-[#222] font-semibold space-y-2">
                {activeState.hl.split('\n').map((line, i) => (
                  <p key={i}>{line}</p>
                ))}
-               <p className="text-[10px] text-gray-400 mt-4 italic font-medium uppercase tracking-tighter">Verified by State Dept.</p>
             </div>
           </div>
         </div>
@@ -143,7 +154,7 @@ export default function Dashboard() {
       <footer className="mt-8 flex items-center gap-6 bg-[#14301f] text-[#5ee08a] px-6 py-2 rounded-xl text-[10px] font-black tracking-widest overflow-hidden relative">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
-          ● SYSTEM LIVE
+          ● {t.systemLive}
         </div>
         <div className="h-3 w-[1px] bg-[#1a8a47]"></div>
         <div>STATE: {selectedStateCode}</div>

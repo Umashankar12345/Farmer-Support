@@ -1,58 +1,73 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { TRANSLATIONS } from '../../constants/translations';
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const [lang, setLang] = useState(localStorage.getItem('krishi_lang') || 'en');
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setLang(localStorage.getItem('krishi_lang') || 'en');
+    };
+    window.addEventListener('storage', handleStorage);
+    const interval = setInterval(handleStorage, 1000); // Polling as fallback for same-window changes
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
   const sections = [
     {
-      title: 'Main',
+      title: t.main,
       items: [
-        { name: 'Dashboard', icon: '🏠', path: '/' },
-        { name: 'AI Query', icon: '🤖', path: '/query' },
-        { name: 'My Farms', icon: '🚜', path: '/farms' },
+        { name: t.dashboardMenu, icon: '🏠', path: '/' },
+        { name: t.aiQuery, icon: '🤖', path: '/query' },
+        { name: t.myFarms, icon: '🚜', path: '/farms' },
       ]
     },
     {
-      title: 'Alerts & Tools',
+      title: t.alertsTools,
       items: [
-        { name: 'Weather', icon: '🌦️', path: '/weather' },
-        { name: 'Pest Alert', icon: '🐛', path: '/pest' }, // Mock path
-        { name: 'Disease Detector', icon: '📸', path: '/query#disease' },
+        { name: t.weather, icon: '🌦️', path: '/weather' },
+        { name: t.pestAlert, icon: '🐛', path: '/pest' },
+        { name: t.diseaseDetector, icon: '📸', path: '/query#disease' },
       ]
     },
     {
-      title: 'Analytics',
+      title: t.analytics,
       items: [
-        { name: 'Market (eNAM)', icon: '📈', path: '/analytics' },
-        { name: 'Soil History', icon: '🧪', path: '/farms#soil' },
+        { name: t.market, icon: '📈', path: '/analytics' },
+        { name: t.soilHistory, icon: '🧪', path: '/farms#soil' },
       ]
     },
     {
-      title: 'Advanced Features',
+      title: t.advanced,
       items: [
-        { name: 'Crop Recommender', icon: '🌱', path: '/crop-rec' },
-        { name: 'Income / ROI', icon: '📊', path: '/roi' },
-        { name: 'NDVI Satellite', icon: '🛰', path: '/ndvi' },
-        { name: 'Yield Prediction', icon: '📈', path: '/yield' },
-        { name: 'Community Feed', icon: '🤝', path: '/community' },
-        { name: 'Farm Passport', icon: '🆔', path: '/passport' },
-        { name: 'Farmer Journey', icon: '🚀', path: '/onboard' },
-        { name: 'Offline Mode', icon: '📵', path: '/offline' },
+        { name: t.cropRec, icon: '🌱', path: '/crop-rec' },
+        { name: t.incomeRoi, icon: '📊', path: '/roi' },
+        { name: t.ndvi, icon: '🛰', path: '/ndvi' },
+        { name: t.yieldPred, icon: '📈', path: '/yield' },
+        { name: t.community, icon: '🤝', path: '/community' },
+        { name: t.passport, icon: '🆔', path: '/passport' },
+        { name: t.journey, icon: '🚀', path: '/onboard' },
+        { name: t.offline, icon: '📵', path: '/offline' },
       ]
     },
     {
-      title: 'Support',
+      title: t.support,
       items: [
-        { name: 'Gov Schemes', icon: '🏛️', path: '/schemes' },
-        { name: 'Human Officer', icon: '👤', path: '/support' },
+        { name: t.schemes, icon: '🏛️', path: '/schemes' },
+        { name: t.officer, icon: '👤', path: '/support' },
       ]
     }
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('krishi_jwt');
+    localStorage.clear(); // Clear all for safety
     navigate('/login');
   };
 
@@ -65,7 +80,7 @@ const Sidebar = () => {
             <p className="text-sm font-bold text-gray-900 truncate">Umashankar</p>
             <div className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-              <p className="text-[10px] font-bold text-green-600 uppercase tracking-tighter">Certified Partner</p>
+              <p className="text-[10px] font-bold text-green-600 uppercase tracking-tighter">{t.partner}</p>
             </div>
           </div>
         </div>
@@ -102,7 +117,7 @@ const Sidebar = () => {
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-all group"
           >
             <span className="text-lg group-hover:scale-110 transition-transform">🚪</span>
-            Logout
+            {t.logout}
           </button>
         </div>
       </nav>

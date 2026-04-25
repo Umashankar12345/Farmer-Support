@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CropHealthBars = ({ crops = [], stateName = '' }) => {
+const CropHealthBars = ({ crops = [], stateName = '', label, badge }) => {
   const getProgressColor = (pct) => {
     if (pct >= 85) return 'bg-[#16a34a]';
     if (pct >= 70) return 'bg-[#d97706]';
@@ -17,10 +17,10 @@ const CropHealthBars = ({ crops = [], stateName = '' }) => {
     <div className="glass-card p-5 rounded-2xl border border-white/40 hover-lift transition-all">
       <div className="flex justify-between items-center mb-6">
         <h4 className="text-[#14301f] text-[13px] font-extrabold flex items-center gap-2">
-          🌿 Crop Health Index — <span className="text-[#1a8a4a]">{stateName}</span>
+          🌿 {label} — <span className="text-[#1a8a4a]">{stateName}</span>
         </h4>
         <span className="text-[9.5px] bg-[#e0f5e7] text-[#1a7a3a] px-2 py-1 rounded-md font-bold uppercase tracking-wider">
-          AI ANALYSED
+          {badge}
         </span>
       </div>
 
