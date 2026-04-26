@@ -77,3 +77,7 @@ export const commentAPI = {
 export const visitorAPI = {
   getVisitors: () => apiRequest('/visitors', 'GET'),
 };
+
+export const weatherAPI = {
+  getForecast: (lat, lon) => apiRequest(`/weather/forecast?lat=${lat}&lon=${lon}`),
+};

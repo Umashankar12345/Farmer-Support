@@ -78,7 +78,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-64 bg-white h-screen border-r border-gray-100 flex flex-col sticky top-0 overflow-y-auto pt-20">
+    <aside className="w-64 bg-white h-screen border-r border-gray-100 flex flex-col sticky top-0 overflow-y-auto pt-4">
       <div className="px-6 mb-8 mt-4">
         <div className="bg-green-50 rounded-2xl p-4 flex items-center gap-3 border border-green-100 group hover:border-green-300 transition-all cursor-pointer">
           <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white text-xl shadow-lg shadow-green-100">👨‍🌾</div>

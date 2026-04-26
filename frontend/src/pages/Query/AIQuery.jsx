@@ -15,14 +15,42 @@ export default function AIQuery() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const scrollRef = useRef(null);
+  const recognitionRef = useRef(null);
 
-  // Auto-scroll to bottom on new message
+  // Initialize Speech Recognition
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'hi-IN'; // Default to Hindi
+
+      recognition.onstart = () => setIsRecording(true);
+      recognition.onend = () => setIsRecording(false);
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        // Optionally auto-send: handleSend(transcript);
+      };
+      recognition.onerror = (event) => {
+        console.error('Speech Recognition Error:', event.error);
+        setIsRecording(false);
+      };
+
+      recognitionRef.current = recognition;
     }
-  }, [messages, loading]);
+  }, []);
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      recognitionRef.current?.stop();
+    } else {
+      recognitionRef.current?.start();
+    }
+  };
 
   const handleSend = async (textOverride) => {
     const queryText = textOverride || input;
@@ -122,8 +150,26 @@ export default function AIQuery() {
                 ))}
              </div>
 
-            <div style={{ display: 'flex', gap: '12px', background: 'var(--bg)', padding: '6px', borderRadius: '16px', border: '1px solid var(--border)' }}>
-              <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>🎙️</div>
+            <div style={{ display: 'flex', gap: '12px', background: 'var(--bg)', padding: '6px', borderRadius: '16px', border: '1px solid var(--border)', position: 'relative' }}>
+              <button 
+                onClick={toggleRecording}
+                style={{ 
+                  width: '40px', 
+                  height: '40px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontSize: '18px',
+                  background: isRecording ? 'var(--red)' : 'transparent',
+                  borderRadius: '12px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s'
+                }}
+                title="Speak in Hindi"
+              >
+                {isRecording ? <span className="animate-pulse">🛑</span> : '🎙️'}
+              </button>
               <input 
                 style={{ flex: 1, height: '40px', padding: '0 12px', background: 'transparent', border: 'none', outline: 'none', fontSize: '13px', fontWeight: 500 }}
                 placeholder="Ask in Hindi, Tamil, Telugu or English..."

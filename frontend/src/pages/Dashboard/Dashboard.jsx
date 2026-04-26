@@ -8,6 +8,7 @@ import SoilMiniWidget from './components/SoilMiniWidget';
 import SchemeMiniWidget from './components/SchemeMiniWidget';
 import ProjectComments from './components/ProjectComments';
 import OfflineBanner from '../../components/Offline/OfflineBanner';
+import { weatherAPI } from '../../services/api';
 
 export default function Dashboard() {
   const [selectedStateCode, setSelectedStateCode] = useState('RJ');
@@ -21,12 +22,11 @@ export default function Dashboard() {
   const fetchWeather = useCallback(async (lat, lon) => {
     setWeather(prev => ({ ...prev, loading: true, rain: 'fetching...' }));
     try {
-      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation&timezone=Asia%2FKolkata`);
-      const data = await res.json();
+      const data = await weatherAPI.getForecast(lat, lon);
       if (data.current) {
         setWeather({
-          temp: `${Math.round(data.current.temperature_2m)}°C`,
-          rain: data.current.precipitation > 0 ? `${data.current.precipitation.toFixed(1)} mm ${t.now}` : `No rain ${t.now}`,
+          temp: `${data.current.temp}°C`,
+          rain: data.current.rain > 0 ? `${data.current.rain.toFixed(1)} mm ${t.now}` : `No rain ${t.now}`,
           loading: false
         });
       }
