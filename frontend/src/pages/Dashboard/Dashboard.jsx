@@ -6,6 +6,7 @@ import CropHealthBars from './components/CropHealthBars';
 import MandiWidget from './components/MandiWidget';
 import SoilMiniWidget from './components/SoilMiniWidget';
 import SchemeMiniWidget from './components/SchemeMiniWidget';
+import ProjectComments from './components/ProjectComments';
 import OfflineBanner from '../../components/Offline/OfflineBanner';
 
 export default function Dashboard() {
@@ -149,6 +150,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Project Feedback Section */}
+      <ProjectComments />
 
       {/* Live System Status Bar */}
       <footer className="mt-8 flex items-center gap-6 bg-[#14301f] text-[#5ee08a] px-6 py-2 rounded-xl text-[10px] font-black tracking-widest overflow-hidden relative">

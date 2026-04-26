@@ -36,6 +36,8 @@ app.use('/api/schemes', require('./routes/schemeRoutes'));
 app.use('/api/market', require('./routes/marketRoutes'));
 app.use('/api/location', require('./routes/locationRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/comments', require('./routes/commentRoutes'));
+
 
 // Basic health check
 app.get('/', (req, res) => {

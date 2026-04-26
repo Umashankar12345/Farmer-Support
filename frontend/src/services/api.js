@@ -68,3 +68,8 @@ export const dashboardAPI = {
 export const queryAPI = {
   askAI: (queryData) => apiRequest('/query/ask', 'POST', queryData),
 };
+
+export const commentAPI = {
+  postComment: (commentData) => apiRequest('/comments', 'POST', commentData),
+  getComments: () => apiRequest('/comments', 'GET'),
+};
