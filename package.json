@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "start": "node backened/server.js",
+    "build": "npm install --prefix backened",
     "install-all": "npm install --prefix backened && npm install --prefix frontend",
     "build-frontend": "npm run build --prefix frontend"
   }

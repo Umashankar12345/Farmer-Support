@@ -2,7 +2,7 @@ const Comment = require('../models/Comment');
 
 exports.createComment = async (req, res) => {
   try {
-    const { content } = req.body;
+    const { content, rating } = req.body;
     const userId = req.user.id; 
 
     const User = require('../models/User');
@@ -15,7 +15,8 @@ exports.createComment = async (req, res) => {
     const newComment = new Comment({
       userId,
       userName: `${user.firstName} ${user.lastName}`,
-      content
+      content,
+      rating: rating || 5
     });
 
     await newComment.save();

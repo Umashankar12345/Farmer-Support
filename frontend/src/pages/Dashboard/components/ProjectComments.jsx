@@ -4,6 +4,7 @@ import { commentAPI } from '../../../services/api';
 export default function ProjectComments() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [rating, setRating] = useState(5);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -29,8 +30,9 @@ export default function ProjectComments() {
 
     setSubmitting(true);
     try {
-      await commentAPI.postComment({ content: newComment });
+      await commentAPI.postComment({ content: newComment, rating });
       setNewComment('');
+      setRating(5);
       fetchComments();
     } catch (err) {
       alert('Failed to post comment. Please make sure you are logged in.');
@@ -54,7 +56,24 @@ export default function ProjectComments() {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         ></textarea>
-        <div className="flex justify-end mt-3">
+        
+        <div className="flex items-center justify-between mt-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-black text-[#14301f] uppercase tracking-wider">Rating:</span>
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star)}
+                  className={`text-xl transition-all ${star <= rating ? 'text-amber-400 scale-110' : 'text-gray-200 hover:text-amber-200'}`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+          </div>
+          
           <button
             type="submit"
             disabled={submitting || !newComment.trim()}
@@ -82,8 +101,13 @@ export default function ProjectComments() {
               key={comment._id}
               className="p-4 rounded-2xl bg-[#f9fdf9] border border-[#e8f5e9] hover:border-[#c8e6c9] transition-all group"
             >
-              <div className="flex justify-between items-start mb-2">
-                <span className="text-[13px] font-black text-[#14301f]">{comment.userName}</span>
+              <div className="flex justify-between items-start mb-1">
+                <div>
+                  <span className="text-[13px] font-black text-[#14301f] block">{comment.userName}</span>
+                  <div className="flex text-amber-400 text-[10px] mt-0.5">
+                    {'★'.repeat(comment.rating || 5)}{'☆'.repeat(5 - (comment.rating || 5))}
+                  </div>
+                </div>
                 <span className="text-[10px] font-bold text-gray-400">
                   {new Date(comment.createdAt).toLocaleDateString('en-IN', {
                     day: 'numeric',

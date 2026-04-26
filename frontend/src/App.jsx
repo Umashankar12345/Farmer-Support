@@ -10,6 +10,7 @@ import SupportPage from './pages/Support/SupportPage';
 import PestAlertPage from './pages/Pest/PestAlertPage';
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
+import AdminDashboard from './pages/Admin/AdminDashboard';
 import Navbar from './components/Layout/Navbar';
 import Sidebar from './components/Layout/Sidebar';
 import PerformanceTicker from './pages/Dashboard/components/PerformanceTicker';
@@ -62,6 +63,7 @@ function App() {
         <Route path="/passport" element={<ProtectedRoute><FarmPassport /></ProtectedRoute>} />
         <Route path="/onboard" element={<ProtectedRoute><OnboardingJourney /></ProtectedRoute>} />
         <Route path="/offline" element={<ProtectedRoute><OfflineMode /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

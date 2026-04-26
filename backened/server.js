@@ -37,6 +37,8 @@ app.use('/api/market', require('./routes/marketRoutes'));
 app.use('/api/location', require('./routes/locationRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/comments', require('./routes/comments'));
+app.use('/api/visitors', require('./routes/visitorRoutes'));
+
 
 
 

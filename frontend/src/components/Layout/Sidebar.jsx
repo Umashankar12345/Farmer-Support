@@ -63,6 +63,12 @@ const Sidebar = () => {
         { name: t.schemes, icon: '🏛️', path: '/schemes' },
         { name: t.officer, icon: '👤', path: '/support' },
       ]
+    },
+    {
+      title: 'System',
+      items: [
+        { name: 'Admin Console', icon: '🛡️', path: '/admin' },
+      ]
     }
   ];
 

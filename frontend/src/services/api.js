@@ -73,3 +73,7 @@ export const commentAPI = {
   postComment: (commentData) => apiRequest('/comments', 'POST', commentData),
   getComments: () => apiRequest('/comments', 'GET'),
 };
+
+export const visitorAPI = {
+  getVisitors: () => apiRequest('/visitors', 'GET'),
+};
