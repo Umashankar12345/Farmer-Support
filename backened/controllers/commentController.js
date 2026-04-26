@@ -8,13 +8,14 @@ exports.createComment = async (req, res) => {
     const User = require('../models/User');
     const user = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    let userName = 'Demo User';
+    if (user) {
+      userName = `${user.firstName} ${user.lastName}`;
     }
 
     const newComment = new Comment({
       userId,
-      userName: `${user.firstName} ${user.lastName}`,
+      userName,
       content,
       rating: rating || 5
     });

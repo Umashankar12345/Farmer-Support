@@ -52,6 +52,13 @@ exports.verifyOTP = async (req, res) => {
         role: 'Farmer'
       }
     });
+
+    // Record Visitor
+    await Visitor.create({
+      userId: demoUserId,
+      userName: 'OTP Demo User',
+      email: 'demo@farmer.support'
+    });
   } catch (error) {
     res.status(500).json({ error: 'Verification failed' });
   }
@@ -71,6 +78,13 @@ exports.googleLoginSim = async (req, res) => {
         email: 'google.demo@example.com',
         role: 'Farmer'
       }
+    });
+
+    // Record Visitor
+    await Visitor.create({
+      userId: demoUserId,
+      userName: 'Google Demo User',
+      email: 'google.demo@example.com'
     });
   } catch (error) {
     res.status(500).json({ error: 'Google login simulation failed' });
