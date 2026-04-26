@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Visitor = require('../models/Visitor');
 const jwt = require('jsonwebtoken');
 
 // Generate JWT Token
@@ -110,6 +111,13 @@ exports.register = async (req, res) => {
       state: state || '',
       registrationNo: `FS-${Date.now()}`
     });
+    
+    // Record Visitor
+    await Visitor.create({
+      userId: user._id,
+      userName: `${user.firstName} ${user.lastName}`,
+      email: user.email
+    });
 
     res.status(201).json({
       success: true,
@@ -163,6 +171,13 @@ exports.login = async (req, res) => {
         email: user.email,
         registrationNo: user.registrationNo
       }
+    });
+
+    // Record Visitor
+    await Visitor.create({
+      userId: user._id,
+      userName: `${user.firstName} ${user.lastName}`,
+      email: user.email
     });
   } catch (error) {
     console.error('Login error:', error);

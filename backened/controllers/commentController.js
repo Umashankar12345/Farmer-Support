@@ -3,11 +3,18 @@ const Comment = require('../models/Comment');
 exports.createComment = async (req, res) => {
   try {
     const { content } = req.body;
-    const { userId, firstName, lastName } = req.user; // Assumes verifyJWT adds user to req
+    const userId = req.user.id; 
+
+    const User = require('../models/User');
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
     const newComment = new Comment({
       userId,
-      userName: `${firstName} ${lastName}`,
+      userName: `${user.firstName} ${user.lastName}`,
       content
     });
 

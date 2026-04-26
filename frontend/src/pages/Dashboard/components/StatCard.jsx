@@ -18,7 +18,7 @@ const StatCard = ({ icon, value, label, subValue, trend, colorClass, t }) => {
       <div>
         <h3 className="text-[#777] text-[10px] font-bold uppercase tracking-wider mb-2">{label}</h3>
         <p className="text-2xl font-black text-[#111] leading-none mb-2">{value}</p>
-        <p className={`text-[11px] font-bold ${colorClass || 'text-[#1a8a4a]'}`}>{subValue}</p>
+        <div className={`text-[11px] font-bold ${colorClass || 'text-[#1a8a4a]'}`}>{subValue}</div>
       </div>
     </div>
   );
