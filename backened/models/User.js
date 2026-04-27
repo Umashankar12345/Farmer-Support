@@ -51,6 +51,14 @@ const UserSchema = new mongoose.Schema({
   state: {
     type: String
   },
+  preferredState: { 
+    type: String, 
+    default: "All States" 
+  },
+  preferredCrop: { 
+    type: String, 
+    default: "All Crops"  
+  },
   createdAt: {
     type: Date,
     default: Date.now

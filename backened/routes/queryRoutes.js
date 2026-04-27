@@ -20,13 +20,20 @@ router.post('/ask', verifyJWT, async (req, res) => {
     const { query, farmContext, language = 'en' } = req.body;
     const lowerQuery = query.toLowerCase();
 
-    // 1. Try Real AI (if key exists)
     if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== 'gsk_placeholder') {
       const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-      const systemPrompt = `You are a professional Digital Krishi Officer (Agricultural Advisor). 
-      Help the farmer with their query: "${query}". 
-      Context: Location ${farmContext.location || 'Rajasthan'}, Crops: ${(farmContext.crops || []).join(', ')}.
-      Answer concisely in ${language}. Provide specific fertilizer, pest, or crop advice.`;
+      const isPestQuery = lowerQuery.includes('pest') || lowerQuery.includes('insect') || lowerQuery.includes('disease') || lowerQuery.includes('spots') || lowerQuery.includes('worm');
+      
+      const systemPrompt = isPestQuery 
+        ? `You are a professional Plant Pathologist and Pest Control Specialist. 
+           Analyze the following pest/disease query: "${query}".
+           Context: Location ${farmContext.location || 'Rajasthan'}, Crops: ${(farmContext.crops || []).join(', ')}.
+           Identify the likely pest or disease, its severity, and provide BOTH chemical and organic treatment options.
+           Answer concisely in ${language}.`
+        : `You are a professional Digital Krishi Officer (Agricultural Advisor). 
+           Help the farmer with their query: "${query}". 
+           Context: Location ${farmContext.location || 'Rajasthan'}, Crops: ${(farmContext.crops || []).join(', ')}.
+           Answer concisely in ${language}. Provide specific fertilizer, pest, or crop advice.`;
 
       const completion = await groq.chat.completions.create({
         messages: [

@@ -42,6 +42,8 @@ app.use('/api/location', require('./routes/locationRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/visitors', require('./routes/visitorRoutes'));
+app.use("/api/pest-alerts",  require("./routes/pestAlerts"));
+app.use("/api/user",         require("./routes/userPreferences"));
 
 
 
