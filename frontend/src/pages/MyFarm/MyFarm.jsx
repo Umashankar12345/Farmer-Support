@@ -7,23 +7,36 @@ const INITIAL_FARMS = [
 ];
 
 export default function MyFarm() {
-  const [farms, setFarms] = useState([]);
+  const [actions, setActions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newFarm, setNewFarm] = useState({ crop: '', area: '', status: 'Vegetative' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const savedFarms = localStorage.getItem('krishi_farms');
+    const savedActions = localStorage.getItem('krishi_actions');
+    
     if (savedFarms) {
       setFarms(JSON.parse(savedFarms));
     } else {
       setFarms(INITIAL_FARMS);
     }
+
+    if (savedActions) {
+      setActions(JSON.parse(savedActions));
+    } else {
+      setActions([
+        { icon: '🧪', title: 'Collect Soil Samples', sub: 'Mustard field requires nutrient re-testing.' },
+        { icon: '💧', title: 'Irrigation Alert', sub: 'High moisture expected in Jaipur region.' }
+      ]);
+    }
   }, []);
 
-  const saveFarms = (updated) => {
-    setFarms(updated);
-    localStorage.setItem('krishi_farms', JSON.stringify(updated));
+  const saveFarms = (updatedFarms, updatedActions) => {
+    setFarms(updatedFarms);
+    setActions(updatedActions || actions);
+    localStorage.setItem('krishi_farms', JSON.stringify(updatedFarms));
+    if (updatedActions) localStorage.setItem('krishi_actions', JSON.stringify(updatedActions));
   };
 
   const handleRegister = (e) => {
@@ -31,16 +44,24 @@ export default function MyFarm() {
     setIsSubmitting(true);
     
     setTimeout(() => {
-      const added = [
-        ...farms,
-        { 
-          id: Date.now().toString(), 
-          ...newFarm, 
-          health: Math.floor(Math.random() * 15) + 80, // Random health for new farm
-          growth: 10 
-        }
-      ];
-      saveFarms(added);
+      const farmId = Date.now().toString();
+      const newFarmObj = { 
+        id: farmId, 
+        ...newFarm, 
+        health: Math.floor(Math.random() * 15) + 80, 
+        growth: 10 
+      };
+
+      const addedFarms = [...farms, newFarmObj];
+      
+      const newAction = { 
+        icon: '🛰️', 
+        title: 'Satellite Calibration', 
+        sub: `Activating health monitoring for ${newFarm.crop} (ID: ${farmId.slice(-4)})` 
+      };
+      const addedActions = [newAction, ...actions].slice(0, 4); // Keep latest 4 actions
+
+      saveFarms(addedFarms, addedActions);
       setShowModal(false);
       setNewFarm({ crop: '', area: '', status: 'Vegetative' });
       setIsSubmitting(false);
@@ -117,10 +138,7 @@ export default function MyFarm() {
         <div className="card" style={{ background: '#f8fafc', border: '2px dashed #cbd5e1' }}>
            <div className="card-title">Awaiting Action</div>
            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {[
-                { icon: '🧪', title: 'Collect Soil Samples', sub: 'Farm B requires nutrient re-testing.' },
-                { icon: '💧', title: 'Irrigation Alert', sub: 'High moisture expected per forecast.' }
-              ].map((act, i) => (
+              {actions.map((act, i) => (
                 <div key={i} className="action-item" style={{ background: '#fff', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', gap: '14px', alignItems: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
                    <div style={{ fontSize: '24px', background: '#f1f5f9', width: '44px', height: '44px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{act.icon}</div>
                    <div>
@@ -129,6 +147,11 @@ export default function MyFarm() {
                    </div>
                 </div>
               ))}
+              {actions.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '20px', color: 'var(--muted)', fontSize: '11px', fontWeight: 600 }}>
+                  ALL TASKS COMPLETED ✅
+                </div>
+              )}
            </div>
         </div>
       </div>
