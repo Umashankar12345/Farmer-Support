@@ -34,7 +34,7 @@ const Sidebar = () => {
       items: [
         { name: t.weather, icon: '🌦️', path: '/weather' },
         { name: t.pestAlert, icon: '🐛', path: '/pest' },
-        { name: t.diseaseDetector, icon: '📸', path: '/query#disease' },
+        { name: t.diseaseDetector, icon: '📸', path: '/disease' },
       ]
     },
     {

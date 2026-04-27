@@ -25,6 +25,7 @@ import CommunityFeed from './pages/Features/CommunityFeed';
 import FarmPassport from './pages/Features/FarmPassport';
 import OnboardingJourney from './pages/Features/OnboardingJourney';
 import OfflineMode from './pages/Features/OfflineMode';
+import DiseaseDetectorPage from './pages/Disease/DiseaseDetectorPage';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token') || localStorage.getItem('krishi_jwt');
@@ -63,6 +64,8 @@ function App() {
         <Route path="/passport" element={<ProtectedRoute><FarmPassport /></ProtectedRoute>} />
         <Route path="/onboard" element={<ProtectedRoute><OnboardingJourney /></ProtectedRoute>} />
         <Route path="/offline" element={<ProtectedRoute><OfflineMode /></ProtectedRoute>} />
+        <Route path="/pest" element={<ProtectedRoute><PestAlertPage /></ProtectedRoute>} />
+        <Route path="/disease" element={<ProtectedRoute><DiseaseDetectorPage /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" />} />

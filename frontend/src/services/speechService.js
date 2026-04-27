@@ -22,7 +22,10 @@ export async function startVoiceRecording() {
           const formData = new FormData();
           formData.append('audio', blob);
 
-          const res = await fetch('/api/speech/transcribe', {
+          const baseUrl = window.location.origin.includes('localhost') 
+            ? 'http://localhost:5000' 
+            : '';
+          const res = await fetch(`${baseUrl}/api/speech/transcribe`, {
             method: 'POST',
             body: formData,
           });

@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "start": "node backened/server.js",
-    "build": "npm install --prefix backened",
+    "build": "npm install --prefix backened && npm install --prefix frontend && npm run build --prefix frontend",
     "install-all": "npm install --prefix backened && npm install --prefix frontend",
     "build-frontend": "npm run build --prefix frontend"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
