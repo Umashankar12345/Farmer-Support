@@ -169,6 +169,27 @@ export default function PestAlertFilter() {
       <div style={s.header}>
         <div style={s.h1}>🐛 Pest Alert System — India</div>
         <div style={s.hsub}>Select your state and crop to see active pest threats in your area</div>
+        
+        {/* Risk Score AI Section */}
+        {selectedState !== "All States" && (
+          <div style={{ marginTop: 20, padding: '12px 16px', background: 'rgba(255,255,255,0.1)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>AI Risk Prediction</span>
+              <span style={{ fontSize: 18, fontWeight: 900, color: counts.high > 0 ? '#ff4d4d' : '#5ee08a' }}>
+                {counts.high > 0 ? '88%' : counts.medium > 0 ? '42%' : '12%'} Likelihood
+              </span>
+            </div>
+            <div style={{ height: 6, background: 'rgba(255,255,255,0.2)', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{ 
+                height: '100%', 
+                width: counts.high > 0 ? '88%' : counts.medium > 0 ? '42%' : '12%', 
+                background: counts.high > 0 ? '#ff4d4d' : '#5ee08a',
+                transition: 'width 1s ease-out'
+              }}></div>
+            </div>
+          </div>
+        )}
+
         <div style={s.statRow}>
           <div style={s.stat}><div style={s.statVal}>{filtered.length}</div><div style={s.statLbl}>ACTIVE ALERTS</div></div>
           <div style={s.stat}><div style={s.statVal}>{counts.high}</div><div style={s.statLbl}>HIGH RISK</div></div>

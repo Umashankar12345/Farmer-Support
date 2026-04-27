@@ -44,11 +44,10 @@ app.use('/api/comments', require('./routes/comments'));
 app.use('/api/visitors', require('./routes/visitorRoutes'));
 app.use("/api/pest-alerts",  require("./routes/pestAlerts"));
 app.use("/api/user",         require("./routes/userPreferences"));
+app.use("/api/diagnosis",    require("./routes/diagnosisRoutes"));
 
-
-
-
-// Serve static files from frontend build
+// Serve static files (uploads and dist)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // Basic health check for Render
