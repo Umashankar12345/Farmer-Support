@@ -91,3 +91,12 @@ export const visitorAPI = {
 export const weatherAPI = {
   getForecast: (lat, lon) => apiRequest(`/weather/forecast?lat=${lat}&lon=${lon}`),
 };
+
+export const pestAPI = {
+  getAlerts: (region, crops) => {
+    const params = new URLSearchParams();
+    if (region && region !== "All States") params.append("region", region);
+    if (crops && crops !== "All Crops") params.append("crops", crops);
+    return apiRequest(`/pest-alerts?${params.toString()}`);
+  }
+};

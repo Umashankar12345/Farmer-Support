@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { pestAPI } from "../../services/api";
 
 // ── All Indian States ──────────────────────────────────────────
 const INDIAN_STATES = [
@@ -33,10 +34,6 @@ const SEVERITY_CONFIG = {
   low:    { color: "#2d6a35", bg: "#e1f5ee", border: "#5dcaa5", icon: "🟢", label: "LOW RISK"    },
 };
 
-const API_BASE = window.location.origin.includes('localhost') 
-  ? 'http://localhost:5000' 
-  : '';
-
 export default function PestAlertFilter() {
   const [selectedState, setSelectedState] = useState("All States");
   const [selectedCrop,  setSelectedCrop]  = useState("All Crops");
@@ -55,15 +52,14 @@ export default function PestAlertFilter() {
     setLoading(true);
     setError("");
     try {
-      const params = new URLSearchParams();
-      if (selectedState !== "All States") params.append("region", selectedState);
-      if (selectedCrop  !== "All Crops")  params.append("crops",  selectedCrop);
-
-      const res  = await fetch(`${API_BASE}/api/pest-alerts?${params}`);
-      const data = await res.json();
-      if (data.success) setAlerts(data.alerts);
-      else setError("Could not load alerts.");
-    } catch {
+      const data = await pestAPI.getAlerts(selectedState, selectedCrop);
+      if (data && data.success) {
+        setAlerts(data.alerts || []);
+      } else {
+        setError("Could not load alerts.");
+      }
+    } catch (err) {
+      console.error(err);
       setError("Connection error. Make sure backend is running.");
     }
     setLoading(false);
@@ -71,16 +67,7 @@ export default function PestAlertFilter() {
 
   // ── Save user's state to profile ─────────────────────────────
   const savePreference = async (state, crop) => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-    await fetch(`${API_BASE}/api/user/preferences`, {
-      method:  "PUT",
-      headers: { 
-        "Content-Type": "application/json", 
-        Authorization: `Bearer ${token}` 
-      },
-      body:    JSON.stringify({ preferredState: state, preferredCrop: crop }),
-    }).catch(() => {});
+    // Optional: implement profile saving if needed
   };
 
   const handleStateChange = (val) => {
