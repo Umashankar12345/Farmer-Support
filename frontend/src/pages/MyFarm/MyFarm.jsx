@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const INITIAL_FARMS = [
   { id: '1', crop: 'Mustard', area: '4.2 Hectares', health: 92, status: 'Vegetative', growth: 65 },
@@ -7,10 +8,11 @@ const INITIAL_FARMS = [
 ];
 
 export default function MyFarm() {
+  const navigate = useNavigate();
   const [farms, setFarms] = useState([]);
   const [actions, setActions] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [newFarm, setNewFarm] = useState({ crop: '', area: '', status: 'Vegetative' });
+  const [newFarm, setNewFarm] = useState({ name: '', location: '', acres: '', soilType: 'Loamy', crop: '', status: 'Vegetative' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function MyFarm() {
 
       saveFarms(addedFarms, addedActions);
       setShowModal(false);
-      setNewFarm({ crop: '', area: '', status: 'Vegetative' });
+      setNewFarm({ name: '', location: '', acres: '', soilType: 'Loamy', crop: '', status: 'Vegetative' });
       setIsSubmitting(false);
     }, 800);
   };
@@ -89,13 +91,13 @@ export default function MyFarm() {
 
       <div className="grid grid-3" style={{ marginBottom: '24px' }}>
         {farms.map(f => (
-          <div key={f.id} className="card" style={{ borderTop: `4px solid var(--g3)`, animation: 'fadeInUp 0.4s ease-out' }}>
+          <div key={f.id} className="card" onClick={() => navigate(`/farms/${f.id}`)} style={{ borderTop: `4px solid var(--g3)`, animation: 'fadeInUp 0.4s ease-out', cursor: 'pointer' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
               <div style={{ fontWeight: 800, fontSize: '10px', color: 'var(--muted)', letterSpacing: '1px' }}>FIELD ID: {f.id.slice(-4)}</div>
               <div className="badge b-green" style={{ fontSize: '9px' }}>{f.status}</div>
             </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text)', marginBottom: '4px' }}>{f.crop}</div>
-            <div style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '16px', fontWeight: 600 }}>{f.area}</div>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text)', marginBottom: '4px' }}>{f.name || f.crop}</div>
+            <div style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '16px', fontWeight: 600 }}>{f.location ? `${f.location} • ${f.acres || f.area} ${f.acres ? 'Acres' : ''}` : f.area}</div>
             
             <div style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', fontWeight: 800, marginBottom: '5px', color: 'var(--muted)' }}>
@@ -179,29 +181,33 @@ export default function MyFarm() {
             </div>
 
             <form onSubmit={handleRegister}>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Crop Name</label>
-                <input 
-                  autoFocus
-                  required
-                  className="input-v2"
-                  placeholder="e.g. Cotton, Soybean, Wheat"
-                  value={newFarm.crop}
-                  onChange={e => setNewFarm({...newFarm, crop: e.target.value})}
-                  style={{ width: '100%', height: '44px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '14px', outline: 'none' }}
-                />
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Farm Name</label>
+                <input required className="input-v2" placeholder="e.g. North Plot" value={newFarm.name} onChange={e => setNewFarm({...newFarm, name: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
               </div>
-
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Location / Village</label>
+                <input required className="input-v2" placeholder="e.g. Sikar, Rajasthan" value={newFarm.location} onChange={e => setNewFarm({...newFarm, location: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
+              </div>
+              <div style={{ marginBottom: '16px', display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Acres</label>
+                  <input required className="input-v2" placeholder="e.g. 5" value={newFarm.acres} onChange={e => setNewFarm({...newFarm, acres: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Soil Type</label>
+                  <select required className="input-v2" value={newFarm.soilType} onChange={e => setNewFarm({...newFarm, soilType: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }}>
+                    <option value="Loamy">Loamy</option>
+                    <option value="Clay">Clay</option>
+                    <option value="Sandy">Sandy</option>
+                    <option value="Black">Black Soil</option>
+                    <option value="Red">Red Soil</option>
+                  </select>
+                </div>
+              </div>
               <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Area (Hectares)</label>
-                <input 
-                  required
-                  className="input-v2"
-                  placeholder="e.g. 5.5 Hectares"
-                  value={newFarm.area}
-                  onChange={e => setNewFarm({...newFarm, area: e.target.value})}
-                  style={{ width: '100%', height: '44px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '14px', outline: 'none' }}
-                />
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Current Crop (Optional)</label>
+                <input className="input-v2" placeholder="e.g. Cotton, Soybean, Wheat" value={newFarm.crop} onChange={e => setNewFarm({...newFarm, crop: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
               </div>
 
               <div style={{ display: 'flex', gap: '12px' }}>

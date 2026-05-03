@@ -20,6 +20,8 @@ const PerformanceTicker = ({ metrics }) => {
         <span className="hidden sm:inline">|</span>
         <span className="hidden sm:inline">API Latency: <span className="text-gray-100">{latency.toFixed(0)}ms</span></span>
         <span className="hidden sm:inline">|</span>
+        <span className="hidden sm:inline">Cache: <span className="text-green-400">REDIS HIT</span></span>
+        <span className="hidden sm:inline">|</span>
         <span className="hidden sm:inline">AI Model: <span className="text-gray-100">Llama3-8B-8192 (Groq)</span></span>
       </div>
       <div className="flex gap-4 uppercase font-bold text-gray-500">

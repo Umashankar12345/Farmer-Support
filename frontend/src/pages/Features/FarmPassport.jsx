@@ -20,7 +20,9 @@ const FarmPassport = () => {
               <div className="pp-name">North Field (Wheat)</div>
               <div className="pp-loc">📍 Jaipur North, Rajasthan · Zone A1</div>
             </div>
-            <div className="pp-qr">📱</div>
+            <div className="pp-qr">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=FarmPassport_DK-RJ-2024-001" alt="QR Code" style={{width: '60px', height: '60px', borderRadius: '4px', border: '2px solid white'}} />
+            </div>
           </div>
           <div style={{height:'1px', background:'rgba(255,255,255,.1)', marginBottom:'14px'}}></div>
           <div className="pp-grid">

@@ -114,9 +114,12 @@ export default function DiseaseDetector() {
 
       {analyzing && (
         <div className="flex flex-col items-center justify-center py-12">
-          <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-sm font-bold text-green-600 mt-6 animate-pulse uppercase tracking-widest">Running Deep-Link CNN Analysis...</p>
-          <p className="text-[10px] text-gray-400 mt-2 font-medium">Checking for 14,000+ known pathogens</p>
+          <div className="w-16 h-16 border-4 border-[#d97757] border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm font-bold text-[#d97757] mt-6 animate-pulse uppercase tracking-widest">Anthropic Claude Vision Processing...</p>
+          <p className="text-[10px] text-gray-400 mt-2 font-medium flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+            Cross-referencing 14,000+ known pathogens
+          </p>
         </div>
       )}
 

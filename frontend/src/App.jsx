@@ -26,6 +26,7 @@ import FarmPassport from './pages/Features/FarmPassport';
 import OnboardingJourney from './pages/Features/OnboardingJourney';
 import OfflineMode from './pages/Features/OfflineMode';
 import DiseaseDetectorPage from './pages/Disease/DiseaseDetectorPage';
+import FarmDashboard from './pages/MyFarm/FarmDashboard';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token') || localStorage.getItem('krishi_jwt');
@@ -51,6 +52,7 @@ function App() {
         <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/query" element={<ProtectedRoute><AIQuery /></ProtectedRoute>} />
         <Route path="/farms" element={<ProtectedRoute><MyFarm /></ProtectedRoute>} />
+        <Route path="/farms/:id" element={<ProtectedRoute><FarmDashboard /></ProtectedRoute>} />
         <Route path="/weather" element={<ProtectedRoute><WeatherPage /></ProtectedRoute>} />
         <Route path="/schemes" element={<ProtectedRoute><SchemesPage /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />

@@ -74,7 +74,7 @@ const ROICalculator = () => {
             <div style={{display:'flex', flexDirection:'column', gap:'6px'}}>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'7px 10px', background:'var(--g5)', borderRadius:'8px'}}><div style={{fontSize:'11px', fontWeight:'600'}}>2023 Net Profit</div><div style={{fontSize:'13px', fontWeight:'800', color:'var(--muted)'}}>₹5.8L</div></div>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'7px 10px', background:'var(--g5)', borderRadius:'8px'}}><div style={{fontSize:'11px', fontWeight:'600'}}>2024 Net Profit</div><div style={{fontSize:'13px', fontWeight:'800', color:'var(--amber)'}}>₹7.1L</div></div>
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'7px 10px', background:'#dcfce7', borderRadius:'8px', border:'1px solid #86efac'}}><div style={{fontSize:'11px', fontWeight:'700', color:'var(--g1)'}}>2025 Net Profit</div><div style={{fontSize:'14px', fontWeight:'800', color:'var(--g1)'}}>₹8.5L ▲</div></div>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px', background:'#dcfce7', borderRadius:'8px', border:'2px solid #22c55e'}}><div style={{fontSize:'12px', fontWeight:'800', color:'var(--g1)'}}>2025 (With AI Advisory)</div><div style={{textAlign: 'right'}}><div style={{fontSize:'16px', fontWeight:'900', color:'var(--g1)'}}>₹8.9L ▲</div><div style={{fontSize:'10px', color:'#15803d', fontWeight:'800'}}>+₹1.8L Extra Income</div></div></div>
             </div>
           </div>
         </div>
