@@ -1,6 +1,14 @@
-const API_URL = window.location.origin.includes('localhost') 
-  ? 'http://localhost:5000/api' 
-  : '/api';
+// Automatically determine the correct API URL based on environment
+let API_URL = '/api';
+
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
+  API_URL = 'http://localhost:5000/api';
+} else if (import.meta.env.VITE_API_URL) {
+  API_URL = import.meta.env.VITE_API_URL;
+} else if (window.location.hostname.includes('github.io') || window.location.hostname.includes('vercel.app')) {
+  // Fallback for static hosting if no env var is set
+  API_URL = 'https://farmer-support-backend.onrender.com/api'; // Replace with actual backend URL
+}
 
 export const apiRequest = async (endpoint, method = 'GET', data = null) => {
   const token = localStorage.getItem('token');
