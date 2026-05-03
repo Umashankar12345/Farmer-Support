@@ -7,6 +7,7 @@ const INITIAL_FARMS = [
 ];
 
 export default function MyFarm() {
+  const [farms, setFarms] = useState([]);
   const [actions, setActions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newFarm, setNewFarm] = useState({ crop: '', area: '', status: 'Vegetative' });
