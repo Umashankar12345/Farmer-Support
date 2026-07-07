@@ -27,6 +27,7 @@ import OnboardingJourney from './pages/Features/OnboardingJourney';
 import OfflineMode from './pages/Features/OfflineMode';
 import DiseaseDetectorPage from './pages/Disease/DiseaseDetectorPage';
 import FarmDashboard from './pages/MyFarm/FarmDashboard';
+import MarketAdvisorPrototype from './pages/Features/MarketAdvisorPrototype';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token') || localStorage.getItem('krishi_jwt');
@@ -58,6 +59,7 @@ function App() {
         <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
         
         {/* Advanced Features */}
+        <Route path="/prototype" element={<ProtectedRoute><MarketAdvisorPrototype /></ProtectedRoute>} />
         <Route path="/crop-rec" element={<ProtectedRoute><CropRecommender /></ProtectedRoute>} />
         <Route path="/roi" element={<ProtectedRoute><ROICalculator /></ProtectedRoute>} />
         <Route path="/ndvi" element={<ProtectedRoute><NDVISatellite /></ProtectedRoute>} />
