@@ -15,6 +15,7 @@
 
 const axios = require("axios");
 const User = require('../models/User');
+const { getMandiPriceWithFallback } = require("../services/mandiPriceService");
 
 // ---------------------------------------------------------------
 // 1. Database Model Integration
@@ -109,20 +110,8 @@ function getNearbyMandis(farmerLat, farmerLon, topN = 5) {
 }
 
 // ---------------------------------------------------------------
-// 5. SIMULATED LIVE PRICE / TREND
-//    (swap for a real data.gov.in eNAM API call using an API key)
+// 5. SIMULATED LIVE PRICE / TREND (REMOVED - using real API now)
 // ---------------------------------------------------------------
-function fetchLivePrice(mandiName, commodity) {
-  const basePrices = { Wheat: 2200, Mustard: 4800, Bajra: 1800, Millet: 2000 };
-  const base = basePrices[commodity] || 2000;
-  const variation = Math.floor(Math.random() * 200) - 100;
-  return base + variation;
-}
-
-function getPriceTrend() {
-  const trends = ["Rising (+2%)", "Stable", "Falling (-1.5%)"];
-  return trends[Math.floor(Math.random() * trends.length)];
-}
 
 // ---------------------------------------------------------------
 // 6. FINANCIAL LOGIC (unchanged - already correct)
@@ -207,21 +196,37 @@ exports.askQuestion = async (req, res) => {
     `[Tool: Distance Math] Found ${nearbyMandis.length} nearby mandis sorted by Haversine distance.`
   );
 
-  const analysis = nearbyMandis.map((mandi) => {
-    const price = fetchLivePrice(mandi.name, commodity);
-    const trend = getPriceTrend();
-    const transportCost = estimateTransportCost(mandi.distanceKm, quantity);
+  // NOTE: now async - real API call per mandi, with fallback
+  const analysis = await Promise.all(
+    nearbyMandis.map(async (mandi) => {
+      const fallbackBase = { Wheat: 2200, Mustard: 4800, Bajra: 1800, Millet: 2000 }[commodity] || 2000;
 
-    return {
-      mandi: mandi.name,
-      distance: mandi.distanceKm,
-      price,
-      trend,
-      transportCost,
-      netRevenue: price * quantity - transportCost,
-    };
-  });
-  executionLog.push(`[Tool: Live API] Fetched prices from eNAM mock API for ${commodity}.`);
+      const priceResult = await getMandiPriceWithFallback(
+        mandi.name,
+        commodity,
+        undefined, // state - pass user's state here if you store it
+        fallbackBase
+      );
+
+      const transportCost = estimateTransportCost(mandi.distanceKm, quantity);
+
+      return {
+        mandi: mandi.name,
+        distance: mandi.distanceKm,
+        price: priceResult.price,
+        priceSource: priceResult.source,       // "live" or "estimate" - be honest in the UI
+        arrivalDate: priceResult.arrivalDate,
+        transportCost,
+        netRevenue: priceResult.price * quantity - transportCost,
+      };
+    })
+  );
+
+  const liveCount = analysis.filter((a) => a.priceSource === "live").length;
+  executionLog.push(
+    `[Tool: Live API] Fetched real eNAM/AGMARKNET prices for ${liveCount}/${analysis.length} mandis` +
+    (liveCount < analysis.length ? ` (${analysis.length - liveCount} used fallback estimate - no data reported today).` : ".")
+  );
 
   const bestMandi = [...analysis].sort((a, b) => b.netRevenue - a.netRevenue)[0];
   const closestMandi = analysis[0];
@@ -232,15 +237,13 @@ exports.askQuestion = async (req, res) => {
   );
 
   let finalAnswer = `Hello ${user.firstName}, based on your location near ${user.location}:\n\n`;
-  finalAnswer += `The closest market is ${closestMandi.mandi} (${closestMandi.distance}km) offering Rs.${closestMandi.price}/qtl.\n`;
+  finalAnswer += `The closest market is ${closestMandi.mandi} (${closestMandi.distance}km) offering Rs.${closestMandi.price}/qtl`;
+  finalAnswer += closestMandi.priceSource === "estimate" ? " (estimated, no live data reported today).\n" : " (live price).\n";
 
   if (bestMandi.mandi !== closestMandi.mandi && extraGain > 0) {
     finalAnswer += `However, I recommend traveling to ${bestMandi.mandi} (${bestMandi.distance}km).\n`;
-    finalAnswer += `The price there is Rs.${bestMandi.price}/qtl. Even after subtracting Rs.${bestMandi.transportCost.toFixed(
-      0
-    )} for transport, you will make a net extra profit of Rs.${extraGain.toFixed(
-      0
-    )} for your ${quantity} quintals. The price trend there is also ${bestMandi.trend}.\n`;
+    finalAnswer += `The price there is Rs.${bestMandi.price}/qtl${bestMandi.priceSource === "estimate" ? " (estimated)" : " (live)"}. `;
+    finalAnswer += `Even after subtracting Rs.${bestMandi.transportCost.toFixed(0)} for transport, you will make a net extra profit of Rs.${extraGain.toFixed(0)} for your ${quantity} quintals.\n`;
   } else {
     finalAnswer += `I recommend selling locally at ${closestMandi.mandi}. Further markets don't offer enough price difference to cover the transport costs.`;
   }
