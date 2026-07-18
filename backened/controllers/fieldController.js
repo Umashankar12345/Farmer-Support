@@ -90,7 +90,8 @@ function generateActionItems(field, mockWeather) {
 exports.getFields = async (req, res) => {
   try {
     const userId = req.user.id;
-    const fields = await Field.find({ userId }).lean();
+    // Don't use .lean() here, because we need to .save() below
+    const fields = await Field.find({ userId });
 
     // In a full production app, these would be fetched per-field based on actual
     // coordinates (weather API), satellite models (NDVI), and pest databases.
@@ -99,7 +100,8 @@ exports.getFields = async (req, res) => {
     const mockNdviContext = 0.8; 
     const mockPestAlertContext = false; 
 
-    const enhancedFields = fields.map(field => {
+    // We use Promise.all because we might be saving documents
+    const enhancedFields = await Promise.all(fields.map(async field => {
       const growth = calculateGrowthProgress(field.sowingDate, field.cropName);
       
       let status = 'Vegetative';
@@ -109,15 +111,41 @@ exports.getFields = async (req, res) => {
       const health = calculateHealthScore(field, mockWeatherContext, mockNdviContext, mockPestAlertContext);
       const actions = generateActionItems(field, mockWeatherContext);
 
+      // --- HONEST ACCUMULATION LOGIC ---
+      const today = new Date();
+      const todayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+      
+      let historyChanged = false;
+      
+      // Check if we already recorded a score today
+      if (field.healthHistory.length > 0) {
+        const lastEntry = field.healthHistory[field.healthHistory.length - 1];
+        const lastEntryKey = `${lastEntry.date.getFullYear()}-${lastEntry.date.getMonth()}-${lastEntry.date.getDate()}`;
+        
+        if (lastEntryKey !== todayKey) {
+          field.healthHistory.push({ date: today, score: health });
+          historyChanged = true;
+        }
+      } else {
+        // First ever entry
+        field.healthHistory.push({ date: today, score: health });
+        historyChanged = true;
+      }
+      
+      // Persist to the database if we added a new daily entry
+      if (historyChanged) {
+        await field.save();
+      }
+
       return {
-        ...field,
+        ...field.toObject(),
         id: field._id.toString(), // Map for frontend convenience
         growth,
         health,
         status,
         actions
       };
-    });
+    }));
 
     res.json({ fields: enhancedFields });
   } catch (err) {
@@ -142,7 +170,8 @@ exports.registerField = async (req, res) => {
       soilType: soilType || 'Loamy',
       irrigationType: irrigationType || 'Rainfed',
       cropName: crop,
-      sowingDate: new Date(sowingDate)
+      sowingDate: new Date(sowingDate),
+      healthHistory: [] // Starts genuinely empty
     });
 
     res.status(201).json({ message: 'Field registered successfully', field: newField });

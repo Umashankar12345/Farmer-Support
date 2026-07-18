@@ -45,7 +45,11 @@ const fieldSchema = new mongoose.Schema({
   location: {
     type: String,
     default: ''
-  }
+  },
+  healthHistory: [{
+    date: { type: Date, required: true },
+    score: { type: Number, required: true }
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Field', fieldSchema);
