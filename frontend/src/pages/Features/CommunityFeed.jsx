@@ -54,13 +54,22 @@ const CommunityFeed = () => {
 
   const submitPost = () => {
     if (!newQ.trim()) return;
+    
+    let user = {};
+    try {
+      user = JSON.parse(localStorage.getItem('user') || '{}');
+    } catch(e) {}
+    
+    const fullName = `${user.firstName || 'Anonymous'} ${user.lastName || 'Farmer'}`.trim();
+    const initials = (user.firstName?.[0] || 'A') + (user.lastName?.[0] || 'F');
+
     const newPost = {
       id: Date.now(),
-      name: 'Umashankar Kumar',
-      meta: 'Rajasthan · Just now',
+      name: fullName,
+      meta: `${user.state || 'Unknown Location'} · Just now`,
       tag: '💬 Question',
       body: newQ,
-      av: 'UK',
+      av: initials.toUpperCase(),
       avColor: 'var(--g2)',
       likes: 0,
       liked: false

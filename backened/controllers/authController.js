@@ -30,34 +30,48 @@ exports.sendOTP = async (req, res) => {
 
 exports.verifyOTP = async (req, res) => {
   try {
-    const { otp } = req.body;
+    const { phone, otp } = req.body;
     
     // As per user spec: 000000 is error, anything else is success
     if (otp === '000000') {
       return res.status(400).json({ error: 'Incorrect OTP. Please try again.' });
     }
 
-    // For demo purposes, we'll return a token for a 'Demo User'
-    // In a real app, you'd find/create a user by their phone number
-    const demoUserId = '65f1a1a1a1a1a1a1a1a1a1a1'; // Hardcoded dummy ID for demo
+    if (!phone) {
+      return res.status(400).json({ error: 'Phone number is required.' });
+    }
+
+    // Find real user by phone or create a skeletal one if they don't exist yet
+    let user = await User.findOne({ phone });
+    if (!user) {
+      user = await User.create({
+        firstName: 'Farmer',
+        lastName: 'User',
+        phone: phone,
+        email: `${phone}@farmer.support`,
+        password: 'otp-login-placeholder',
+        role: 'Farmer',
+        registrationNo: `FS-${Date.now()}`
+      });
+    }
     
     res.json({
       success: true,
       message: 'OTP verified successfully',
-      token: generateToken(demoUserId),
+      token: generateToken(user._id),
       user: {
-        id: demoUserId,
-        firstName: 'OTP',
-        lastName: 'Demo User',
-        role: 'Farmer'
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
       }
     });
 
     // Record Visitor
     await Visitor.create({
-      userId: demoUserId,
-      userName: 'OTP Demo User',
-      email: 'demo@farmer.support'
+      userId: user._id,
+      userName: `${user.firstName} ${user.lastName}`,
+      email: user.email
     });
   } catch (error) {
     res.status(500).json({ error: 'Verification failed' });
@@ -67,24 +81,42 @@ exports.verifyOTP = async (req, res) => {
 // Simulated Google Login for demo
 exports.googleLoginSim = async (req, res) => {
   try {
-    const demoUserId = '65f1a1a1a1a1a1a1a1a1a1a2';
+    const { email, firstName = 'Google', lastName = 'User' } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        firstName,
+        lastName,
+        email,
+        phone: `GOOG-${Date.now()}`,
+        password: 'google-login-placeholder',
+        role: 'Farmer',
+        registrationNo: `FS-${Date.now()}`
+      });
+    }
+
     res.json({
       success: true,
-      token: generateToken(demoUserId),
+      token: generateToken(user._id),
       user: {
-        id: demoUserId,
-        firstName: 'Google',
-        lastName: 'Demo User',
-        email: 'google.demo@example.com',
-        role: 'Farmer'
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role
       }
     });
 
     // Record Visitor
     await Visitor.create({
-      userId: demoUserId,
-      userName: 'Google Demo User',
-      email: 'google.demo@example.com'
+      userId: user._id,
+      userName: `${user.firstName} ${user.lastName}`,
+      email: user.email
     });
   } catch (error) {
     res.status(500).json({ error: 'Google login simulation failed' });

@@ -83,7 +83,16 @@ const Sidebar = () => {
         <div className="bg-green-50 rounded-2xl p-4 flex items-center gap-3 border border-green-100 group hover:border-green-300 transition-all cursor-pointer">
           <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white text-xl shadow-lg shadow-green-100">👨‍🌾</div>
           <div className="overflow-hidden">
-            <p className="text-sm font-bold text-gray-900 truncate">Umashankar</p>
+            <p className="text-sm font-bold text-gray-900 truncate">
+              {(() => {
+                try {
+                  const u = JSON.parse(localStorage.getItem('user') || '{}');
+                  return u.firstName || 'Farmer';
+                } catch (e) {
+                  return 'Farmer';
+                }
+              })()}
+            </p>
             <div className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
               <p className="text-[10px] font-bold text-green-600 uppercase tracking-tighter">{t.partner}</p>

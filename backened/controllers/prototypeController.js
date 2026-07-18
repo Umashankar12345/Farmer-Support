@@ -14,11 +14,12 @@
 // in production this would be a real database (Postgres/MongoDB).
 
 const axios = require("axios");
+const User = require('../models/User');
 
 // ---------------------------------------------------------------
-// 1. In-memory "database" of signed-up farmers (replace with real DB)
+// 1. Database Model Integration
+//    Users are now stored and fetched from the real MongoDB User collection.
 // ---------------------------------------------------------------
-const usersDB = {}; // phone -> user details
 
 // ---------------------------------------------------------------
 // 2. MANDI DATA SOURCE
@@ -143,42 +144,62 @@ exports.signupFarmer = async (req, res) => {
   }
 
   try {
-    // Works for ANY village/town/city name - not limited to a fixed list
     const location = await geocodeLocation(village);
+    
+    let user = await User.findOne({ phone });
+    if (!user) {
+      const parts = name.split(' ');
+      const firstName = parts[0];
+      const lastName = parts.slice(1).join(' ');
 
-    usersDB[phone] = {
-      name,
-      phone,
-      village,
-      matchedLocation: location.matchedName,
-      coordinates: { lat: location.lat, lon: location.lon },
-    };
+      user = await User.create({
+        firstName,
+        lastName: lastName || 'User',
+        phone,
+        email: `${phone}@prototype.farmer.support`, // Placeholder email
+        password: 'prototype-demo', // Placeholder password
+        location: location.matchedName,
+        coordinates: { lat: location.lat, lon: location.lon },
+        registrationNo: `FS-PROTO-${Date.now()}`
+      });
+    } else {
+      // Update coordinates if user already exists
+      user.location = location.matchedName;
+      user.coordinates = { lat: location.lat, lon: location.lon };
+      await user.save();
+    }
 
-    res.json({ message: "Signup successful", user: usersDB[phone] });
+    res.json({ message: "Signup successful", user });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
-exports.loginFarmer = (req, res) => {
+exports.loginFarmer = async (req, res) => {
   const { phone } = req.body;
-  const user = usersDB[phone];
-  if (!user) {
-    return res.status(404).json({ error: "User not found." });
+  try {
+    const user = await User.findOne({ phone });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+    res.json({ message: "Login successful", user });
+  } catch (err) {
+    res.status(500).json({ error: 'Database error' });
   }
-  res.json({ message: "Login successful", user });
 };
 
-exports.askQuestion = (req, res) => {
+exports.askQuestion = async (req, res) => {
   const { phone, question, commodity = "Wheat", quantity = 50 } = req.body;
 
-  const user = usersDB[phone];
-  if (!user) return res.status(401).json({ error: "Unauthorized. Please login." });
+  const user = await User.findOne({ phone });
+  if (!user || !user.coordinates || !user.coordinates.lat) {
+    return res.status(401).json({ error: "Unauthorized or missing location data. Please login or signup again." });
+  }
 
   const executionLog = [];
 
   executionLog.push(
-    `[Tool: Geocoding] Resolved "${user.village}" to ${user.matchedLocation} (${user.coordinates.lat}, ${user.coordinates.lon})`
+    `[Tool: Geocoding] Resolved location to ${user.location} (${user.coordinates.lat}, ${user.coordinates.lon})`
   );
 
   const nearbyMandis = getNearbyMandis(user.coordinates.lat, user.coordinates.lon);
@@ -210,7 +231,7 @@ exports.askQuestion = (req, res) => {
     `[LLM Reasoning] Comparing net benefit of ${closestMandi.mandi} (closest) vs ${bestMandi.mandi} (highest net return).`
   );
 
-  let finalAnswer = `Hello ${user.name}, based on your location near ${user.matchedLocation}:\n\n`;
+  let finalAnswer = `Hello ${user.firstName}, based on your location near ${user.location}:\n\n`;
   finalAnswer += `The closest market is ${closestMandi.mandi} (${closestMandi.distance}km) offering Rs.${closestMandi.price}/qtl.\n`;
 
   if (bestMandi.mandi !== closestMandi.mandi && extraGain > 0) {

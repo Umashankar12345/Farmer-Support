@@ -46,6 +46,7 @@ app.use("/api/pest-alerts",  require("./routes/pestAlerts"));
 app.use("/api/user",         require("./routes/userPreferences"));
 app.use("/api/diagnosis",    require("./routes/diagnosisRoutes"));
 app.use("/api/prototype",    require("./routes/prototypeRoutes"));
+app.use("/api/yield",        require("./routes/yieldRoutes"));
 
 // Serve static files (uploads and dist)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

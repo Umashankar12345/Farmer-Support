@@ -59,7 +59,16 @@ export default function Dashboard() {
       {/* Executive Header */}
       <header className="mb-6 flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#d4e8d0] shadow-sm">
         <div>
-          <h1 className="text-2xl font-black text-[#111] tracking-tight">{t.greeting} Umashankar Kumar 👋</h1>
+          <h1 className="text-2xl font-black text-[#111] tracking-tight">
+            {t.greeting} {(() => {
+              try {
+                const u = JSON.parse(localStorage.getItem('user') || '{}');
+                return u.firstName ? `${u.firstName} ${u.lastName || ''}` : 'Farmer';
+              } catch (e) {
+                return 'Farmer';
+              }
+            })()} 👋
+          </h1>
           <p className="text-[11.5px] text-[#555] font-bold mt-1 uppercase tracking-wider">
             {t.dashboard} · {new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })} · 
             <span className="text-[#14301f] ml-1">{activeState.name}</span>

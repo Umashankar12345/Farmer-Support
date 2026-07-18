@@ -45,6 +45,10 @@ const UserSchema = new mongoose.Schema({
   location: {
     type: String
   },
+  coordinates: {
+    lat: Number,
+    lon: Number
+  },
   crop: {
     type: String
   },

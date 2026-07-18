@@ -4,10 +4,10 @@ const MarketAdvisorPrototype = () => {
   const [step, setStep] = useState('auth'); // auth or chat
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
-  const [village, setVillage] = useState('Neemrana');
+  const [village, setVillage] = useState('');
   
   const [user, setUser] = useState(null);
-  const [question, setQuestion] = useState('Where should I sell my wheat this week?');
+  const [question, setQuestion] = useState('');
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
