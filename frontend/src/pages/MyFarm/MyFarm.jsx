@@ -1,74 +1,81 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const INITIAL_FARMS = [
-  { id: '1', crop: 'Mustard', area: '4.2 Hectares', health: 92, status: 'Vegetative', growth: 65 },
-  { id: '2', crop: 'Wheat', area: '2.8 Hectares', health: 88, status: 'Flowering', growth: 40 },
-  { id: '3', crop: 'Millet', area: '1.5 Hectares', health: 95, status: 'Harvesting', growth: 98 }
-];
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function MyFarm() {
   const navigate = useNavigate();
+
   const [farms, setFarms] = useState([]);
   const [actions, setActions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [showModal, setShowModal] = useState(false);
-  const [newFarm, setNewFarm] = useState({ name: '', location: '', acres: '', soilType: 'Loamy', crop: '', status: 'Vegetative' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newFarm, setNewFarm] = useState({
+    name: '',
+    location: '',
+    acres: '',
+    soilType: 'Loamy',
+    crop: '',
+    irrigationType: 'Rainfed',
+    sowingDate: ''
+  });
 
-  useEffect(() => {
-    const savedFarms = localStorage.getItem('krishi_farms');
-    const savedActions = localStorage.getItem('krishi_actions');
-    
-    if (savedFarms) {
-      setFarms(JSON.parse(savedFarms));
-    } else {
-      setFarms(INITIAL_FARMS);
+  const fetchFarms = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('token') || localStorage.getItem('krishi_jwt');
+      const response = await axios.get(`${API_URL}/api/fields`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const fetchedFarms = response.data.fields || [];
+      setFarms(fetchedFarms);
+
+      // Aggregate action items from all fields into one list
+      let allActions = [];
+      fetchedFarms.forEach((f) => {
+        if (f.actions && Array.isArray(f.actions)) {
+          allActions = [...allActions, ...f.actions];
+        }
+      });
+      setActions(allActions.slice(0, 4));
+    } catch (err) {
+      console.error('Failed to fetch farms:', err);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (savedActions) {
-      setActions(JSON.parse(savedActions));
-    } else {
-      setActions([
-        { icon: '🧪', title: 'Collect Soil Samples', sub: 'Mustard field requires nutrient re-testing.' },
-        { icon: '💧', title: 'Irrigation Alert', sub: 'High moisture expected in Jaipur region.' }
-      ]);
-    }
-  }, []);
-
-  const saveFarms = (updatedFarms, updatedActions) => {
-    setFarms(updatedFarms);
-    setActions(updatedActions || actions);
-    localStorage.setItem('krishi_farms', JSON.stringify(updatedFarms));
-    if (updatedActions) localStorage.setItem('krishi_actions', JSON.stringify(updatedActions));
   };
 
-  const handleRegister = (e) => {
+  useEffect(() => {
+    fetchFarms();
+  }, []);
+
+  const handleRegister = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    setTimeout(() => {
-      const farmId = Date.now().toString();
-      const newFarmObj = { 
-        id: farmId, 
-        ...newFarm, 
-        health: Math.floor(Math.random() * 15) + 80, 
-        growth: 10 
-      };
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('krishi_jwt');
+      await axios.post(`${API_URL}/api/fields/register`, newFarm, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-      const addedFarms = [...farms, newFarmObj];
-      
-      const newAction = { 
-        icon: '🛰️', 
-        title: 'Satellite Calibration', 
-        sub: `Activating health monitoring for ${newFarm.crop} (ID: ${farmId.slice(-4)})` 
-      };
-      const addedActions = [newAction, ...actions].slice(0, 4); // Keep latest 4 actions
-
-      saveFarms(addedFarms, addedActions);
       setShowModal(false);
-      setNewFarm({ name: '', location: '', acres: '', soilType: 'Loamy', crop: '', status: 'Vegetative' });
+      setNewFarm({
+        name: '', location: '', acres: '', soilType: 'Loamy',
+        crop: '', irrigationType: 'Rainfed', sowingDate: ''
+      });
+
+      // Refresh so the newly registered field's real computed growth/health/actions show up
+      await fetchFarms();
+    } catch (err) {
+      console.error('Failed to register farm:', err);
+      alert(err.response?.data?.error || 'Registration failed. Please check inputs.');
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   };
 
   return (
@@ -77,11 +84,11 @@ export default function MyFarm() {
         <div>
           <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text)' }}>My Farming Portfolio</div>
           <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            Managing {farms.length} active fields across Rajasthan
+            Managing {farms.length} active fields
           </div>
         </div>
-        <button 
-          className="btn btn-green" 
+        <button
+          className="btn btn-green"
           onClick={() => setShowModal(true)}
           style={{ transition: 'all 0.2s', transform: showModal ? 'scale(0.95)' : 'scale(1)' }}
         >
@@ -89,114 +96,146 @@ export default function MyFarm() {
         </button>
       </header>
 
-      <div className="grid grid-3" style={{ marginBottom: '24px' }}>
-        {farms.map(f => (
-          <div key={f.id} className="card" onClick={() => navigate(`/farms/${f.id}`)} style={{ borderTop: `4px solid var(--g3)`, animation: 'fadeInUp 0.4s ease-out', cursor: 'pointer' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <div style={{ fontWeight: 800, fontSize: '10px', color: 'var(--muted)', letterSpacing: '1px' }}>FIELD ID: {f.id.slice(-4)}</div>
-              <div className="badge b-green" style={{ fontSize: '9px' }}>{f.status}</div>
-            </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text)', marginBottom: '4px' }}>{f.name || f.crop}</div>
-            <div style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '16px', fontWeight: 600 }}>{f.location ? `${f.location} • ${f.acres || f.area} ${f.acres ? 'Acres' : ''}` : f.area}</div>
-            
-            <div style={{ marginBottom: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', fontWeight: 800, marginBottom: '5px', color: 'var(--muted)' }}>
-                <span>GROWTH PROGRESS</span>
-                <span style={{ color: 'var(--g2)' }}>{f.growth}%</span>
+      {isLoading ? (
+        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--muted)', fontWeight: 600 }}>
+          Loading your fields...
+        </div>
+      ) : (
+        <div className="grid grid-3" style={{ marginBottom: '24px' }}>
+          {farms.map((f) => (
+            <div
+              key={f.id}
+              className="card"
+              onClick={() => navigate(`/farms/${f.id}`)}
+              style={{ borderTop: '4px solid var(--g3)', animation: 'fadeInUp 0.4s ease-out', cursor: 'pointer' }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <div style={{ fontWeight: 800, fontSize: '10px', color: 'var(--muted)', letterSpacing: '1px' }}>
+                  FIELD ID: {f.id.slice(-4)}
+                </div>
+                <div className="badge b-green" style={{ fontSize: '9px' }}>{f.status}</div>
               </div>
-              <div style={{ height: '7px', background: '#f0fdf4', borderRadius: '4px', overflow: 'hidden', border: '1px solid #dcfce7' }}>
-                <div style={{ width: `${f.growth}%`, height: '100%', background: 'linear-gradient(90deg, var(--g3), #22c55e)', borderRadius: '4px', transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }}></div>
-              </div>
-            </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <div style={{ flex: 1, background: 'var(--g5)', padding: '10px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(0,0,0,0.02)' }}>
-                <div style={{ fontSize: '8px', fontWeight: 800, color: 'var(--muted)', textTransform: 'uppercase' }}>Health</div>
-                <div style={{ fontSize: '15px', fontWeight: 900, color: '#166534' }}>{f.health}%</div>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text)', marginBottom: '4px' }}>
+                {f.fieldName || f.cropName}
               </div>
-              <div style={{ flex: 1, background: 'var(--g5)', padding: '10px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(0,0,0,0.02)' }}>
-                <div style={{ fontSize: '8px', fontWeight: 800, color: 'var(--muted)', textTransform: 'uppercase' }}>Yield Est.</div>
-                <div style={{ fontSize: '15px', fontWeight: 900, color: '#166534' }}>High</div>
+              <div style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '16px', fontWeight: 600 }}>
+                {f.location
+                  ? `${f.location} • ${f.areaHectares ? (f.areaHectares / 0.404686).toFixed(1) + ' Acres' : ''}`
+                  : `${f.areaHectares} Ha`}
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', fontWeight: 800, marginBottom: '5px', color: 'var(--muted)' }}>
+                  <span>GROWTH PROGRESS</span>
+                  <span style={{ color: 'var(--g2)' }}>{f.growth}%</span>
+                </div>
+                <div style={{ height: '7px', background: '#f0fdf4', borderRadius: '4px', overflow: 'hidden', border: '1px solid #dcfce7' }}>
+                  <div style={{ width: `${f.growth}%`, height: '100%', background: 'linear-gradient(90deg, var(--g3), #22c55e)', borderRadius: '4px', transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' }}></div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ flex: 1, background: 'var(--g5)', padding: '10px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(0,0,0,0.02)' }}>
+                  <div style={{ fontSize: '8px', fontWeight: 800, color: 'var(--muted)', textTransform: 'uppercase' }}>Health</div>
+                  <div style={{ fontSize: '15px', fontWeight: 900, color: f.health < 60 ? '#b91c1c' : '#166534' }}>{f.health}%</div>
+                </div>
+                <div style={{ flex: 1, background: 'var(--g5)', padding: '10px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(0,0,0,0.02)' }}>
+                  <div style={{ fontSize: '8px', fontWeight: 800, color: 'var(--muted)', textTransform: 'uppercase' }}>Yield Est.</div>
+                  <div style={{ fontSize: '15px', fontWeight: 900, color: f.health > 80 ? '#166534' : 'var(--muted)' }}>
+                    {f.health > 80 ? 'High' : 'Avg'}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+
+          {farms.length === 0 && (
+            <div style={{ gridColumn: 'span 3', padding: '40px', textAlign: 'center', background: '#f8fafc', borderRadius: '12px', border: '2px dashed #cbd5e1' }}>
+              <div style={{ fontSize: '24px', marginBottom: '10px' }}>🌱</div>
+              <div style={{ fontWeight: 800, color: 'var(--text)', marginBottom: '4px' }}>No fields registered yet.</div>
+              <div style={{ fontSize: '13px', color: 'var(--muted)' }}>
+                Click "Register New Farm" to start tracking your fields using real growth and soil-based rules.
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-2">
         <div className="card">
           <div className="card-title">Soil Health Trends</div>
           <div style={{ height: '180px', display: 'flex', alignItems: 'flex-end', gap: '16px', padding: '0 10px', marginTop: '20px' }}>
-             {[60, 45, 80, 55, 90].map((h, i) => (
-                <div key={i} style={{ flex: 1, background: 'var(--g4)', height: `${h}%`, borderRadius: '6px 6px 0 0', position: 'relative', transition: 'height 1s ease-out' }}>
-                  <div style={{ position: 'absolute', top: '-22px', width: '100%', textAlign: 'center', fontSize: '9px', fontWeight: 900, color: 'var(--g2)' }}>{h}%</div>
-                </div>
-             ))}
+            {[60, 45, 80, 55, farms.length > 0 ? farms[0].health : 0].map((h, i) => (
+              <div key={i} style={{ flex: 1, background: 'var(--g4)', height: `${h}%`, borderRadius: '6px 6px 0 0', position: 'relative', transition: 'height 1s ease-out' }}>
+                <div style={{ position: 'absolute', top: '-22px', width: '100%', textAlign: 'center', fontSize: '9px', fontWeight: 900, color: 'var(--g2)' }}>{h}%</div>
+              </div>
+            ))}
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '15px', fontSize: '10px', fontWeight: 800, color: 'var(--muted)', padding: '0 5px' }}>
-             <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span>
+            <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>CURRENT</span>
           </div>
+          {/* NOTE: Jan-Apr are still placeholder bars. A fully real version needs a
+              historical health-score log per field, saved over time - not built yet. */}
         </div>
-        
-        <div className="card" style={{ background: '#f8fafc', border: '2px dashed #cbd5e1' }}>
-           <div className="card-title">Awaiting Action</div>
-           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {actions.map((act, i) => (
-                <div key={i} className="action-item" style={{ background: '#fff', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', gap: '14px', alignItems: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-                   <div style={{ fontSize: '24px', background: '#f1f5f9', width: '44px', height: '44px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{act.icon}</div>
-                   <div>
-                      <div style={{ fontSize: '13px', fontWeight: 800, color: '#1e293b' }}>{act.title}</div>
-                      <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>{act.sub}</div>
-                   </div>
+
+        <div className="card">
+          <div className="card-title">Awaiting Action</div>
+          <div>
+            {actions.map((a, i) => (
+              <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '10px 0', borderBottom: i < actions.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+                <div style={{ fontSize: '18px' }}>{a.icon}</div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--text)' }}>{a.title}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--muted)' }}>{a.sub}</div>
                 </div>
-              ))}
-              {actions.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '20px', color: 'var(--muted)', fontSize: '11px', fontWeight: 600 }}>
-                  ALL TASKS COMPLETED ✅
-                </div>
-              )}
-           </div>
+              </div>
+            ))}
+            {actions.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--muted)', fontSize: '11px', fontWeight: 600 }}>
+                ALL TASKS COMPLETED ✅<br />(Or no fields registered to analyze)
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Registration Modal */}
       {showModal && (
-        <div 
-          style={{ 
-            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', 
-            background: 'rgba(15, 33, 21, 0.8)', backdropFilter: 'blur(8px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
-            animation: 'fadeIn 0.2s ease-out'
-          }}
-          onClick={() => setShowModal(false)}
-        >
-          <div 
-            className="card" 
-            style={{ width: '420px', padding: '32px', border: 'none', position: 'relative' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{ marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text)', letterSpacing: '-0.5px' }}>Register New Farm</h2>
-              <p style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '4px', fontWeight: 600 }}>Enter your field details to start AI monitoring.</p>
-            </div>
-
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '28px', width: '480px', maxWidth: '90%' }}>
+            <div style={{ fontSize: '18px', fontWeight: 800, marginBottom: '20px' }}>Register New Farm</div>
             <form onSubmit={handleRegister}>
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Farm Name</label>
-                <input required className="input-v2" placeholder="e.g. North Plot" value={newFarm.name} onChange={e => setNewFarm({...newFarm, name: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
+                <input required className="input-v2" placeholder="e.g. North Plot" value={newFarm.name} onChange={(e) => setNewFarm({ ...newFarm, name: e.target.value })} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
               </div>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Location / Village</label>
-                <input required className="input-v2" placeholder="e.g. Sikar, Rajasthan" value={newFarm.location} onChange={e => setNewFarm({...newFarm, location: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
-              </div>
+
               <div style={{ marginBottom: '16px', display: 'flex', gap: '12px' }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Acres</label>
-                  <input required className="input-v2" placeholder="e.g. 5" value={newFarm.acres} onChange={e => setNewFarm({...newFarm, acres: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Location / Village</label>
+                  <input required className="input-v2" placeholder="e.g. Sikar" value={newFarm.location} onChange={(e) => setNewFarm({ ...newFarm, location: e.target.value })} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
                 </div>
                 <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Acres</label>
+                  <input required type="number" step="0.1" className="input-v2" placeholder="e.g. 5" value={newFarm.acres} onChange={(e) => setNewFarm({ ...newFarm, acres: e.target.value })} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '16px', display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Crop Name</label>
+                  <input required className="input-v2" placeholder="e.g. Wheat" value={newFarm.crop} onChange={(e) => setNewFarm({ ...newFarm, crop: e.target.value })} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Sowing Date</label>
+                  <input required type="date" className="input-v2" value={newFarm.sowingDate} onChange={(e) => setNewFarm({ ...newFarm, sowingDate: e.target.value })} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '24px', display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Soil Type</label>
-                  <select required className="input-v2" value={newFarm.soilType} onChange={e => setNewFarm({...newFarm, soilType: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }}>
+                  <select required className="input-v2" value={newFarm.soilType} onChange={(e) => setNewFarm({ ...newFarm, soilType: e.target.value })} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }}>
                     <option value="Loamy">Loamy</option>
                     <option value="Clay">Clay</option>
                     <option value="Sandy">Sandy</option>
@@ -204,28 +243,34 @@ export default function MyFarm() {
                     <option value="Red">Red Soil</option>
                   </select>
                 </div>
-              </div>
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Current Crop (Optional)</label>
-                <input className="input-v2" placeholder="e.g. Cotton, Soybean, Wheat" value={newFarm.crop} onChange={e => setNewFarm({...newFarm, crop: e.target.value})} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }} />
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: 'var(--muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Irrigation</label>
+                  <select required className="input-v2" value={newFarm.irrigationType} onChange={(e) => setNewFarm({ ...newFarm, irrigationType: e.target.value })} style={{ width: '100%', height: '40px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0 16px', fontSize: '13px', outline: 'none' }}>
+                    <option value="Rainfed">Rainfed</option>
+                    <option value="Canal">Canal</option>
+                    <option value="Tube Well">Tube Well</option>
+                    <option value="Drip">Drip</option>
+                    <option value="Sprinkler">Sprinkler</option>
+                  </select>
+                </div>
               </div>
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <button 
+                <button
                   type="button"
-                  className="btn" 
+                  className="btn"
                   onClick={() => setShowModal(false)}
-                  style={{ flex: 1, height: '48px', fontWeight: 800 }}
+                  style={{ flex: 1, height: '48px', fontWeight: 700, background: '#f1f5f9', border: 'none', borderRadius: '12px' }}
                 >
                   CANCEL
                 </button>
-                <button 
+                <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn btn-green" 
+                  className="btn btn-green"
                   style={{ flex: 1, height: '48px', fontWeight: 900 }}
                 >
-                  {isSubmitting ? 'SECURELY SAVING...' : 'REGISTER FARM'}
+                  {isSubmitting ? 'SAVING...' : 'REGISTER FARM'}
                 </button>
               </div>
             </form>

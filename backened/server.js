@@ -47,7 +47,7 @@ app.use("/api/user",         require("./routes/userPreferences"));
 app.use("/api/diagnosis",    require("./routes/diagnosisRoutes"));
 app.use("/api/prototype",    require("./routes/prototypeRoutes"));
 app.use("/api/yield",        require("./routes/yieldRoutes"));
-
+app.use("/api/fields",       require("./routes/fieldRoutes"));
 // Serve static files (uploads and dist)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
