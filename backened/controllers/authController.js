@@ -132,13 +132,13 @@ exports.register = async (req, res) => {
     } = req.body;
 
     // Check if user exists
-    const userExists = await User.findOne({ 
-      $or: [{ email }, { phone }] 
-    });
+    const query = [{ email }];
+    if (phone) query.push({ phone });
+    const userExists = await User.findOne({ $or: query });
 
     if (userExists) {
       return res.status(400).json({ 
-        error: 'User already exists with this email or phone number' 
+        error: 'User already exists with this email' 
       });
     }
 

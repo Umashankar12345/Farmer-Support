@@ -55,6 +55,9 @@ export const apiRequest = async (endpoint, method = 'GET', data = null) => {
     return result;
   } catch (error) {
     console.error('API Error:', error);
+    if (error.message === 'Failed to fetch' || error.message.includes('NetworkError')) {
+      throw new Error('Unable to connect to the server. Please try again later.');
+    }
     throw error;
   }
 };
