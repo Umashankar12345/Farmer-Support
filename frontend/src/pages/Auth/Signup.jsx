@@ -32,6 +32,7 @@ const Signup = () => {
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: ''
   });
@@ -87,19 +88,20 @@ const Signup = () => {
         {/* Left Content */}
         <div className="auth-hero">
           <h1 className="hero-title">Digital Krishi Officer</h1>
-          <h2 className="hero-subtitle">Smart Farming Platform</h2>
+          <h2 className="hero-subtitle">AI-powered Smart Farming Platform</h2>
           <p className="hero-tagline">Powered by AI & Real-Time Data</p>
 
           <p className="hero-description">
-            AI-powered farming platform for Indian farmers
+            Helping farmers make better decisions using AI, weather intelligence, disease detection and government services.
           </p>
           
           <div className="hero-checklist">
-            <div className="check-item"><span className="check-icon">✓</span> Weather Forecast</div>
-            <div className="check-item"><span className="check-icon">✓</span> Disease Detection</div>
-            <div className="check-item"><span className="check-icon">✓</span> AI Assistant</div>
-            <div className="check-item"><span className="check-icon">✓</span> Mandi Prices</div>
+            <div className="check-item"><span className="check-icon">✓</span> Live Weather Forecast</div>
+            <div className="check-item"><span className="check-icon">✓</span> Crop Disease Detection</div>
+            <div className="check-item"><span className="check-icon">✓</span> AI Farming Assistant</div>
             <div className="check-item"><span className="check-icon">✓</span> Government Schemes</div>
+            <div className="check-item"><span className="check-icon">✓</span> Soil Health Insights</div>
+            <div className="check-item"><span className="check-icon">✓</span> Market Prices</div>
           </div>
 
           <div className="feature-carousel-container">
@@ -161,6 +163,18 @@ const Signup = () => {
                     type="email"
                     placeholder="email@example.com" 
                     value={formData.email} 
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Mobile number</label>
+                  <input 
+                    className="inp" 
+                    name="phone" 
+                    type="tel"
+                    placeholder="9876543210" 
+                    value={formData.phone} 
                     onChange={handleChange}
                   />
                 </div>
