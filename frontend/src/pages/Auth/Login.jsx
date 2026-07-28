@@ -3,7 +3,16 @@ import { useNavigate, Link } from 'react-router-dom';
 import StepProgress from './components/StepProgress';
 import OTPInput from './components/OTPInput';
 import { authAPI } from '../../services/api';
+import illustration from '../../assets/auth-illustration.png';
 import './Auth.css';
+
+const features = [
+  { icon: '🌧', title: 'Live Weather Alerts' },
+  { icon: '📈', title: 'Mandi Prices' },
+  { icon: '🌿', title: 'Disease Detection' },
+  { icon: '🤖', title: 'AI Chat' },
+  { icon: '📱', title: 'Offline SMS Support' }
+];
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,9 +22,19 @@ const Login = () => {
   const [otpError, setOtpError] = useState(false);
   const [timer, setTimer] = useState(120);
   const [resendShow, setResendShow] = useState(false);
+  
+  // Carousel logic
+  const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFeatureIndex((prev) => (prev + 1) % features.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [formData, setFormData] = useState({
-    id: '', // email or mobile
+    id: '', 
     password: '',
     dialCode: '+91',
     phone: '',
@@ -64,7 +83,7 @@ const Login = () => {
       const response = await authAPI.login({ id: formData.id, password: formData.password });
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
-      setStep(99); // Success state
+      setStep(99); 
     } catch (err) {
       setError(err.message || 'Invalid credentials');
     } finally {
@@ -102,7 +121,6 @@ const Login = () => {
     setOtpError(false);
     try {
       const response = await authAPI.verifyOTP({ otp });
-      // The backend now returns a real token even in demo mode
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       setStep(99);
@@ -132,7 +150,6 @@ const Login = () => {
     setLoading(true);
     setError('');
     try {
-      // Call the simulated backend Google login
       const response = await authAPI.googleLogin();
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
@@ -146,155 +163,193 @@ const Login = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
-        {step < 99 && (
-          <>
-            <div className="card-hdr">
-              <div className="hdr-icon-wrap">
-                <span style={{ fontSize: '24px' }}>🌾</span>
-              </div>
-              <div className="hdr-title">Digital Krishi Officer</div>
-              <div className="hdr-sub">Sign in to your dashboard</div>
-            </div>
-            {step > 0 && <StepProgress currentStep={step} totalSteps={3} labels={stepLabels} />}
-          </>
-        )}
+      {/* Top Navbar */}
+      <div className="auth-navbar">
+        <div className="nav-logo">
+          <span className="nav-icon">🌾</span>
+          <span className="nav-brand">KrishiOfficer</span>
+        </div>
+        <div className="nav-links">
+          <span className="nav-item">🌐 English</span>
+          <span className="nav-item">Help</span>
+        </div>
+      </div>
 
-        <div className="card-body">
-          {error && <div style={{ color: 'red', fontSize: '12px', marginBottom: '10px', textAlign: 'center' }}>{error}</div>}
+      <div className="auth-main-container">
+        {/* Left Content */}
+        <div className="auth-hero">
+          <h1 className="hero-title">Digital Krishi Officer</h1>
+          <h2 className="hero-subtitle">Smart Farming Platform</h2>
+          <p className="hero-tagline">Powered by AI & Real-Time Data</p>
 
-          {step === 0 && (
-            <div className="success-wrap animate-fade-in" style={{ textAlign: 'center', padding: '20px' }}>
-               <div className="animate-spin" style={{ width: '40px', height: '40px', border: '3px solid #eee', borderTopColor: '#4285F4', borderRadius: '50%', margin: '0 auto 20px' }}></div>
-               <p style={{ fontSize: '14px', fontWeight: '600', color: '#4285F4' }}>Connecting to Google...</p>
-            </div>
-          )}
+          <p className="hero-description">
+            AI-powered farming platform for Indian farmers
+          </p>
+          
+          <div className="hero-checklist">
+            <div className="check-item"><span className="check-icon">✓</span> Weather Forecast</div>
+            <div className="check-item"><span className="check-icon">✓</span> Disease Detection</div>
+            <div className="check-item"><span className="check-icon">✓</span> AI Assistant</div>
+            <div className="check-item"><span className="check-icon">✓</span> Mandi Prices</div>
+            <div className="check-item"><span className="check-icon">✓</span> Government Schemes</div>
+          </div>
 
-          {step === 1 && (
-            <div className="animate-fade-in">
-              <button className="btn-google" onClick={handleGoogleLogin}>
-                <svg viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-                Continue with Google
-              </button>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '20px 0', color: '#ccc' }}>
-                <div style={{ flex: 1, height: '1px', background: '#eee' }}></div>
-                <div style={{ fontSize: '11px' }}>or sign in with email / mobile</div>
-                <div style={{ flex: 1, height: '1px', background: '#eee' }}></div>
-              </div>
-
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '600' }}>Email or mobile number</label>
-                <input 
-                  className="inp" 
-                  name="id" 
-                  placeholder="farmer@email.com or 9876543210" 
-                  value={formData.id} 
-                  onChange={handleChange}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1.5px solid #eee', marginTop: '5px' }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '600' }}>Password</label>
-                <input 
-                  className="inp" 
-                  name="password" 
-                  type="password"
-                  placeholder="Enter your password" 
-                  value={formData.password} 
-                  onChange={handleChange}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1.5px solid #eee', marginTop: '5px' }}
-                />
-                <div style={{ textAlign: 'right', marginTop: '5px' }}>
-                  <span style={{ fontSize: '12px', color: '#2e7d32', fontWeight: '600', cursor: 'pointer' }}>Forgot password?</span>
+          <div className="feature-carousel-container">
+            <div className="feature-carousel-inner" style={{ transform: `translateY(-${currentFeatureIndex * 100}%)` }}>
+              {features.map((feature, idx) => (
+                <div key={idx} className="feature-slide">
+                  <span className="feature-icon-small">{feature.icon}</span>
+                  <span className="feature-title-small">{feature.title}</span>
                 </div>
-              </div>
-
-              <button className="btn-auth" onClick={handlePasswordLogin} disabled={loading}>
-                {loading ? <span className="animate-spin" style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%' }}></span> : 'Sign in →'}
-              </button>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '20px 0', color: '#ccc' }}>
-                <div style={{ flex: 1, height: '1px', background: '#eee' }}></div>
-                <div style={{ fontSize: '11px' }}>or sign in with OTP</div>
-                <div style={{ flex: 1, height: '1px', background: '#eee' }}></div>
-              </div>
-
-              <button className="btn-auth" style={{ background: '#fff', border: '1.5px solid #2e7d32', color: '#2e7d32' }} onClick={handleGoToOTPFlow}>
-                Sign in with mobile OTP
-              </button>
-
-              <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '12px' }}>
-                New here? <Link to="/signup" style={{ color: '#2e7d32', fontWeight: '700' }}>Create free account</Link>
-              </div>
+              ))}
             </div>
-          )}
+          </div>
 
-          {step === 2 && (
-            <div className="animate-fade-in">
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '600' }}>Mobile number</label>
-                <div style={{ display: 'flex', gap: '8px', marginTop: '5px' }}>
-                  <select 
-                    style={{ width: '90px', padding: '10px', borderRadius: '8px', border: '1.5px solid #eee' }}
-                    value={formData.dialCode}
-                    onChange={(e) => setFormData({ ...formData, dialCode: e.target.value })}
-                  >
-                    <option value="+91">🇮🇳 +91</option>
-                    <option value="+1">🇺🇸 +1</option>
-                    <option value="+44">🇬🇧 +44</option>
-                  </select>
-                  <input 
-                    className="inp" 
-                    name="phone" 
-                    placeholder="9876543210" 
-                    value={formData.phone} 
-                    onChange={handleChange}
-                    style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1.5px solid #eee' }}
-                  />
+          <div className="hero-illustration">
+            <img src={illustration} alt="Smart Farming" />
+          </div>
+        </div>
+
+        {/* Right Content: Login Card */}
+        <div className="auth-form-wrapper">
+          <div className="auth-card">
+            {step < 99 && (
+              <>
+                <div className="card-hdr">
+                  <div className="hdr-title-small">Welcome Back</div>
+                  <div className="hdr-sub">Sign in to your dashboard</div>
                 </div>
-              </div>
+                {step > 0 && <StepProgress currentStep={step} totalSteps={3} labels={stepLabels} />}
+              </>
+            )}
 
-              <button className="btn-auth" onClick={handleSendOTP} disabled={loading}>
-                {loading ? <span className="animate-spin" style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%' }}></span> : 'Send OTP →'}
-              </button>
-              <button 
-                className="btn-auth" 
-                style={{ background: 'none', color: '#999', marginTop: '10px', fontSize: '12px' }} 
-                onClick={() => setStep(1)}>← Use password instead</button>
+            <div className="card-body">
+              {error && <div className="error-msg">{error}</div>}
+
+              {step === 0 && (
+                <div className="success-wrap animate-fade-in" style={{ textAlign: 'center', padding: '20px' }}>
+                  <div className="animate-spin loader-spin"></div>
+                  <p className="loader-text">Connecting to Google...</p>
+                </div>
+              )}
+
+              {step === 1 && (
+                <div className="animate-fade-in">
+                  <div className="input-group">
+                    <label>Email or mobile number</label>
+                    <input 
+                      className="inp" 
+                      name="id" 
+                      placeholder="farmer@email.com or 9876543210" 
+                      value={formData.id} 
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="input-group">
+                    <label>Password</label>
+                    <input 
+                      className="inp" 
+                      name="password" 
+                      type="password"
+                      placeholder="Enter your password" 
+                      value={formData.password} 
+                      onChange={handleChange}
+                    />
+                    <div className="forgot-password">
+                      <span>Forgot password?</span>
+                    </div>
+                  </div>
+
+                  <button className="btn-auth" onClick={handlePasswordLogin} disabled={loading}>
+                    {loading ? <span className="animate-spin loader-white"></span> : 'Sign in →'}
+                  </button>
+
+                  <div className="divider">
+                    <div className="divider-line"></div>
+                    <div className="divider-text">or sign in with OTP</div>
+                    <div className="divider-line"></div>
+                  </div>
+
+                  <button className="btn-outline" onClick={handleGoToOTPFlow}>
+                    Sign in with mobile OTP
+                  </button>
+                  
+                  <div className="divider">
+                    <div className="divider-line"></div>
+                    <div className="divider-text">or continue with</div>
+                    <div className="divider-line"></div>
+                  </div>
+
+                  <button className="btn-google" onClick={handleGoogleLogin}>
+                    <svg viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+                    Google
+                  </button>
+
+                  <div className="signup-link">
+                    New here? <Link to="/signup">Create free account</Link>
+                  </div>
+                </div>
+              )}
+
+              {step === 2 && (
+                <div className="animate-fade-in">
+                  <div className="input-group">
+                    <label>Mobile number</label>
+                    <div className="phone-input">
+                      <select 
+                        value={formData.dialCode}
+                        onChange={(e) => setFormData({ ...formData, dialCode: e.target.value })}
+                      >
+                        <option value="+91">🇮🇳 +91</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                      </select>
+                      <input 
+                        className="inp" 
+                        name="phone" 
+                        placeholder="9876543210" 
+                        value={formData.phone} 
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <button className="btn-auth" onClick={handleSendOTP} disabled={loading}>
+                    {loading ? <span className="animate-spin loader-white"></span> : 'Send OTP →'}
+                  </button>
+                  <button className="btn-text" onClick={() => setStep(1)}>← Use password instead</button>
+                </div>
+              )}
+
+              {step === 3 && (
+                <div className="animate-fade-in">
+                  <div className="info-box">
+                    OTP sent to <strong>{formData.dialCode} {formData.phone}</strong>
+                  </div>
+                  <div className="otp-label">ENTER 6-DIGIT OTP</div>
+                  <OTPInput onComplete={handleVerifyOTP} error={otpError} />
+                  
+                  <div className="otp-timer-row">
+                    <span>Expires in: <span className="timer-text">{formatTime(timer)}</span></span>
+                    {resendShow && <button className="btn-resend" onClick={handleResendOTP}>Resend OTP</button>}
+                  </div>
+
+                  <button className="btn-auth disabled-look" disabled={loading}>Verify & sign in →</button>
+                  <button className="btn-text" onClick={() => setStep(2)}>← Change number</button>
+                </div>
+              )}
+
+              {step === 99 && (
+                <div className="success-wrap animate-fade-in">
+                  <div className="success-icon">✓</div>
+                  <h2 className="success-title">Signed in!</h2>
+                  <p className="success-sub">Welcome back to KrishiOfficer</p>
+                  <button className="btn-primary btn-auth" onClick={() => navigate('/')}>Open Dashboard →</button>
+                </div>
+              )}
             </div>
-          )}
-
-          {step === 3 && (
-            <div className="animate-fade-in">
-              <div className="info-box" style={{ background: '#e8f5e9', padding: '12px', borderRadius: '10px', fontSize: '12px', color: '#1b5e20', marginBottom: '20px' }}>
-                OTP sent to <strong>{formData.dialCode} {formData.phone}</strong>
-              </div>
-              <div style={{ fontSize: '11px', fontWeight: '700', color: '#666', marginBottom: '10px' }}>ENTER 6-DIGIT OTP</div>
-              <OTPInput onComplete={handleVerifyOTP} error={otpError} />
-              
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', margin: '15px 0' }}>
-                <span>Expires in: <span style={{ color: '#e53935', fontWeight: '700' }}>{formatTime(timer)}</span></span>
-                {resendShow && <button onClick={handleResendOTP} style={{ background: 'none', border: 'none', color: '#2e7d32', fontWeight: '700', cursor: 'pointer' }}>Resend OTP</button>}
-              </div>
-
-              <button className="btn-auth" disabled={loading} style={{ opacity: 0.5 }}>Verify & sign in →</button>
-              <button 
-                className="btn-auth" 
-                style={{ background: 'none', color: '#999', marginTop: '10px', fontSize: '12px' }} 
-                onClick={() => setStep(2)}>← Change number</button>
-            </div>
-          )}
-
-          {step === 99 && (
-            <div className="success-wrap animate-fade-in" style={{ textAlign: 'center' }}>
-              <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #2e7d32', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '30px', color: '#2e7d32' }}>✓</div>
-              <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '10px' }}>Signed in!</h2>
-              <p style={{ fontSize: '13px', color: '#666', marginBottom: '20px' }}>Welcome back to Digital Krishi Officer</p>
-              <button className="btn-primary btn-auth" onClick={() => navigate('/')}>Open Dashboard →</button>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

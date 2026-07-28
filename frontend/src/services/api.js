@@ -89,7 +89,7 @@ export const visitorAPI = {
 };
 
 export const weatherAPI = {
-  getForecast: (lat, lon) => apiRequest(`/weather/forecast?lat=${lat}&lon=${lon}`),
+  getForecast: (cropStage) => apiRequest(`/weather${cropStage ? `?cropStage=${cropStage}` : ''}`),
 };
 
 export const pestAPI = {
