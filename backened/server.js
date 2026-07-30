@@ -54,6 +54,7 @@ app.use("/api/portfolio", require("./routes/portfolioRoutes"));
 app.use("/api/market-prices", require("./routes/marketPricesRoutes"));
 app.use("/api/financials", require("./routes/financialRoutes"));
 app.use("/api/satellite", require("./routes/satelliteRoutes"));
+app.use("/api/journey", require("./routes/journeyRoutes"));
 // Serve static files (uploads and dist)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
