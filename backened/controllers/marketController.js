@@ -1,5 +1,6 @@
 // backend/controllers/marketController.js
 const axios = require("axios");
+const { getMandiPrices } = require("../mandiPipeline");
 
 // Fallback Mandi Dataset (Agmarknet / eNAM standard format)
 const FALLBACK_MANDI_DATA = [
@@ -49,14 +50,17 @@ exports.fetchMandiPricesInternal = async (search = "", state = "") => {
 
 exports.getLiveMandiPrices = async (req, res) => {
   try {
-    const { search = "", state = "" } = req.query;
-    const records = await exports.fetchMandiPricesInternal(search, state);
+    const { state = "Rajasthan" } = req.query;
+    
+    // Call the new pipeline engine which handles caching, retries, and telemetry
+    const pipelineResult = await getMandiPrices(state);
 
     return res.status(200).json({
       success: true,
-      source: process.env.DATA_GOV_API_KEY ? "Agmarknet Live API" : "Govt Agmarknet Data Engine",
-      totalCount: records.length,
-      records
+      source: pipelineResult.telemetry.source,
+      telemetry: pipelineResult.telemetry,
+      totalCount: pipelineResult.data.length,
+      records: pipelineResult.data
     });
   } catch (err) {
     console.error("[marketController] Error:", err.message);
