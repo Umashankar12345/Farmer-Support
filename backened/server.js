@@ -49,6 +49,7 @@ app.use("/api/prototype",    require("./routes/prototypeRoutes"));
 app.use("/api/yield",        require("./routes/yieldRoutes"));
 app.use("/api/fields",       require("./routes/fieldRoutes"));
 app.use("/api/crop-recommend", require("./routes/cropRecommendRoutes"));
+app.use("/api", require("./routes/farmerQueryRoutes"));
 // Serve static files (uploads and dist)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
