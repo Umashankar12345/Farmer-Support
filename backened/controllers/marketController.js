@@ -15,42 +15,46 @@ const FALLBACK_MANDI_DATA = [
   { commodity: "Coffee", variety: "Arabica", state: "Karnataka", district: "Chikkamagaluru", market: "Chikkamagaluru", modalPrice: 9500, minPrice: 9200, maxPrice: 9800, change: "+0.5%", trend: "up", date: "2026-07-30" }
 ];
 
-exports.getLiveMandiPrices = async (req, res) => {
-  try {
-    const { search = "", state = "" } = req.query;
+exports.fetchMandiPricesInternal = async (search = "", state = "") => {
+  const API_KEY = process.env.DATA_GOV_API_KEY;
+  const RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070";
 
-    // Optional: Real Data.gov.in Agmarknet API endpoint call
-    const API_KEY = process.env.DATA_GOV_API_KEY;
-    const RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070"; // Agmarknet dataset ID
-
-    if (API_KEY) {
+  if (API_KEY) {
+    try {
       const url = `https://api.data.gov.in/resource/${RESOURCE_ID}?api-key=${API_KEY}&format=json&limit=50`;
       const response = await axios.get(url);
       if (response.data && response.data.records) {
-        return res.json({ success: true, source: "Agmarknet Live API", records: response.data.records });
+        return response.data.records;
       }
+    } catch (err) {
+      console.error("[marketController] API Fetch Error:", err.message);
     }
+  }
 
-    // Fallback Filtered Query Processing
-    let records = [...FALLBACK_MANDI_DATA];
+  let records = [...FALLBACK_MANDI_DATA];
+  if (search) {
+    const q = search.toLowerCase();
+    records = records.filter(
+      (r) =>
+        r.commodity.toLowerCase().includes(q) ||
+        r.market.toLowerCase().includes(q) ||
+        r.state.toLowerCase().includes(q)
+    );
+  }
+  if (state) {
+    records = records.filter((r) => r.state.toLowerCase() === state.toLowerCase());
+  }
+  return records;
+};
 
-    if (search) {
-      const q = search.toLowerCase();
-      records = records.filter(
-        (r) =>
-          r.commodity.toLowerCase().includes(q) ||
-          r.market.toLowerCase().includes(q) ||
-          r.state.toLowerCase().includes(q)
-      );
-    }
-
-    if (state) {
-      records = records.filter((r) => r.state.toLowerCase() === state.toLowerCase());
-    }
+exports.getLiveMandiPrices = async (req, res) => {
+  try {
+    const { search = "", state = "" } = req.query;
+    const records = await exports.fetchMandiPricesInternal(search, state);
 
     return res.status(200).json({
       success: true,
-      source: "Govt Agmarknet Data Engine",
+      source: process.env.DATA_GOV_API_KEY ? "Agmarknet Live API" : "Govt Agmarknet Data Engine",
       totalCount: records.length,
       records
     });

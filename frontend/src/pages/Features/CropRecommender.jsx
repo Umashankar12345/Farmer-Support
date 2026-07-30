@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
 import './Features.css';
 
+// Real Agronomic Seed Data Presets
+const SOIL_PRESETS = {
+  rice: { name: "🌾 High Rain / Clay (Rice)", N: 90, P: 42, K: 43, temperature: 24, humidity: 82, ph: 6.5, rainfall: 236 },
+  cotton: { name: "☁️ High Nitrogen (Cotton)", N: 120, P: 46, K: 19, temperature: 25, humidity: 80, ph: 7.2, rainfall: 80 },
+  apple: { name: "🍎 High Potassium / Cold (Apple)", N: 20, P: 134, K: 199, temperature: 21, humidity: 90, ph: 5.9, rainfall: 110 },
+  chickpea: { name: "🌱 Low Nitrogen / Dry (Chickpea)", N: 35, P: 68, K: 80, temperature: 19, humidity: 17, ph: 7.3, rainfall: 80 }
+};
+
 const CropRecommender = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const [formData, setFormData] = useState({
-    N: '90',
-    P: '42',
-    K: '43',
-    ph: '6.8',
-    temperature: '25',
-    humidity: '70',
-    rainfall: '580'
-  });
+  const [formData, setFormData] = useState(SOIL_PRESETS.rice);
+
+  // Apply chosen preset to form state instantly
+  const handleApplyPreset = (presetKey) => {
+    setFormData(SOIL_PRESETS[presetKey]);
+  };
 
   const runAnalysis = async () => {
     setLoading(true);
@@ -60,6 +65,21 @@ const CropRecommender = () => {
           <div className="page-title">🌱 AI Crop Recommendation Engine</div>
           <div className="page-sub">Combines soil data + weather forecast + live mandi prices → best crop decision</div>
         </div>
+      </div>
+
+      {/* Preset Seed Data Quick Select Buttons */}
+      <div className="mb-4 flex flex-wrap items-center gap-2" style={{ marginTop: '20px' }}>
+        <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Quick Test Seeds:</span>
+        {Object.keys(SOIL_PRESETS).map((key) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => handleApplyPreset(key)}
+            className="bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs px-3 py-1.5 rounded-lg font-medium transition shadow-sm"
+          >
+            {SOIL_PRESETS[key].name}
+          </button>
+        ))}
       </div>
 
       <div className="rec-form">

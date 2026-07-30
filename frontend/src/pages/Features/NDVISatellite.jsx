@@ -1,78 +1,178 @@
-import React from 'react';
-import './Features.css';
+import React, { useState, useEffect } from "react";
 
-const NDVISatellite = () => {
+export default function NDVISatellite({ farmId = 'defaultUser123' }) {
+  const [loading, setLoading] = useState(true);
+  const [ndviData, setNdviData] = useState(null);
+
+  useEffect(() => {
+    // Fetch live Sentinel-2 / Agromonitoring satellite payload via Node.js proxy
+    const fetchSatelliteData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`http://localhost:5000/api/satellite/ndvi/${farmId}`);
+        const data = await res.json();
+        setNdviData(data);
+      } catch (err) {
+        console.error("Satellite fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSatelliteData();
+  }, [farmId]);
+
+  if (loading) {
+    return (
+      <div className="p-12 text-center text-slate-500 font-medium">
+        🛰️ Fetching Sentinel-2 satellite telemetry & processing NDVI matrix...
+      </div>
+    );
+  }
+
+  if (!ndviData || !ndviData.activeField) {
+    return (
+      <div className="p-12 text-center text-red-500 font-medium">
+        ⚠️ Failed to load NDVI data. Check backend connection.
+      </div>
+    );
+  }
+
+  const { activeField, allFields, advisories } = ndviData;
+
   return (
-    <div className="features-root f-page">
-      <div className="page-hdr">
+    <div className="p-6 bg-[#f1f5f3] min-h-screen font-sans text-gray-800">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <div className="page-title">🛰 NDVI Satellite Crop Health Map</div>
-          <div className="page-sub">Field-level vegetation index · Green = Healthy · Red = Stressed</div>
+          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <span>🛰️</span> NDVI Satellite Crop Health Map
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Field-level vegetation index • Green = Healthy | Red = Stressed
+          </p>
         </div>
-        <button className="f-btn f-btn-dark f-btn-sm">📡 Refresh Satellite</button>
+        <button className="bg-[#0b1320] hover:bg-[#1e293b] text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm flex items-center gap-1.5">
+          🔄 Refresh Satellite
+        </button>
       </div>
 
-      <div className="g21">
-        <div className="f-card">
-          <div className="ct">North Field — Wheat · Zone A1 <span className="f-badge bg">NDVI 0.78</span></div>
-          <div className="ndvi-wrap">
-            <svg viewBox="0 0 400 220" width="100%" height="100%" style={{position:'absolute', inset:0}}>
-              <defs>
-                <radialGradient id="stress1" cx="70%" cy="30%" r="25%"><stop offset="0%" stopColor="#ef4444" stopOpacity=".8"/><stop offset="100%" stopColor="#16a34a" stopOpacity="0"/></radialGradient>
-                <radialGradient id="stress2" cx="20%" cy="75%" r="15%"><stop offset="0%" stopColor="#f59e0b" stopOpacity=".7"/><stop offset="100%" stopColor="#16a34a" stopOpacity="0"/></radialGradient>
-              </defs>
-              <rect width="400" height="220" fill="#052e16"/>
-              <rect x="10" y="10" width="380" height="200" rx="8" fill="#064e1e"/>
-              
-              {/* NDVI grid cells - Simplified SVG generation */}
-              {[
-                {x:15, y:15, w:55, h:40, f:'#16a34a'}, {x:75, y:15, w:55, h:40, f:'#22c55e'}, {x:135, y:15, w:55, h:40, f:'#15803d'}, {x:195, y:15, w:55, h:40, f:'#ef4444'}, {x:255, y:15, w:55, h:40, f:'#dc2626'}, {x:315, y:15, w:70, h:40, f:'#f59e0b'},
-                {x:15, y:62, w:55, h:40, f:'#22c55e'}, {x:75, y:62, w:55, h:40, f:'#16a34a'}, {x:135, y:62, w:55, h:40, f:'#15803d'}, {x:195, y:62, w:55, h:40, f:'#ca8a04'}, {x:255, y:62, w:55, h:40, f:'#16a34a'}, {x:315, y:62, w:70, h:40, f:'#16a34a'},
-                {x:15, y:109, w:55, h:40, f:'#15803d'}, {x:75, y:109, w:55, h:40, f:'#16a34a'}, {x:135, y:109, w:55, h:40, f:'#22c55e'}, {x:195, y:109, w:55, h:40, f:'#16a34a'}, {x:255, y:109, w:55, h:40, f:'#15803d'}, {x:315, y:109, w:70, h:40, f:'#22c55e'},
-                {x:15, y:156, w:120, h:40, f:'#16a34a'}, {x:140, y:156, w:120, h:40, f:'#22c55e'}, {x:265, y:156, w:120, h:40, f:'#15803d'}
-              ].map((r, i) => <rect key={i} x={r.x} y={r.y} width={r.w} height={r.h} rx="3" fill={r.f} opacity=".85" />)}
-
-              <rect x="195" y="15" width="130" height="87" rx="4" fill="url(#stress1)"/>
-              <rect x="15" y="62" width="70" height="134" rx="4" fill="url(#stress2)"/>
-
-              <text x="255" y="38" className="ndvi-field-label" fill="#fca5a5" fontSize="10">⚠ STRESS</text>
-              <text x="18" y="130" className="ndvi-field-label" fill="#fde68a" fontSize="10">⚠ DRY</text>
-              <text x="140" y="85" className="ndvi-field-label" fill="#86efac" fontSize="11">✓ HEALTHY</text>
-            </svg>
-            <div className="ndvi-score">NDVI: 0.78 · 2.4 Ha</div>
-            <div className="stress-alert">⚠ Stress zone detected in NE corner — 0.4 Ha. Possible water deficit. Check irrigation.</div>
-          </div>
-          <div style={{marginTop:'10px'}}>
-            <div className="ct" style={{marginBottom:'6px'}}>Vegetation Index Legend</div>
-            <div className="ndvi-legend">
-              {['#dc2626', '#ef4444', '#f59e0b', '#ca8a04', '#84cc16', '#22c55e', '#16a34a', '#14532d'].map((c, i) => (
-                <div key={i} className="ndvi-leg-seg" style={{background: c}}></div>
-              ))}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Grid: Heatmap (2 Cols) */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="bg-[#0c1911] border border-emerald-950 p-5 rounded-2xl shadow-sm text-white relative">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                {activeField.name} — {activeField.crop} • {activeField.zone}
+              </span>
+              <span className="bg-emerald-900/80 text-emerald-300 text-xs font-bold px-2.5 py-1 rounded-md border border-emerald-700/50">
+                NDVI {activeField.score}
+              </span>
             </div>
-            <div className="ndvi-leg-labels"><span>0.0 (Bare soil)</span><span>0.3</span><span>0.5</span><span>0.8</span><span>1.0 (Dense)</span></div>
+
+            {/* Simulated Satellite Spatial Heatmap Grid */}
+            <div className="relative bg-[#050c07] p-4 rounded-xl border border-emerald-900/40 grid grid-cols-6 gap-2 my-2 min-h-[220px]">
+              {activeField.gridCells.map((cell, idx) => {
+                let bgColor = "bg-emerald-600";
+                if (cell.status === "stress") bgColor = "bg-red-600 animate-pulse";
+                if (cell.status === "warning") bgColor = "bg-amber-500";
+                if (cell.status === "dry") bgColor = "bg-emerald-700";
+
+                return (
+                  <div
+                    key={idx}
+                    className={`${bgColor} rounded-md h-12 flex items-center justify-center text-[10px] font-bold text-white shadow-inner cursor-pointer hover:opacity-90 transition`}
+                  >
+                    {cell.label && <span>{cell.label}</span>}
+                  </div>
+                );
+              })}
+              <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-1 rounded border border-gray-700 font-mono">
+                NDVI: {activeField.score} - {activeField.areaHa} Ha
+              </div>
+            </div>
+
+            {/* Active Field Alert */}
+            {activeField.alert && (
+              <div className="bg-red-600/90 text-white text-xs font-semibold p-3 rounded-xl mt-3 flex items-center gap-2">
+                <span>⚠️ {activeField.alert}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Vegetation Index Scale Bar */}
+          <div className="bg-white/70 border border-gray-200/80 p-4 rounded-2xl shadow-sm">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2">
+              VEGETATION INDEX LEGEND
+            </span>
+            <div className="h-3 rounded-full bg-gradient-to-r from-red-500 via-amber-400 via-emerald-400 to-emerald-900 w-full mb-1"></div>
+            <div className="flex justify-between text-[10px] text-gray-500 font-medium">
+              <span>0.0 (Bare soil)</span>
+              <span>0.2</span>
+              <span>0.5</span>
+              <span>0.8</span>
+              <span>1.0 (Dense)</span>
+            </div>
           </div>
         </div>
 
-        <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
-          <div className="f-card">
-            <div className="ct">All Fields NDVI</div>
-            <div className="hbar"><div className="hbar-n">North Field<span className="hbar-sub">Wheat · A1</span></div><div className="hbar-t"><div className="hbar-f" style={{width:'78%', background:'#16a34a'}}></div></div><div className="hbar-v" style={{color:'#16a34a'}}>0.78</div></div>
-            <div className="hbar"><div className="hbar-n">South Orchard<span className="hbar-sub">Mustard · B2</span></div><div className="hbar-t"><div className="hbar-f" style={{width:'68%', background:'#ca8a04'}}></div></div><div className="hbar-v" style={{color:'#ca8a04'}}>0.68</div></div>
-            <div className="hbar"><div className="hbar-n">Canal Side<span className="hbar-sub">Millet · C1</span></div><div className="hbar-t"><div className="hbar-f" style={{width:'85%', background:'#16a34a'}}></div></div><div className="hbar-v" style={{color:'#16a34a'}}>0.85</div></div>
-            <div className="hbar"><div className="hbar-n">Cotton Plot<span className="hbar-sub">Cotton · D</span></div><div className="hbar-t"><div className="hbar-f" style={{width:'42%', background:'#dc2626'}}></div></div><div className="hbar-v" style={{color:'#dc2626'}}>0.42</div></div>
+        {/* Right Section: Multi-field bars & AI Advisories (1 Col) */}
+        <div className="space-y-6">
+          {/* All Fields list */}
+          <div className="bg-white/70 border border-gray-200/80 p-5 rounded-2xl shadow-sm">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
+              ALL FIELDS NDVI
+            </h2>
+            <div className="space-y-3">
+              {allFields.map((field, idx) => {
+                let barColor = "bg-emerald-600";
+                let textColor = "text-emerald-700";
+                if (field.ndvi < 0.5) { barColor = "bg-red-500"; textColor = "text-red-600"; }
+                else if (field.ndvi < 0.7) { barColor = "bg-amber-500"; textColor = "text-amber-600"; }
+
+                return (
+                  <div key={idx} className="flex justify-between items-center text-xs">
+                    <div className="w-1/3">
+                      <span className="font-bold text-slate-800 block truncate">{field.name}</span>
+                      <span className="text-[10px] text-gray-400">{field.crop}</span>
+                    </div>
+                    <div className="w-1/2 bg-gray-200 rounded-full h-2 overflow-hidden mx-2">
+                      <div className={`h-2 rounded-full ${barColor}`} style={{ width: `${field.ndvi * 100}%` }}></div>
+                    </div>
+                    <span className={`font-mono font-bold w-10 text-right ${textColor}`}>
+                      {field.ndvi.toFixed(2)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <div className="f-card">
-            <div className="ct">Satellite Advisory</div>
-            <div style={{display:'flex', flexDirection:'column', gap:'7px'}}>
-              <div style={{background:'#fef2f2', border:'1px solid #fca5a5', borderRadius:'9px', padding:'9px 11px'}}><div style={{fontSize:'11px', fontWeight:'700', color:'#991b1b'}}>🔴 Cotton Plot · NDVI 0.42</div><div style={{fontSize:'10px', color:'#b91c1c', marginTop:'3px'}}>Severe stress. Possible pest damage or drought. Immediate inspection needed.</div></div>
-              <div style={{background:'#fffbeb', border:'1px solid #fde68a', borderRadius:'9px', padding:'9px 11px'}}><div style={{fontSize:'11px', fontWeight:'700', color:'#92400e'}}>🟡 South Orchard · NDVI 0.68</div><div style={{fontSize:'10px', color:'#b45309', marginTop:'3px'}}>Moderate. Consider irrigation boost and zinc application.</div></div>
-              <div style={{background:'#f0fdf4', border:'1px solid #86efac', borderRadius:'9px', padding:'9px 11px'}}><div style={{fontSize:'11px', fontWeight:'700', color:'#166534'}}>🟢 Canal Side · NDVI 0.85</div><div style={{fontSize:'10px', color:'#15803d', marginTop:'3px'}}>Excellent vegetation density. No action needed.</div></div>
+
+          {/* Satellite Advisories */}
+          <div className="bg-white/70 border border-gray-200/80 p-5 rounded-2xl shadow-sm">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
+              SATELLITE ADVISORY
+            </h2>
+            <div className="space-y-3">
+              {advisories.map((item, idx) => {
+                let badgeClass = "bg-emerald-50 border-emerald-200 text-emerald-900";
+                let dot = "🟢";
+                if (item.level === "severe") { badgeClass = "bg-red-50 border-red-200 text-red-900"; dot = "🔴"; }
+                if (item.level === "moderate") { badgeClass = "bg-amber-50 border-amber-200 text-amber-900"; dot = "🟡"; }
+
+                return (
+                  <div key={idx} className={`p-3 rounded-xl border text-xs ${badgeClass}`}>
+                    <p className="font-bold flex items-center gap-1.5 mb-1">
+                      <span>{dot}</span> {item.fieldName} • NDVI {item.ndvi}
+                    </p>
+                    <p className="text-[11px] opacity-90 leading-relaxed">{item.message}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default NDVISatellite;
+}

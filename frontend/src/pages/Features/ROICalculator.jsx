@@ -1,86 +1,176 @@
-import React, { useState } from 'react';
-import './Features.css';
+import React, { useState, useEffect } from "react";
 
-const ROICalculator = () => {
-  const [data, setData] = useState({
-    revenue: '₹12.5L',
-    cost: '₹4.2L',
-    profit: '₹8.3L',
-    revChange: '+14.2%',
-    costChange: '+3.1%'
-  });
+export default function ROICalculator({ farmId = 'defaultUser123' }) {
+  const [loading, setLoading] = useState(true);
+  const [financialData, setFinancialData] = useState(null);
+  const [error, setError] = useState(null);
 
-  const recalc = () => {
-    const revs = ['₹11.8L', '₹12.5L', '₹13.2L'];
-    const costs = ['₹3.9L', '₹4.2L', '₹4.5L'];
-    const profits = ['₹7.9L', '₹8.3L', '₹8.7L'];
-    const r = Math.floor(Math.random() * 3);
-    setData({
-      ...data,
-      revenue: revs[r],
-      cost: costs[r],
-      profit: profits[r]
-    });
-  };
+  // Fetch real financial metrics calculated on the backend
+  useEffect(() => {
+    const fetchFinancials = async () => {
+      try {
+        setLoading(true);
+        // Calls Node.js backend which calculates live ROI using Agmarknet API prices & soil heuristics
+        const response = await fetch(`http://localhost:5000/api/financials/roi/${farmId}`);
+        if (!response.ok) throw new Error("Failed to load real-time financial metrics");
+        
+        const data = await response.json();
+        setFinancialData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFinancials();
+  }, [farmId]);
+
+  if (loading) {
+    return (
+      <div className="p-12 text-center text-slate-500 font-medium">
+        ⏳ Calculating real-time financial breakdown from live Mandi prices...
+      </div>
+    );
+  }
+
+  if (error || !financialData) {
+    return (
+      <div className="p-6 bg-red-50 text-red-700 rounded-xl border border-red-200 m-6">
+        ⚠️ Unable to fetch live financial data. Please check backend connection or API proxy.
+      </div>
+    );
+  }
+
+  const { kpis, cropBreakdown, operationalCosts, breakEven, yoyComparison } = financialData;
 
   return (
-    <div className="features-root f-page">
-      <div className="page-hdr">
+    <div className="p-6 bg-[#f1f5f3] min-h-screen font-sans text-gray-800">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <div className="page-title">📊 Income & ROI Calculator</div>
-          <div className="page-sub">Real financial breakdown — cost of inputs, net profit, break-even point</div>
+          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <span>📊</span> Income & ROI Calculator
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Real financial breakdown computed dynamically from active farm logs and market APIs.
+          </p>
         </div>
-        <button className="f-btn f-btn-g f-btn-sm" onClick={recalc}>↻ Recalculate</button>
+        <button 
+          onClick={() => window.location.reload()}
+          className="bg-[#064e3b] hover:bg-[#04382a] text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm"
+        >
+          🔄 Refresh Market Rates
+        </button>
       </div>
 
-      <div className="roi-grid">
-        <div className="roi-card"><div className="roi-val" style={{color:'var(--g1)'}}>{data.revenue}</div><div className="roi-lbl">Total Revenue</div><div className="roi-change" style={{color:'#16a34a'}}>▲ {data.revChange} vs last yr</div></div>
-        <div className="roi-card"><div className="roi-val" style={{color:'var(--red)'}}>{data.cost}</div><div className="roi-lbl">Total Input Cost</div><div className="roi-change" style={{color:'#dc2626'}}>▲ {data.costChange} inflation</div></div>
-        <div className="roi-card"><div className="roi-val" style={{color:'var(--g2)'}}>{data.profit}</div><div className="roi-lbl">Net Profit</div><div className="roi-change" style={{color:'#16a34a'}}>ROI: 197%</div></div>
-      </div>
-
-      <div className="g21">
-        <div className="f-card">
-          <div className="ct">Profit & Loss Breakdown <span className="f-badge bg">Per Crop</span></div>
-          <div className="roi-breakdown">
-            <div className="roi-row income"><div className="roi-row-lbl">🌻 Mustard Revenue (4.2 Ha)</div><div className="roi-row-val">+₹5,80,000</div></div>
-            <div className="roi-row income"><div className="roi-row-lbl">🌾 Wheat Revenue (2.8 Ha)</div><div className="roi-row-val">+₹4,20,000</div></div>
-            <div className="roi-row income"><div className="roi-row-lbl">🌿 Millet Revenue (1.5 Ha)</div><div className="roi-row-val">+₹2,50,000</div></div>
-            <div style={{height:'1px', background:'var(--border)', margin:'6px 0'}}></div>
-            <div className="roi-row cost"><div className="roi-row-lbl">🌱 Seeds & Sowing</div><div className="roi-row-val">−₹65,000</div></div>
-            <div className="roi-row cost"><div className="roi-row-lbl">🧪 Fertilizer & Pesticide</div><div className="roi-row-val">−₹1,10,000</div></div>
-            <div className="roi-row cost"><div className="roi-row-lbl">👷 Labour (Seasonal)</div><div className="roi-row-val">−₹1,80,000</div></div>
-            <div className="roi-row cost"><div className="roi-row-lbl">🚜 Equipment & Fuel</div><div className="roi-row-val">−₹65,000</div></div>
-            <div className="roi-row cost"><div className="roi-row-lbl">💧 Irrigation Cost</div><div className="roi-row-val">−₹80,000</div></div>
-            <div style={{height:'1px', background:'var(--border)', margin:'6px 0'}}></div>
-            <div className="roi-row profit"><div className="roi-row-lbl">💰 NET PROFIT (After all costs)</div><div className="roi-row-val">{data.profit}</div></div>
-          </div>
+      {/* KPI Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-emerald-50/60 border border-emerald-100 p-4 rounded-xl text-center shadow-sm">
+          <span className="text-2xl font-extrabold text-emerald-800">
+            ₹{kpis.totalRevenue.toLocaleString('en-IN')}
+          </span>
+          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mt-1">TOTAL REVENUE</p>
+          <span className="inline-block text-[11px] font-medium text-emerald-600 mt-1">
+            {kpis.revenueChangePercent >= 0 ? '▲ +' : '▼ '}{kpis.revenueChangePercent}% vs last yr
+          </span>
         </div>
 
-        <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
-          <div className="f-card">
-            <div className="ct">Break-Even Analysis</div>
-            <div style={{textAlign:'center', padding:'10px 0'}}>
-              <div style={{fontSize:'28px', fontWeight:'800', color:'var(--g1)'}}>₹1,42,000</div>
-              <div style={{fontSize:'11px', color:'var(--muted)', marginTop:'3px'}}>Monthly break-even point</div>
-              <div style={{background:'var(--g5)', borderRadius:'10px', padding:'10px', marginTop:'10px', fontSize:'11px', color:'var(--muted)', textAlign:'left'}}>
-                <div style={{marginBottom:'4px'}}>📅 <strong>Months to break-even: 3.2</strong></div>
-                <div>Based on current input costs and market prices, you cover all costs by March 2025.</div>
+        <div className="bg-emerald-50/60 border border-emerald-100 p-4 rounded-xl text-center shadow-sm">
+          <span className="text-2xl font-extrabold text-red-600">
+            ₹{kpis.totalInputCost.toLocaleString('en-IN')}
+          </span>
+          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mt-1">TOTAL INPUT COST</p>
+          <span className="inline-block text-[11px] font-medium text-red-500 mt-1">
+            ▲ +{kpis.inflationRate}% inflation rate
+          </span>
+        </div>
+
+        <div className="bg-emerald-50/60 border border-emerald-100 p-4 rounded-xl text-center shadow-sm">
+          <span className="text-2xl font-extrabold text-emerald-800">
+            ₹{kpis.netProfit.toLocaleString('en-IN')}
+          </span>
+          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mt-1">NET PROFIT</p>
+          <span className="inline-block text-[11px] font-bold text-emerald-700 mt-1">
+            ROI: {kpis.roiPercentage}%
+          </span>
+        </div>
+      </div>
+
+      {/* Main Content Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Column: Real Crop & Expense Items */}
+        <div className="lg:col-span-2 bg-white/70 border border-gray-200/80 p-5 rounded-2xl shadow-sm">
+          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
+            PROFIT & LOSS BREAKDOWN
+          </h2>
+
+          {/* Revenue Dynamic Items */}
+          <div className="space-y-2 mb-4">
+            {cropBreakdown.map((item, idx) => (
+              <div key={idx} className="flex justify-between items-center bg-emerald-100/60 text-emerald-950 px-4 py-2.5 rounded-xl text-xs">
+                <span>🌾 <strong>{item.cropName}</strong> ({item.areaHectares} Ha @ ₹{item.mandiPrice}/Qtl)</span>
+                <span className="font-bold text-emerald-800">+₹{item.totalRevenue.toLocaleString('en-IN')}</span>
               </div>
+            ))}
+          </div>
+
+          {/* Operational Costs Dynamic Items */}
+          <div className="space-y-2 mb-6">
+            {operationalCosts.map((cost, idx) => (
+              <div key={idx} className="flex justify-between items-center bg-red-100/50 text-red-950 px-4 py-2.5 rounded-xl text-xs">
+                <span>{cost.category}</span>
+                <span className="font-bold text-red-700">-₹{cost.amount.toLocaleString('en-IN')}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-[#0b1320] text-white p-4 rounded-xl flex justify-between items-center">
+            <span className="text-xs font-extrabold tracking-wider uppercase">NET PROFIT (After all costs)</span>
+            <span className="text-lg font-bold">₹{kpis.netProfit.toLocaleString('en-IN')}</span>
+          </div>
+        </div>
+
+        {/* Right Column: Analytics */}
+        <div className="space-y-6">
+          <div className="bg-white/70 border border-gray-200/80 p-5 rounded-2xl shadow-sm">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">BREAK-EVEN ANALYSIS</h2>
+            <div className="text-center py-2">
+              <span className="text-3xl font-extrabold text-slate-800">
+                ₹{breakEven.monthlyPoint.toLocaleString('en-IN')}
+              </span>
+              <p className="text-[11px] text-gray-500 mt-1">Monthly break-even target</p>
+            </div>
+            <div className="mt-4 bg-blue-50/70 border border-blue-100 p-3 rounded-xl text-left">
+              <p className="text-[11px] text-blue-900 font-semibold">
+                📅 Months to break-even: {breakEven.monthsToBreakEven}
+              </p>
+              <p className="text-[10px] text-gray-500 mt-1">
+                {breakEven.notes}
+              </p>
             </div>
           </div>
-          <div className="f-card">
-            <div className="ct">Year-on-Year Comparison</div>
-            <div style={{display:'flex', flexDirection:'column', gap:'6px'}}>
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'7px 10px', background:'var(--g5)', borderRadius:'8px'}}><div style={{fontSize:'11px', fontWeight:'600'}}>2023 Net Profit</div><div style={{fontSize:'13px', fontWeight:'800', color:'var(--muted)'}}>₹5.8L</div></div>
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'7px 10px', background:'var(--g5)', borderRadius:'8px'}}><div style={{fontSize:'11px', fontWeight:'600'}}>2024 Net Profit</div><div style={{fontSize:'13px', fontWeight:'800', color:'var(--amber)'}}>₹7.1L</div></div>
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px', background:'#dcfce7', borderRadius:'8px', border:'2px solid #22c55e'}}><div style={{fontSize:'12px', fontWeight:'800', color:'var(--g1)'}}>2025 (With AI Advisory)</div><div style={{textAlign: 'right'}}><div style={{fontSize:'16px', fontWeight:'900', color:'var(--g1)'}}>₹8.9L ▲</div><div style={{fontSize:'10px', color:'#15803d', fontWeight:'800'}}>+₹1.8L Extra Income</div></div></div>
+
+          <div className="bg-white/70 border border-gray-200/80 p-5 rounded-2xl shadow-sm">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">YEAR-ON-YEAR COMPARISON</h2>
+            <div className="space-y-2.5">
+              {yoyComparison.map((y, idx) => (
+                <div key={idx} className={`flex justify-between items-center p-3 rounded-xl text-xs ${
+                  y.isCurrent ? "bg-emerald-100/80 border border-emerald-300 font-bold" : "bg-emerald-50/40"
+                }`}>
+                  <div>
+                    <span>{y.yearLabel}</span>
+                    {y.subtext && <span className="block text-[10px] text-emerald-700 font-semibold">{y.subtext}</span>}
+                  </div>
+                  <span>₹{y.netProfit.toLocaleString('en-IN')}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
-};
-
-export default ROICalculator;
+}
