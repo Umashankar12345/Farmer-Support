@@ -2,8 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard/Dashboard';
 import AIQuery from './pages/Query/AIQuery';
-import MyFarm from './pages/MyFarm/MyFarm';
-import WeatherPage from './pages/Weather/Weather';
+import FarmingPortfolio from './components/FarmingPortfolio';
+import MarketExplorer from './components/MarketExplorer';
+import WeatherForecasting from './components/WeatherForecasting';
 import SchemesPage from './pages/Schemes/SchemesPage';
 import Analytics from './pages/Analytics/Analytics';
 import SupportPage from './pages/Support/SupportPage';
@@ -52,11 +53,12 @@ function App() {
         
         <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/query" element={<ProtectedRoute><AIQuery /></ProtectedRoute>} />
-        <Route path="/farms" element={<ProtectedRoute><MyFarm /></ProtectedRoute>} />
+        <Route path="/farms" element={<ProtectedRoute><FarmingPortfolio /></ProtectedRoute>} />
         <Route path="/farms/:id" element={<ProtectedRoute><FarmDashboard /></ProtectedRoute>} />
-        <Route path="/weather" element={<ProtectedRoute><WeatherPage /></ProtectedRoute>} />
+        <Route path="/weather" element={<ProtectedRoute><WeatherForecasting /></ProtectedRoute>} />
         <Route path="/schemes" element={<ProtectedRoute><SchemesPage /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+        <Route path="/market-explorer" element={<ProtectedRoute><MarketExplorer /></ProtectedRoute>} />
         
         {/* Advanced Features */}
         <Route path="/prototype" element={<ProtectedRoute><MarketAdvisorPrototype /></ProtectedRoute>} />

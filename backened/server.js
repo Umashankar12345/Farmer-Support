@@ -50,6 +50,8 @@ app.use("/api/yield",        require("./routes/yieldRoutes"));
 app.use("/api/fields",       require("./routes/fieldRoutes"));
 app.use("/api/crop-recommend", require("./routes/cropRecommendRoutes"));
 app.use("/api", require("./routes/farmerQueryRoutes"));
+app.use("/api/portfolio", require("./routes/portfolioRoutes"));
+app.use("/api/market-prices", require("./routes/marketPricesRoutes"));
 // Serve static files (uploads and dist)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, '../frontend/dist')));

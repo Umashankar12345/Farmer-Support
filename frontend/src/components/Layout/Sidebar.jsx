@@ -40,8 +40,8 @@ const Sidebar = () => {
     {
       title: t.analytics,
       items: [
-        { name: t.market, icon: '📈', path: '/analytics' },
-        { name: t.soilHistory, icon: '🧪', path: '/farms#soil' },
+        { name: t.market, icon: '📊', path: '/analytics' },
+        { name: 'Live Mandi', icon: '📈', path: '/market-explorer' }
       ]
     },
     {

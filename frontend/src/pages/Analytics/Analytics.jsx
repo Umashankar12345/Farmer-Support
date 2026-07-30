@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import Navbar from '../../components/Layout/Navbar';
@@ -9,6 +10,7 @@ import PerformanceTicker from '../Dashboard/components/PerformanceTicker';
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
 export default function Analytics() {
+  const navigate = useNavigate();
   const [metrics, setMetrics] = useState(null);
   const [mandiPrices, setMandiPrices] = useState([]);
 
@@ -93,7 +95,7 @@ export default function Analytics() {
                       </div>
                    ))}
                 </div>
-                <button className="w-full mt-6 py-3 bg-gray-900 text-white text-[10px] font-black uppercase rounded-xl hover:bg-black transition-all">View All 140+ Markets</button>
+                <button onClick={() => navigate('/market-explorer')} className="w-full mt-6 py-3 bg-gray-900 text-white text-[10px] font-black uppercase rounded-xl hover:bg-black transition-all">View All 140+ Markets</button>
             </div>
           </div>
         </main>
