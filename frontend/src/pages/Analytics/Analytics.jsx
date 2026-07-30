@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
-import Navbar from '../../components/Layout/Navbar';
-import Sidebar from '../../components/Layout/Sidebar';
 import StatCard from '../Dashboard/components/StatCard';
-import PerformanceTicker from '../Dashboard/components/PerformanceTicker';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
@@ -36,12 +33,7 @@ export default function Analytics() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-      <div className="flex flex-1 pt-16">
-        <Sidebar />
-        
-        <main className="flex-1 p-8 flex flex-col max-w-6xl mx-auto w-full">
+    <main className="flex-1 p-0 flex flex-col max-w-6xl mx-auto w-full">
           <header className="mb-8">
             <h1 className="text-3xl font-black text-gray-900 tracking-tight">System Analytics</h1>
             <p className="text-gray-500 font-medium">Performance metrics & market intelligence</p>
@@ -98,9 +90,6 @@ export default function Analytics() {
                 <button onClick={() => navigate('/market-explorer')} className="w-full mt-6 py-3 bg-gray-900 text-white text-[10px] font-black uppercase rounded-xl hover:bg-black transition-all">View All 140+ Markets</button>
             </div>
           </div>
-        </main>
-      </div>
-      <PerformanceTicker />
-    </div>
+    </main>
   );
 }
