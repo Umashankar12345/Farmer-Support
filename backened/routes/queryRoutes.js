@@ -16,9 +16,6 @@ router.post('/ask', verifyJWT, async (req, res) => {
        });
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const systemInstruction = `
       You are AgriVoice AI, an expert agricultural officer assisting farmers in ${detectedLocation}, India.
       - Provide practical, localized agricultural advice for crops, pests, soil, weather, and mandi prices in ${detectedLocation}.
@@ -28,26 +25,28 @@ router.post('/ask', verifyJWT, async (req, res) => {
       - Keep answers concise, factual, and actionable.
     `;
 
-    // Filter chat history to ensure correct format for Gemini and exclude system messages
-    const formattedHistory = chatHistory
-      .filter(msg => msg.role !== 'system' && msg.text) // Remove empty or invalid messages
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: systemInstruction 
+    });
+
+    // Clean history: skip initial UI greeting, map roles, and prevent starting with 'model'
+    const formattedHistory = (chatHistory || [])
+      .filter((msg, index) => !(index === 0 && msg.role === 'ai')) // skip the default UI greeting
+      .filter(msg => msg.role !== 'system' && msg.text && !msg.text.includes("encountered an error"))
       .map(msg => ({
         role: msg.role === "user" ? "user" : "model",
         parts: [{ text: msg.text }],
       }));
 
+    // Gemini strictly requires history to start with 'user'
+    if (formattedHistory.length > 0 && formattedHistory[0].role === "model") {
+      formattedHistory.shift(); 
+    }
+
     const chat = model.startChat({
-      history: [
-        {
-          role: "user",
-          parts: [{ text: systemInstruction }],
-        },
-        {
-          role: "model",
-          parts: [{ text: `Understood. I am online and configured for ${detectedLocation}.` }],
-        },
-        ...formattedHistory,
-      ],
+      history: formattedHistory,
     });
 
     const result = await chat.sendMessage(query);
@@ -55,7 +54,7 @@ router.post('/ask', verifyJWT, async (req, res) => {
 
     res.json({ response: responseText });
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    console.error("DETAILED GEMINI ERROR:", error.message || error);
     res.status(500).json({ 
       error: "AI Advisory service is currently offline. Please try again.", 
       response: "⚠️ **Service Notice:** Unable to reach AI servers. Please check your configuration and API key." 
