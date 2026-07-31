@@ -74,7 +74,8 @@ export default function AIQuery() {
       const result = await queryAPI.askAI({
         query: queryText,
         farmContext,
-        language: 'en'
+        language: 'en',
+        chatHistory: messages // Pass the previous messages for context
       });
 
       // 4. Add AI response
