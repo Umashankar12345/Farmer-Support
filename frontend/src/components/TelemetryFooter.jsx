@@ -17,7 +17,7 @@ export default function TelemetryFooter({ telemetry }) {
           </strong>
         </span>
         <span>|</span>
-        <span>AI MODEL: <strong className="text-white">{telemetry?.aiModel ?? "LLAMA3-8B-8192 (GROQ)"}</strong></span>
+        <span>AI MODEL: <strong className="text-white">{telemetry?.aiModel ?? "GEMINI-1.5-FLASH (GOOGLE)"}</strong></span>
       </div>
 
       <div>

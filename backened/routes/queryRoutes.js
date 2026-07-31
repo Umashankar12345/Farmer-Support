@@ -26,13 +26,16 @@ router.post('/ask', verifyJWT, async (req, res) => {
     `;
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      systemInstruction: systemInstruction 
-    });
+    const model = genAI.getGenerativeModel(
+      { 
+        model: "gemini-1.5-flash",
+        systemInstruction: systemInstruction 
+      },
+      { apiVersion: 'v1beta' }
+    );
 
-    // Clean history: skip initial UI greeting, map roles, and prevent starting with 'model'
-    const formattedHistory = (chatHistory || [])
+    // Map the messages to the expected format
+    const mappedHistory = (chatHistory || [])
       .filter((msg, index) => !(index === 0 && msg.role === 'ai')) // skip the default UI greeting
       .filter(msg => msg.role !== 'system' && msg.text && !msg.text.includes("encountered an error"))
       .map(msg => ({
@@ -40,9 +43,25 @@ router.post('/ask', verifyJWT, async (req, res) => {
         parts: [{ text: msg.text }],
       }));
 
-    // Gemini strictly requires history to start with 'user'
-    if (formattedHistory.length > 0 && formattedHistory[0].role === "model") {
-      formattedHistory.shift(); 
+    // Strictly enforce alternating user/model sequence
+    const formattedHistory = [];
+    for (const msg of mappedHistory) {
+      if (formattedHistory.length === 0) {
+        if (msg.role === "user") formattedHistory.push(msg);
+      } else {
+        const lastRole = formattedHistory[formattedHistory.length - 1].role;
+        if (msg.role !== lastRole) {
+          formattedHistory.push(msg);
+        } else {
+          // If two of the same role appear sequentially, overwrite the last one
+          formattedHistory[formattedHistory.length - 1] = msg;
+        }
+      }
+    }
+
+    // History MUST end with 'model' so the next sendMessage (which is 'user') is valid
+    if (formattedHistory.length > 0 && formattedHistory[formattedHistory.length - 1].role === "user") {
+      formattedHistory.pop();
     }
 
     const chat = model.startChat({
@@ -56,8 +75,8 @@ router.post('/ask', verifyJWT, async (req, res) => {
   } catch (error) {
     console.error("DETAILED GEMINI ERROR:", error.message || error);
     res.status(500).json({ 
-      error: "AI Advisory service is currently offline. Please try again.", 
-      response: "⚠️ **Service Notice:** Unable to reach AI servers. Please check your configuration and API key." 
+      error: error.message || "Server Error",
+      response: `⚠️ **Detailed Diagnostic Error:** ${String(error)}`
     });
   }
 });

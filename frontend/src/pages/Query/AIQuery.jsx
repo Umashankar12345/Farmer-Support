@@ -81,7 +81,8 @@ export default function AIQuery() {
       // 4. Add AI response
       setMessages([...newMessages, { role: 'ai', text: result.response }]);
     } catch (error) {
-      setMessages([...newMessages, { role: 'ai', text: "I'm sorry, I encountered an error. Please try logging out and logging back in, or check if your internet is working." }]);
+      console.error("Frontend Query Error:", error);
+      setMessages([...newMessages, { role: 'ai', text: `⚠️ **Diagnostic Error:** ${error.message}` }]);
     } finally {
       setLoading(false);
     }
