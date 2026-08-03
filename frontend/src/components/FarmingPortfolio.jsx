@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
+import { portfolioAPI } from '../../services/api';
 
 export default function FarmingPortfolio() {
   const [data, setData] = useState(null);
@@ -7,13 +8,15 @@ export default function FarmingPortfolio() {
 
   useEffect(() => {
     // Fetch data from backend endpoint
-    fetch("http://localhost:5000/api/portfolio")
-      .then((res) => res.json())
+    portfolioAPI.getPortfolio()
       .then((resData) => {
         setData(resData);
         setLoading(false);
       })
-      .catch((err) => console.error("Error loading portfolio:", err));
+      .catch((err) => {
+        console.error("Error loading portfolio:", err);
+        setLoading(false);
+      });
   }, []);
 
   if (loading) return <div className="p-6 text-gray-600">Loading Portfolio Data...</div>;

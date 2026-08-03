@@ -103,3 +103,7 @@ export const pestAPI = {
     return apiRequest(`/pest-alerts?${params.toString()}`);
   }
 };
+
+export const portfolioAPI = {
+  getPortfolio: () => apiRequest('/portfolio', 'GET'),
+};
