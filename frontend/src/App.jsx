@@ -31,7 +31,7 @@ import FarmDashboard from './pages/MyFarm/FarmDashboard';
 import MarketAdvisorPrototype from './pages/Features/MarketAdvisorPrototype';
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token') || localStorage.getItem('krishi_jwt');
+  const token = localStorage.getItem('token');
   return token ? (
     <div className="app-shell">
       <Navbar />

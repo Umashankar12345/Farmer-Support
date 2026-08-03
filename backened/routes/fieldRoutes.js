@@ -5,9 +5,9 @@ const fieldController = require('../controllers/fieldController');
 // Middleware to authenticate user (assuming it attaches req.user)
 // We will use a mock middleware if real auth middleware isn't easily accessible,
 // but let's try to use the existing authMiddleware if it exists.
-const authMiddleware = require('../middleware/authMiddleware');
+const { verifyJWT } = require('../middleware/auth');
 
-router.get('/', authMiddleware, fieldController.getFields);
-router.post('/register', authMiddleware, fieldController.registerField);
+router.get('/', verifyJWT, fieldController.getFields);
+router.post('/register', verifyJWT, fieldController.registerField);
 
 module.exports = router;

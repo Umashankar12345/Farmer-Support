@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const cropRecommenderController = require('../controllers/cropRecommenderController');
-const protect = require('../middleware/authMiddleware');
+const { verifyJWT } = require('../middleware/auth');
 
-router.post('/', protect, cropRecommenderController.recommendCrops);
+router.post('/', verifyJWT, cropRecommenderController.recommendCrops);
 
 module.exports = router;
