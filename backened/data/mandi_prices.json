@@ -1,0 +1,35 @@
+{
+  "lastUpdated": "2026-08-06T22:02:43.747Z",
+  "records": [
+    {
+      "state": "Punjab",
+      "market": "Amritsar",
+      "commodity": "Wheat",
+      "modal_price": 2543
+    },
+    {
+      "state": "Punjab",
+      "market": "Amritsar",
+      "commodity": "Mustard",
+      "modal_price": 5272
+    },
+    {
+      "state": "Punjab",
+      "market": "Ludhiana",
+      "commodity": "Rice",
+      "modal_price": 3185
+    },
+    {
+      "state": "Haryana",
+      "market": "Karnal",
+      "commodity": "Wheat",
+      "modal_price": 2514
+    },
+    {
+      "state": "Rajasthan",
+      "market": "Jaipur",
+      "commodity": "Mustard",
+      "modal_price": 5290
+    }
+  ]
+}

@@ -32,14 +32,14 @@ const OfflineMode = () => {
               {icon: '✅', title: 'Soil Health Records', sub: 'All historical data available offline'},
               {icon: '✅', title: 'Farm Passport (Read-only)', sub: 'QR code and field data cached'},
               {icon: '✅', title: 'Crop Recommendation (Cached)', sub: 'Last AI recommendation stored'},
-              {icon: '❌', title: 'Live Mandi Prices', sub: 'Requires internet — use SMS fallback', error: true},
-              {icon: '❌', title: 'AgriVoice AI (Live)', sub: 'Requires Groq API — use SMS advisory', error: true}
+              {icon: '○', title: 'Live Mandi Prices', sub: 'Requires internet — use SMS fallback', disabled: true},
+              {icon: '○', title: 'AgriVoice AI (Live)', sub: 'Requires internet — use SMS advisory', disabled: true}
             ].map((item, i) => (
-              <div key={i} style={{display:'flex', alignItems:'center', gap:'8px', padding:'8px 10px', background: item.error ? '#fef2f2' : 'var(--g5)', borderRadius:'9px'}}>
-                <span style={{fontSize:'14px'}}>{item.icon}</span>
+              <div key={i} style={{display:'flex', alignItems:'center', gap:'8px', padding:'8px 10px', background: item.disabled ? '#f3f4f6' : 'var(--g5)', borderRadius:'9px', opacity: item.disabled ? 0.6 : 1}}>
+                <span style={{fontSize:'14px', color: item.disabled ? '#9ca3af' : 'inherit'}}>{item.icon}</span>
                 <div>
-                  <div style={{fontSize:'11px', fontWeight:'700', color: item.error ? '#991b1b' : 'inherit'}}>{item.title}</div>
-                  <div style={{fontSize:'10px', color: item.error ? '#b91c1c' : 'var(--muted)'}}>{item.sub}</div>
+                  <div style={{fontSize:'11px', fontWeight:'700', color: item.disabled ? '#6b7280' : 'inherit'}}>{item.title}</div>
+                  <div style={{fontSize:'10px', color: item.disabled ? '#9ca3af' : 'var(--muted)'}}>{item.sub}</div>
                 </div>
               </div>
             ))}

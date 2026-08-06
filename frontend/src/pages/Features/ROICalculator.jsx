@@ -4,6 +4,7 @@ import { apiRequest } from "../../services/api";
 export default function ROICalculator({ farmId = 'defaultUser123' }) {
   const [loading, setLoading] = useState(true);
   const [financialData, setFinancialData] = useState(null);
+  const [error, setError] = useState(null);
 
   // Fetch real financial metrics calculated on the backend
   useEffect(() => {
@@ -13,39 +14,8 @@ export default function ROICalculator({ farmId = 'defaultUser123' }) {
         const data = await apiRequest(`/financials/roi/${farmId}`);
         setFinancialData(data);
       } catch (err) {
-        console.warn("Backend API failed, using robust mock data for demo purposes:", err);
-        // Fallback for prototype/demo purposes
-        setFinancialData({
-          kpis: {
-            totalRevenue: 245000,
-            totalInputCost: 110000,
-            netProfit: 135000,
-            roiPercentage: 122,
-            revenueChangePercent: 14.2,
-            inflationRate: 3.1
-          },
-          cropBreakdown: [
-            { cropName: 'Wheat (Winter)', areaHectares: 2.5, mandiPrice: 2850, totalRevenue: 142500 },
-            { cropName: 'Mustard (Yellow)', areaHectares: 1.5, mandiPrice: 5100, totalRevenue: 102500 }
-          ],
-          operationalCosts: [
-            { category: "Seeds & Sowing", amount: 18500 },
-            { category: "Fertilizer & Pesticide", amount: 35000 },
-            { category: "Labour (Seasonal)", amount: 28000 },
-            { category: "Equipment & Fuel", amount: 15500 },
-            { category: "Irrigation Cost", amount: 13000 }
-          ],
-          breakEven: {
-            monthlyPoint: 9166,
-            monthsToBreakEven: 3,
-            notes: "Based on current expenditure and projected post-harvest sales."
-          },
-          yoyComparison: [
-            { yearLabel: "2024", netProfit: 115000, isCurrent: false },
-            { yearLabel: "2025", netProfit: 128000, isCurrent: false },
-            { yearLabel: "2026 (Projected)", netProfit: 135000, isCurrent: true, subtext: "Driven by higher Mandi rates" }
-          ]
-        });
+        console.warn("Backend API failed:", err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -62,9 +32,19 @@ export default function ROICalculator({ farmId = 'defaultUser123' }) {
     );
   }
 
-  const { kpis, cropBreakdown, operationalCosts, breakEven, yoyComparison } = financialData || {};
+  if (error || !financialData) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="p-4 bg-gray-100 text-gray-500 rounded-lg border border-gray-200 text-sm text-center shadow-sm w-96">
+          <div className="text-xl mb-2">🛠️</div>
+          <div>Feature under maintenance.</div>
+          <div className="text-xs mt-1">Please check back shortly.</div>
+        </div>
+      </div>
+    );
+  }
 
-  if (!financialData) return null;
+  const { kpis, cropBreakdown, operationalCosts, breakEven, yoyComparison } = financialData;
 
   return (
     <div className="p-6 bg-[#f1f5f3] min-h-screen font-sans text-gray-800">

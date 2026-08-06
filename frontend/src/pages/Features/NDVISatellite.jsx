@@ -4,6 +4,7 @@ import { apiRequest } from "../../services/api";
 export default function NDVISatellite({ farmId = 'defaultUser123' }) {
   const [loading, setLoading] = useState(true);
   const [ndviData, setNdviData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Fetch live Sentinel-2 / Agromonitoring satellite payload via Node.js proxy
@@ -13,28 +14,8 @@ export default function NDVISatellite({ farmId = 'defaultUser123' }) {
         const data = await apiRequest(`/satellite/ndvi/${farmId}`);
         setNdviData(data);
       } catch (err) {
-        console.warn("Satellite API failed, using robust mock data for demo:", err);
-        // Fallback for prototype/demo purposes
-        setNdviData({
-          activeField: {
-            name: "Plot A - North Block",
-            crop: "Wheat",
-            zone: "Zone 1",
-            score: 0.76,
-            gridCells: Array(24).fill(0).map((_, i) => ({
-              id: i,
-              status: i % 7 === 0 ? "stress" : i % 5 === 0 ? "warning" : "healthy"
-            }))
-          },
-          allFields: [
-            { name: "Plot A - North Block", score: 0.76, trend: "stable" },
-            { name: "Plot B - South Block", score: 0.42, trend: "down" }
-          ],
-          advisories: [
-            { type: "urgent", text: "Irrigation needed in North Block grid 7" },
-            { type: "info", text: "Optimal vegetation detected in South Block" }
-          ]
-        });
+        console.warn("Satellite API failed:", err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -51,9 +32,19 @@ export default function NDVISatellite({ farmId = 'defaultUser123' }) {
     );
   }
 
-  const { activeField, allFields, advisories } = ndviData || {};
+  if (error || !ndviData || !ndviData.activeField) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="p-4 bg-gray-100 text-gray-500 rounded-lg border border-gray-200 text-sm text-center shadow-sm w-96">
+          <div className="text-xl mb-2">🛠️</div>
+          <div>Feature under maintenance.</div>
+          <div className="text-xs mt-1">Please check back shortly.</div>
+        </div>
+      </div>
+    );
+  }
 
-  if (!ndviData || !activeField) return null;
+  const { activeField, allFields, advisories } = ndviData;
 
   return (
     <div className="p-6 bg-[#f1f5f3] min-h-screen font-sans text-gray-800">
