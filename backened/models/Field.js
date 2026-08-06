@@ -49,6 +49,18 @@ const fieldSchema = new mongoose.Schema({
   healthHistory: [{
     date: { type: Date, required: true },
     score: { type: Number, required: true }
+  }],
+  actionLogs: [{
+    type: { type: String, required: true },
+    description: { type: String, required: true },
+    date: { type: Date, default: Date.now }
+  }],
+  tasks: [{
+    type: { type: String, required: true },
+    message: { type: String, required: true },
+    priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium' },
+    status: { type: String, enum: ['pending', 'done', 'snoozed'], default: 'pending' },
+    createdAt: { type: Date, default: Date.now }
   }]
 }, { timestamps: true });
 

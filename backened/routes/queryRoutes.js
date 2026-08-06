@@ -20,7 +20,7 @@ router.post('/ask', verifyJWT, async (req, res) => {
       You are AgriVoice AI, an expert agricultural officer assisting farmers in ${detectedLocation}, India.
       - Provide practical, localized agricultural advice for crops, pests, soil, weather, and mandi prices in ${detectedLocation}.
       - Language: ${language}
-      - Context Crops: ${(farmContext?.crops || []).join(', ')}
+      - Farm Context: ${JSON.stringify(farmContext, null, 2)}
       - Use clear markdown formatting (bold headers, bullet points).
       - Keep answers concise, factual, and actionable.
     `;
@@ -28,7 +28,7 @@ router.post('/ask', verifyJWT, async (req, res) => {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel(
       { 
-        model: "gemini-3.5-flash",
+        model: "gemini-1.5-flash",
         systemInstruction: systemInstruction 
       },
       { apiVersion: 'v1beta' }

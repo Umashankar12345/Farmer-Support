@@ -65,7 +65,8 @@ export default function AIQuery() {
     try {
       // 2. Fetch context (Normally from a global state/store, but using localStorage for demo)
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const farmContext = {
+      const activeFarm = localStorage.getItem('activeFarmContext');
+      const farmContext = activeFarm ? JSON.parse(activeFarm) : {
         location: user.location || 'Rajasthan',
         crops: user.crop ? [user.crop] : ['Mustard', 'Wheat']
       };

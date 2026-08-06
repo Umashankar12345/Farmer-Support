@@ -106,4 +106,6 @@ export const pestAPI = {
 
 export const portfolioAPI = {
   getPortfolio: () => apiRequest('/portfolio', 'GET'),
+  logAction: (fieldId, actionData) => apiRequest(`/portfolio/${fieldId}/action`, 'POST', actionData),
+  updateTask: (fieldId, taskId, statusData) => apiRequest(`/portfolio/${fieldId}/task/${taskId}`, 'PUT', statusData),
 };
