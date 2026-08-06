@@ -1,54 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { commentAPI } from '../../services/api';
 import './Features.css';
+
+const generateTimeAgo = (minutes) => {
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hrs ago`;
+  return `${Math.floor(hours / 24)} days ago`;
+};
+
+const DEMO_POSTS = [
+  {
+    id: 'demo-1',
+    name: 'Ramesh Kumar, Alwar',
+    meta: `Rajasthan · Wheat farmer · ${generateTimeAgo(45)}`,
+    tag: '🌾 Fertilizer',
+    body: '"Best month for Mustard sowing in Bikaner? My soil pH is 7.1 and I have drip irrigation. Should I go for Pusa Mustard or RH-749?"',
+    av: 'RK',
+    avColor: '#1d4ed8',
+    likes: 47,
+    liked: true,
+    reply: {
+      text: 'For Bikaner with pH 7.1, sow in October 10–25. Pusa Mustard is better for your conditions — higher yield in low-rainfall areas. Apply DAP 25kg/acre at sowing + urea in two splits. Expect 10–13 Qtl/acre.',
+      by: '👨💼 Officer Ravi Kumar, Jaipur Block',
+      verified: true
+    }
+  },
+  {
+    id: 'demo-2',
+    name: 'Priya Meena, Jodhpur',
+    meta: `Rajasthan · Millet farmer · ${generateTimeAgo(120)}`,
+    tag: '📋 Scheme',
+    body: '"Subsidy on solar pumps in 2026? My 5 acre farm needs irrigation. Is PM-KUSUM scheme still accepting applications?"',
+    av: 'PM',
+    avColor: '#7c3aed',
+    likes: 23,
+    liked: false,
+    reply: {
+      text: 'PM-KUSUM Component B is active — 60% subsidy on solar pump installation (up to 7.5 HP). Apply through your state agriculture portal. Rajasthan deadline is June 30, 2026. Required docs: Aadhaar, land records, bank passbook.',
+      by: '🌐 Digital Krishi AI',
+      verified: true,
+      isAI: true
+    }
+  }
+];
 
 const CommunityFeed = () => {
   const [showForm, setShowForm] = useState(false);
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      name: 'Ramesh Kumar, Alwar',
-      meta: 'Rajasthan · Wheat farmer · 45 min ago',
-      tag: '🌾 Fertilizer',
-      body: '"Best month for Mustard sowing in Bikaner? My soil pH is 7.1 and I have drip irrigation. Should I go for Pusa Mustard or RH-749?"',
-      av: 'RK',
-      avColor: '#1d4ed8',
-      likes: 47,
-      liked: true,
-      reply: {
-        text: 'For Bikaner with pH 7.1, sow in October 10–25. Pusa Mustard is better for your conditions — higher yield in low-rainfall areas. Apply DAP 25kg/acre at sowing + urea in two splits. Expect 10–13 Qtl/acre.',
-        by: '👨💼 Officer Ravi Kumar, Jaipur Block',
-        verified: true
+  const [posts, setPosts] = useState(DEMO_POSTS);
+
+  useEffect(() => {
+    const loadComments = async () => {
+      try {
+        const data = await commentAPI.getComments();
+        if (data && data.length > 0) {
+          const livePosts = data.map(c => ({
+            id: c._id,
+            name: c.userName || 'Anonymous Farmer',
+            meta: `Real User · ${new Date(c.createdAt).toLocaleDateString()}`,
+            tag: '💬 Discussion',
+            body: `"${c.content}"`,
+            av: (c.userName || 'A')[0].toUpperCase(),
+            avColor: 'var(--g2)',
+            likes: c.rating || 0,
+            liked: false
+          }));
+          // Merge real backend posts with demo rich posts
+          setPosts([...livePosts, ...DEMO_POSTS]);
+        }
+      } catch (err) {
+        console.warn('Failed to load live comments, using demo feed');
       }
-    },
-    {
-      id: 2,
-      name: 'Priya Meena, Jodhpur',
-      meta: 'Rajasthan · Millet farmer · 2 hrs ago',
-      tag: '📋 Scheme',
-      body: '"Subsidy on solar pumps in 2026? My 5 acre farm needs irrigation. Is PM-KUSUM scheme still accepting applications?"',
-      av: 'PM',
-      avColor: '#7c3aed',
-      likes: 23,
-      liked: false,
-      reply: {
-        text: 'PM-KUSUM Component B is active — 60% subsidy on solar pump installation (up to 7.5 HP). Apply through your state agriculture portal. Rajasthan deadline is June 30, 2026. Required docs: Aadhaar, land records, bank passbook.',
-        by: '🌐 Digital Krishi AI',
-        verified: true,
-        isAI: true
-      }
-    },
-    {
-      id: 3,
-      name: 'Suresh Kumar, Kota',
-      meta: 'Rajasthan · Rice farmer · 4 hrs ago',
-      tag: '🆔 Soil Card',
-      body: '"How to get Soil Health Card? My last card expired in 2023. Which office should I visit or can I apply online?"',
-      av: 'SK',
-      avColor: '#0891b2',
-      likes: 12,
-      liked: false
-    }
-  ]);
+    };
+    loadComments();
+  }, []);
 
   const [newQ, setNewQ] = useState('');
 
