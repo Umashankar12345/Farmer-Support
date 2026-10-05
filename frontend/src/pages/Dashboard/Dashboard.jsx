@@ -12,16 +12,30 @@ import {
 } from "../../data/indiaAdminData";
 
 export default function DigitalKrishiDashboard() {
-  // 1. Language State - synchronized with localStorage
+  // 1. Language State - synchronized with localStorage (defaults to Hindi across India, Punjabi in Punjab)
   const [lang, setLang] = useState(() => {
-    return localStorage.getItem("krishi_lang") || "pa";
+    const saved = localStorage.getItem("krishi_lang");
+    if (saved) return saved;
+    try {
+      const loc = JSON.parse(localStorage.getItem("farmer_location") || "{}");
+      if (loc.state === "Punjab") return "pa";
+    } catch (e) {}
+    return "hi";
   });
 
   // 2. Farmer Location State (Pan-India 4-tier: State -> District -> Tehsil -> Village)
   const [farmerLocation, setFarmerLocation] = useState(() => {
     try {
       const saved = localStorage.getItem("farmer_location");
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const preciseCoords = getCoordinatesForLocation(parsed.state, parsed.district, parsed.subDistrict);
+        return {
+          ...parsed,
+          lat: parsed.isGps ? parsed.lat : preciseCoords.lat,
+          lon: parsed.isGps ? parsed.lon : preciseCoords.lon
+        };
+      }
     } catch (e) {}
     return {
       state: "Punjab",
@@ -33,6 +47,40 @@ export default function DigitalKrishiDashboard() {
       isGps: false
     };
   });
+
+  // Farmer's real name with "Google" filter and custom name setter
+  const [farmerName, setFarmerName] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        const u = JSON.parse(savedUser);
+        let raw = u.farmerName || u.firstName || u.name;
+        if (typeof raw === "string" && raw.trim()) {
+          const first = raw.trim().split(" ")[0];
+          if (!/^(google|user|test|admin|kisan|farmer)$/i.test(first)) {
+            return first;
+          }
+        }
+      }
+    } catch (e) {}
+    return null;
+  });
+
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+  const [nameInputVal, setNameInputVal] = useState("");
+
+  const handleSaveFarmerName = (e) => {
+    if (e) e.preventDefault();
+    const trimmed = nameInputVal.trim();
+    if (!trimmed) return;
+    try {
+      const existing = JSON.parse(localStorage.getItem("user") || "{}");
+      const updated = { ...existing, farmerName: trimmed, firstName: trimmed };
+      localStorage.setItem("user", JSON.stringify(updated));
+    } catch (err) {}
+    setFarmerName(trimmed);
+    setIsNameModalOpen(false);
+  };
 
   // Location Selector Modal State
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
@@ -219,7 +267,8 @@ export default function DigitalKrishiDashboard() {
       ? modalLocation.customVillage.trim()
       : (modalLocation.village || "Main Village");
 
-    const coords = getCoordinatesForLocation(modalLocation.state, modalLocation.district);
+    // Resolve hyper-local coordinates down to the specific block / sub-district!
+    const coords = getCoordinatesForLocation(modalLocation.state, modalLocation.district, modalLocation.subDistrict);
     const newLoc = {
       state: modalLocation.state,
       district: modalLocation.district,
@@ -232,6 +281,8 @@ export default function DigitalKrishiDashboard() {
 
     setFarmerLocation(newLoc);
     localStorage.setItem("farmer_location", JSON.stringify(newLoc));
+    window.dispatchEvent(new Event("storage"));
+    window.dispatchEvent(new CustomEvent("farmer_location_change", { detail: newLoc }));
     setIsLocationModalOpen(false);
   };
 
@@ -277,6 +328,8 @@ export default function DigitalKrishiDashboard() {
 
           setFarmerLocation(newLoc);
           localStorage.setItem("farmer_location", JSON.stringify(newLoc));
+          window.dispatchEvent(new Event("storage"));
+          window.dispatchEvent(new CustomEvent("farmer_location_change", { detail: newLoc }));
           setGpsStatusMessage(
             lang === "pa"
               ? `ਸਫਲਤਾਪੂਰਵਕ ਮਿਲਿਆ: ${detectedVillage}, ${detectedDistrict}`
@@ -300,6 +353,8 @@ export default function DigitalKrishiDashboard() {
           };
           setFarmerLocation(fallbackLoc);
           localStorage.setItem("farmer_location", JSON.stringify(fallbackLoc));
+          window.dispatchEvent(new Event("storage"));
+          window.dispatchEvent(new CustomEvent("farmer_location_change", { detail: fallbackLoc }));
           setIsLocationModalOpen(false);
         } finally {
           setIsGpsDetecting(false);
@@ -327,18 +382,15 @@ export default function DigitalKrishiDashboard() {
     window.dispatchEvent(new CustomEvent("krishi_lang_change", { detail: newLang }));
   };
 
-  // Farmer's name from localStorage with neutral fallback (NO hardcoded Gurpreet for everyone!)
-  const farmerName = useMemo(() => {
-    try {
-      const savedUser = localStorage.getItem("user");
-      if (savedUser) {
-        const u = JSON.parse(savedUser);
-        if (u.firstName && u.firstName.trim()) return u.firstName.trim();
-        if (u.name && u.name.trim()) return u.name.trim().split(" ")[0];
-      }
-    } catch (e) {}
-    return null; // Return null if no name is registered
-  }, []);
+  // Auto-adapt language when location changes between Punjab and Hindi belt states
+  useEffect(() => {
+    const isHindiState = ["Bihar", "Uttar Pradesh", "Madhya Pradesh", "Rajasthan", "Haryana", "Chhattisgarh", "Jharkhand"].includes(farmerLocation.state);
+    if (isHindiState && lang === "pa") {
+      handleLanguageChange("hi");
+    } else if (farmerLocation.state === "Punjab" && lang === "hi") {
+      handleLanguageChange("pa");
+    }
+  }, [farmerLocation.state]);
 
   // Greeting text with neutral fallback
   const greetingText = useMemo(() => {
@@ -357,6 +409,38 @@ export default function DigitalKrishiDashboard() {
   const stateData = useMemo(() => {
     return getStateSeasonData(farmerLocation.state);
   }, [farmerLocation.state]);
+
+  // Dynamic actions tailored to farmer's registered farms & crops
+  const tailoredActions = useMemo(() => {
+    const baseActions = stateData.todayActions || [];
+    if (!userFarms || userFarms.length === 0) {
+      return baseActions;
+    }
+
+    const firstFarm = userFarms[0];
+    const crop = firstFarm.crop || "Paddy";
+    const farmName = firstFarm.name || "Field 1";
+    const farmArea = firstFarm.area || firstFarm.size || 3;
+
+    return baseActions.map((action, idx) => {
+      if (idx === 0) {
+        return {
+          ...action,
+          title: {
+            en: `${farmName} (${crop} • ${farmArea} Acres): Moisture Check & Field Prep`,
+            hi: `${farmName} (${crop} • ${farmArea} एकड़): नमी परीक्षण एवं खेत तैयारी`,
+            pa: `${farmName} (${crop} • ${farmArea} ਏਕੜ): ਨਮੀ ਜਾਂਚ ਅਤੇ ਖੇਤ ਤਿਆਰੀ`
+          },
+          desc: {
+            en: `Target for ${farmName}: Drain standing water 10-12 days before harvest (Target: Oct 15-20). Verify ${crop} grain moisture with digital meter before Mandi transport (keep below 17% for official MSP).`,
+            hi: `${farmName} हेतु कार्य: कटाई से 10-12 दिन पहले खेत से पानी निकालें (लक्ष्य: 15-20 अक्टूबर)। सरकारी एमएसपी प्राप्त करने हेतु ${crop} की नमी 17% से कम रखें।`,
+            pa: `${farmName} ਲਈ: ਵਾਢੀ ਤੋਂ 10-12 ਦਿਨ ਪਹਿਲਾਂ ਪਾਣੀ ਕੱਢੋ। ਮੰਡੀ ਜਾਣ ਤੋਂ ਪਹਿਲਾਂ ${crop} ਦੀ ਨਮੀ 17% ਤੋਂ ਘੱਟ ਰੱਖੋ।`
+          }
+        };
+      }
+      return action;
+    });
+  }, [stateData, userFarms]);
 
   // Format real date with localization
   const formattedRealDate = useMemo(() => {
@@ -444,15 +528,27 @@ export default function DigitalKrishiDashboard() {
   const modalVillages = useMemo(() => getVillages(modalLocation.state, modalLocation.district, modalLocation.subDistrict), [modalLocation.state, modalLocation.district, modalLocation.subDistrict]);
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-5 font-sans text-slate-800 pb-16">
+    <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-5 lg:px-8 space-y-5 font-sans text-slate-800 pb-16">
       
       {/* ── 1. HEADER & CONTROLS ── */}
       <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              {greetingText}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                {greetingText}
+              </h1>
+              <button
+                onClick={() => {
+                  setNameInputVal(farmerName || "");
+                  setIsNameModalOpen(true);
+                }}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
+                title={lang === "pa" ? "ਆਪਣਾ ਨਾਮ ਬਦਲੋ" : lang === "hi" ? "अपना नाम बदलें" : "Set or change your name"}
+              >
+                ✏️
+              </button>
+            </div>
             <span className="bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-extrabold px-3 py-1 rounded-full border border-emerald-300">
               ✓ {t.partner}
             </span>
@@ -479,8 +575,8 @@ export default function DigitalKrishiDashboard() {
               onChange={(e) => handleLanguageChange(e.target.value)}
               className="w-full bg-slate-50 hover:bg-slate-100 border-2 border-emerald-600 text-emerald-900 px-3.5 py-2.5 rounded-xl text-sm sm:text-base font-extrabold shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-emerald-500 transition-all min-h-[44px]"
             >
-              <option value="pa">🌾 ਪੰਜਾਬੀ (Punjabi)</option>
               <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
+              <option value="pa">🌾 ਪੰਜਾਬੀ (Punjabi)</option>
               <option value="en">🇬🇧 English</option>
             </select>
           </div>
@@ -502,13 +598,13 @@ export default function DigitalKrishiDashboard() {
         </div>
       </div>
 
-      {/* ── 1.1 PAN-INDIA 4-TIER LOCATION BAR (STATE > DISTRICT > TEHSIL > VILLAGE) ── */}
+      {/* ── 1.1 YOUR FARM LOCATION BAR (STATE > DISTRICT > TEHSIL > VILLAGE) ── */}
       <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white rounded-2xl p-4 sm:p-5 border border-emerald-700 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-lg">📍</span>
             <span className="text-xs font-black tracking-widest text-emerald-300 uppercase">
-              {lang === "pa" ? "ਖੇਤ ਦੀ ਲੋਕੇਸ਼ਨ (ਪੂਰਾ ਭਾਰਤ)" : lang === "hi" ? "खेत का स्थान (सम्पूर्ण भारत)" : "FARM LOCATION (PAN-INDIA)"}
+              {lang === "pa" ? "ਤੁਹਾਡੇ ਖੇਤ ਦੀ ਲੋਕੇਸ਼ਨ" : lang === "hi" ? "आपके खेत का स्थान" : "YOUR FARM LOCATION"}
             </span>
             {farmerLocation.isGps && (
               <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[11px] font-black px-2 py-0.5 rounded-full flex items-center gap-1.5">
@@ -537,10 +633,10 @@ export default function DigitalKrishiDashboard() {
             </span>
           </div>
 
-          <p className="text-[11px] sm:text-xs text-emerald-200/80 font-medium">
+          <p className="text-[11px] sm:text-xs text-emerald-200/90 font-medium">
             {farmerLocation.lat && farmerLocation.lon
-              ? `Coordinates: ${farmerLocation.lat.toFixed(4)}°N, ${farmerLocation.lon.toFixed(4)}°E • Hyper-local Open-Meteo telemetry`
-              : "Standard regional meteorological telemetry"}
+              ? `${farmerLocation.lat.toFixed(4)}°N, ${farmerLocation.lon.toFixed(4)}°E • ${lang === "pa" ? "ਤੁਹਾਡੇ ਖੇਤ ਦਾ ਲਾਈਵ ਮੌਸਮ (Open-Meteo)" : lang === "hi" ? "आपके खेत का सटीक मौसम (Open-Meteo)" : "Weather at your farm"}`
+              : "Regional weather feed"}
           </p>
         </div>
 
@@ -577,33 +673,33 @@ export default function DigitalKrishiDashboard() {
             {t.q3}
           </p>
           <p className="text-xs sm:text-sm text-emerald-200 mt-0.5">
-            {stateData.todayActions.length} {lang === "pa" ? "ਸਿਫਾਰਸ਼ ਕੀਤੇ ਕੰਮ (ਹੇਠਾਂ ਦੇਖੋ ↓)" : lang === "hi" ? "कार्य निर्धारित हैं ↓" : "tasks scheduled below ↓"}
+            {tailoredActions.length} {lang === "pa" ? "ਸਿਫਾਰਸ਼ ਕੀਤੇ ਕੰਮ (ਹੇਠਾਂ ਦੇਖੋ ↓)" : lang === "hi" ? "कार्य निर्धारित हैं ↓" : "tasks scheduled below ↓"}
           </p>
         </div>
 
         {/* Question 2: Is anything wrong? */}
         <div className="bg-amber-900 text-white p-4 rounded-xl shadow-md border-l-4 border-amber-400">
           <div className="flex items-center gap-2 text-xs font-extrabold text-amber-300 uppercase tracking-wider">
-            <span>⚠️ 2. RISKS & REGULATIONS</span>
+            <span>⚠️ 2. GOVERNMENT ADVISORIES</span>
           </div>
           <p className="text-base sm:text-lg font-bold mt-1 text-white">
             {t.q2}
           </p>
           <p className="text-xs sm:text-sm text-amber-200 mt-0.5">
-            {stateData.alerts.length} {lang === "pa" ? "ਸਰਕਾਰੀ ਨੋਟਿਸ (ਪਰਾਲੀ ਤੇ ਮੰਡੀ ਨਮੀ) ↓" : "statutory guidelines ↓"}
+            {stateData.alerts.length} {lang === "pa" ? "ਸਰਕਾਰੀ ਖੇਤੀ ਸਲਾਹਾਂ (ਹੇਠਾਂ ਦੇਖੋ ↓)" : lang === "hi" ? "कृषि परामर्श व मौसम अलर्ट ↓" : "farm advisories below ↓"}
           </p>
         </div>
 
         {/* Question 1: What's happening right now? */}
         <div className="bg-slate-900 text-white p-4 rounded-xl shadow-md border-l-4 border-emerald-500">
           <div className="flex items-center gap-2 text-xs font-extrabold text-emerald-400 uppercase tracking-wider">
-            <span>📊 3. FARM & WEATHER TELEMETRY</span>
+            <span>📊 3. WEATHER AT YOUR FARM</span>
           </div>
           <p className="text-base sm:text-lg font-bold mt-1 text-white">
             {t.q1}
           </p>
           <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
-            {liveWeather ? `${liveWeather.temp} • ${liveWeather.humidity} Humidity` : "Loading live station..."}
+            {liveWeather ? `${liveWeather.temp} • ${liveWeather.humidity} Moisture` : "Connecting to weather feed..."}
           </p>
         </div>
       </div>
@@ -625,19 +721,19 @@ export default function DigitalKrishiDashboard() {
 
           <div className="flex items-center gap-2">
             <span className="bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-extrabold px-3 py-1.5 rounded-lg border border-emerald-300">
-              {Object.values(completedActions).filter(Boolean).length} / {stateData.todayActions.length} {t.completed}
+              {Object.values(completedActions).filter(Boolean).length} / {tailoredActions.length} {t.completed}
             </span>
           </div>
         </div>
 
-        {/* Actions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {stateData.todayActions.map((act) => {
+        {/* Dynamic Actions Grid (Fills width evenly - zero dead whitespace!) */}
+        <div className={`grid grid-cols-1 ${tailoredActions.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
+          {tailoredActions.map((act) => {
             const isDone = !!completedActions[act.id];
             return (
               <div
                 key={act.id}
-                className={`rounded-2xl p-4 sm:p-5 border-2 transition-all flex flex-col justify-between ${
+                className={`rounded-2xl p-4 sm:p-5 border-2 transition-all flex flex-col justify-between h-full ${
                   isDone
                     ? "bg-emerald-50/60 border-emerald-300 opacity-90"
                     : act.badge === "urgent"
@@ -705,7 +801,7 @@ export default function DigitalKrishiDashboard() {
         </div>
       </section>
 
-      {/* ── 4. TOP ALERTS & REGULATORY NOTICES (QUESTION 2: IS ANYTHING WRONG?) ── */}
+      {/* ── 4. GOVERNMENT ADVISORIES & FARM ALERTS (QUESTION 2: IS ANYTHING WRONG?) ── */}
       <section className="bg-amber-50 rounded-2xl p-5 sm:p-6 border-2 border-amber-400 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-4 border-b border-amber-200">
           <div className="flex items-center gap-2.5">
@@ -768,10 +864,10 @@ export default function DigitalKrishiDashboard() {
       {/* ── 5. TOP METRICS GRID (REAL SOURCES OR HONEST EMPTY STATES) ── */}
       <section className="space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">📊</span>
-            <h2 className="text-lg sm:text-xl font-black text-slate-900">
-              {t.whatsHappening} (Live & Farmer Data)
+          <div className="flex items-center gap-2.5">
+            <span className="text-2xl shrink-0 leading-none">📊</span>
+            <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+              {t.whatsHappening} — {lang === "pa" ? "ਮੌਸਮ ਅਤੇ ਫਸਲ ਜਾਣਕਾਰੀ" : lang === "hi" ? "मौसम एवं फसल विवरण" : "Weather & Farm Summary"}
             </h2>
           </div>
           {liveWeather && (
@@ -1595,6 +1691,68 @@ export default function DigitalKrishiDashboard() {
                   className="w-2/3 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-sm py-3 rounded-xl shadow-md transition-all min-h-[44px]"
                 >
                   ✓ {t.applyLocation || "Save Location"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── 12. FARMER NAME PERSONALIZATION MODAL ── */}
+      {isNameModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+              <div>
+                <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                  <span>👤</span>
+                  <span>{lang === "pa" ? "ਆਪਣਾ ਨਾਮ ਦਰਜ ਕਰੋ" : lang === "hi" ? "अपना नाम दर्ज करें" : "Set Your Name"}</span>
+                </h3>
+                <p className="text-xs font-semibold text-slate-500 mt-0.5">
+                  {lang === "pa" ? "ਤੁਹਾਡੇ ਡੈਸ਼ਬੋਰਡ ਅਤੇ ਨਿੱਜੀ ਸੁਆਗਤ ਲਈ" : lang === "hi" ? "आपके डैशबोर्ड एवं अभिवादन हेतु" : "Used for your personal greeting and advisories"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsNameModalOpen(false)}
+                className="text-slate-400 hover:text-slate-700 font-bold p-1 text-lg leading-none"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveFarmerName} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  {lang === "pa" ? "ਕਿਸਾਨ ਦਾ ਨਾਮ" : lang === "hi" ? "किसान का नाम" : "Farmer's First Name"}
+                </label>
+                <input
+                  type="text"
+                  autoFocus
+                  value={nameInputVal}
+                  onChange={(e) => setNameInputVal(e.target.value)}
+                  placeholder={lang === "pa" ? "ਉਦਾਹਰਨ: ਗੁਰਪ੍ਰੀਤ, ਹਰਪ੍ਰੀਤ" : lang === "hi" ? "उदा: रमेश, मुकेश, राजेश" : "e.g. Ramesh, Gurpreet"}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-base font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <span className="text-[11px] text-slate-500 font-medium block mt-1.5">
+                  {lang === "pa" ? "ਇਹ ਤੁਹਾਡੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਸੁਰੱਖਿਅਤ ਰਹੇਗਾ।" : lang === "hi" ? "यह नाम आपके डिवाइस में सुरक्षित रहेगा।" : "Saved locally on your device for a personalized experience."}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsNameModalOpen(false)}
+                  className="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-sm py-2.5 rounded-xl transition-all min-h-[44px]"
+                >
+                  {lang === "pa" ? "ਰੱਦ ਕਰੋ" : lang === "hi" ? "रद्द करें" : "Cancel"}
+                </button>
+                <button
+                  type="submit"
+                  disabled={!nameInputVal.trim()}
+                  className="w-2/3 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white font-extrabold text-sm py-2.5 rounded-xl shadow-md transition-all min-h-[44px]"
+                >
+                  ✓ {lang === "pa" ? "ਸੁਰੱਖਿਅਤ ਕਰੋ" : lang === "hi" ? "सुरक्षित करें" : "Save Name"}
                 </button>
               </div>
             </form>

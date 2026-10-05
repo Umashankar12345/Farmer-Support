@@ -571,6 +571,91 @@ export const OCTOBER_STATE_DATA = {
         }
       }
     ]
+  },
+
+  Bihar: {
+    stateCode: "BR",
+    researchSource: "Bihar Agricultural University (Sabour), Dr. RPCAU (Pusa) & ICAR-RCER Patna",
+    satelliteSource: "District Agromet Unit (DAMU) / IMD & ICAR-RCER Patna (Issued: 03 Oct 2026 • Valid till 08 Oct 2026)",
+    advisory: {
+      en: "Kharif Paddy (Swarna, Rajendra Mansoori, BPT-5204) is in late grain filling to physiological maturity. Drain standing water 10-12 days before harvest to firm soil for combine harvesting. Wheat sowing window in Bihar is mid to late November (Nov 15 - Dec 10) when temperatures drop to 20-22°C. Early October priorities: harvest mature early paddy/maize, conserve soil moisture by immediate planking, procure certified Rabi wheat seeds (HD-2967, DBW-187, Sabour Shrestha) from BRBN/KVK, and sow early Mustard/Toria and Lentil.",
+      hi: "खरीफ धान (स्वर्णा, राजेंद्र मंसूरी, बीपीटी-5204) परिपक्वता अवस्था में है। कंबाइन कटाई में सुगमता हेतु कटाई से 10-12 दिन पहले खेत से पानी निकाल दें। बिहार में गेहूं बुवाई का उपयुक्त समय मध्य से अंत नवंबर (15 नवंबर - 10 दिसंबर) है जब तापमान 20-22°C हो। अक्टूबर के मुख्य कार्य: धान कटाई, पाटा लगाकर खेत की नमी संरक्षित करना, बिहार राज्य बीज निगम (BRBN) या केवीके से प्रमाणित गेहूं बीज (HD-2967, DBW-187) की व्यवस्था, एवं नमी का लाभ लेकर अगेती तोरिया/सरसों व मसूर की समय पर बुवाई।",
+      pa: "ਝੋਨੇ (ਸਵਰਨਾ, ਰਾਜੇਂਦਰ ਮਨਸੂਰੀ) ਦੀ ਫਸਲ ਪੱਕਣ ਵੱਲ ਹੈ। ਵਾਢੀ ਤੋਂ 10-12 ਦਿਨ ਪਹਿਲਾਂ ਪਾਣੀ ਕੱਢ ਦਿਓ। ਬਿਹਾਰ ਵਿੱਚ ਕਣਕ ਦੀ ਬਿਜਾਈ ਦਾ ਸਹੀ ਸਮਾਂ 15 ਨਵੰਬਰ ਤੋਂ 10 ਦਸੰਬਰ ਹੈ। ਅਕਤੂਬਰ ਦੇ ਜ਼ਰੂਰੀ ਕੰਮ: ਨਮੀ ਸੰਭਾਲ ਕੇ ਅਗੇਤੀ ਤੋਰੀਆ/ਸਰ੍ਹੋਂ ਅਤੇ ਮਸਰਾਂ ਦੀ ਬਿਜਾਈ ਕਰੋ ਅਤੇ ਬੀਜ ਨਿਗਮ ਤੋਂ ਕਣਕ ਦੇ ਪ੍ਰਮਾਣਿਤ ਬੀਜ ਦਾ ਪ੍ਰਬੰਧ ਕਰੋ।"
+    },
+    todayActions: [
+      {
+        id: "br-act-1",
+        type: "drain",
+        badge: "urgent",
+        icon: "🌾",
+        title: {
+          en: "Drain Field Water 10 Days Before Harvest",
+          hi: "कटाई से 10-12 दिन पूर्व खेत से पानी निकालें",
+          pa: "ਵਾਢੀ ਤੋਂ 10 ਦਿਨ ਪਹਿਲਾਂ ਖੇਤ ਵਿੱਚੋਂ ਪਾਣੀ ਕੱਢੋ"
+        },
+        desc: {
+          en: "Drain standing water from Swarna/Rajendra paddy fields 10-12 days before harvest. This firms the soil for combine harvesters and prevents grain lodging or fungal discoloration.",
+          hi: "स्वर्णा व राजेंद्र मंसूरी धान के खेतों से 10-12 दिन पहले पानी निकालें ताकि मिट्टी सख्त हो सके और कंबाइन हार्वेस्टर आसानी से चल सके।",
+          pa: "ਕੰਬਾਈਨ ਚੱਲਣ ਵਿੱਚ ਆਸਾਨੀ ਅਤੇ ਦਾਣੇ ਖ਼ਰਾਬ ਹੋਣ ਤੋਂ ਬਚਾਅ ਲਈ ਪਾਣੀ ਕੱਢ ਦਿਓ।"
+        },
+        actionLink: "/market-explorer",
+        actionText: { en: "Paddy Mandi & MSP Rates", hi: "धान मंडी भाव व एमएसपी", pa: "ਝੋਨਾ ਮੰਡੀ ਭਾਅ" }
+      },
+      {
+        id: "br-act-2",
+        type: "seed",
+        badge: "recommended",
+        icon: "🌱",
+        title: {
+          en: "Sow Early Mustard / Toria & Procure Wheat Seeds",
+          hi: "अगेती तोरिया/सरसों बुवाई एवं प्रमाणित गेहूं बीज प्रबंध",
+          pa: "ਅਗੇਤੀ ਤੋਰੀਆ/ਸਰ੍ਹੋਂ ਦੀ ਬਿਜਾਈ ਅਤੇ ਕਣਕ ਦਾ ਬੀਜ ਪ੍ਰਬੰਧ"
+        },
+        desc: {
+          en: "Sow Toria (RAUTS-17, Panchali) by Oct 20. Procure certified wheat seeds (HD-2967, DBW-187, Sabour Shrestha) from Bihar Rajya Beej Nigam (BRBN) or local KVK for mid-November sowing.",
+          hi: "20 अक्टूबर तक तोरिया (RAUTS-17) की बुवाई पूर्ण करें। बिहार राज्य बीज निगम (BRBN) या नजदीकी केवीके से प्रमाणित गेहूं बीज (HD-2967, DBW-187) की व्यवस्था करें।",
+          pa: "ਤੋਰੀਆ ਦੀ ਬਿਜਾਈ 20 ਅਕਤੂਬਰ ਤੱਕ ਕਰੋ ਅਤੇ ਬੀਜ ਨਿਗਮ ਤੋਂ ਕਣਕ ਦੇ ਪ੍ਰਮਾਣਿਤ ਬੀਜ ਪ੍ਰਾਪਤ ਕਰੋ।"
+        },
+        actionLink: "/crop-rec",
+        actionText: { en: "Rabi Seed Advisory", hi: "रबी बीज सिफारिश", pa: "ਹਾੜ੍ਹੀ ਬੀਜ ਸਲਾਹ" }
+      },
+      {
+        id: "br-act-3",
+        type: "moisture",
+        badge: "advisory",
+        icon: "💧",
+        title: {
+          en: "Conserve Soil Moisture for Rabi Pulses (Lentil/Gram)",
+          hi: "रबी दलहन (मसूर/चना) हेतु खेत की नमी संरक्षित करें",
+          pa: "ਹਾੜ੍ਹੀ ਦਾਲਾਂ (ਮਸਰ/ਛੋਲੇ) ਲਈ ਮਿੱਟੀ ਦੀ ਨਮੀ ਸੰਭਾਲੋ"
+        },
+        desc: {
+          en: "After harvesting early Kharif crops, plank immediately (pata lagana) in Tal and Diara areas to seal in residual monsoon moisture for Lentil (HUL-57, KLS-218) sowing in late October.",
+          hi: "टाल व दियारा क्षेत्रों में कटाई के तुरंत बाद पाटा लगाकर नमी को सुरक्षित करें ताकि अक्टूबर अंत में मसूर (HUL-57) की बुवाई हो सके।",
+          pa: "ਝੋਨੇ ਦੀ ਵਾਢੀ ਤੋਂ ਬਾਅਦ ਤੁਰੰਤ ਸੁਹਾਗਾ ਫੇਰ ਕੇ ਨਮੀ ਸੰਭਾਲੋ ਤਾਂ ਜੋ ਮਸਰਾਂ ਦੀ ਬਿਜਾਈ ਹੋ ਸਕੇ।"
+        },
+        actionLink: "/schemes",
+        actionText: { en: "Pulses Mission Subsidies", hi: "दलहन मिशन योजनाएं", pa: "ਸਰਕਾਰੀ ਸਕੀਮਾਂ" }
+      }
+    ],
+    alerts: [
+      {
+        id: "br-alt-1",
+        severity: "warning",
+        icon: "🐛",
+        sourceBadge: "DAMU Agromet Advisory Bulletin (Issued: 03 Oct 2026)",
+        title: {
+          en: "Brown Plant Hopper (BPH) & Gundhi Bug Surveillance in Paddy",
+          hi: "धान में भूरा माहू (BPH) एवं गंधी बग कीट निगरानी",
+          pa: "ਝੋਨੇ ਵਿੱਚ ਭੂਰੇ ਟਿੱਡੇ ਅਤੇ ਗੰਧੀ ਬੱਗ ਦੀ ਨਿਗਰਾਨੀ"
+        },
+        desc: {
+          en: "Partially cloudy weather favors Gundhi bug in milk-stage paddy and BPH at plant bases. Inspect plant stems. If 5-10 nymphs per hill observed, spray Pymetrozine 50WG (120g/acre) or Dinotefuran 20SG (80g/acre).",
+          hi: "दूधिया अवस्था वाले धान में गंधी बग तथा तने के पास भूरा माहू की निगरानी करें। तने के पास 5-10 कीट दिखने पर पाइमेट्रोज़िन 50WG (120g/एकड़) का छिड़काव करें।",
+          pa: "ਬੂਟੇ ਦੇ ਮੁੱਢਾਂ ਕੋਲ ਭੂਰੇ ਟਿੱਡੇ ਦੀ ਜਾਂਚ ਕਰੋ। ਨੁਕਸਾਨ ਦਿਸਣ 'ਤੇ ਸਿਫਾਰਸ਼ ਕੀਤੀ ਕੀਟਨਾਸ਼ਕ ਵਰਤੋ।"
+        }
+      }
+    ]
   }
 };
 
@@ -584,11 +669,11 @@ export function getStateSeasonData(stateName = "Punjab") {
   return {
     stateCode: stateName.substring(0, 2).toUpperCase(),
     researchSource: `ICAR & State Agricultural Department (${stateName})`,
-    satelliteSource: "National Remote Sensing Centre (NRSC / ISRO) & NASA FIRMS",
+    satelliteSource: `District Agromet Advisory Unit (DAMU / IMD) • Issued: 03 Oct 2026 • Valid till 08 Oct 2026`,
     advisory: {
-      en: `Kharif harvest transition active in ${stateName}. Sun-dry harvested grains below recommended procurement moisture. Conserve residual soil moisture for upcoming Rabi sowing. Avail state farm machinery subsidies on agrimachinery.nic.in.`,
+      en: `Kharif harvest transition active in ${stateName}. Sun-dry harvested grains below recommended procurement moisture. Conserve residual soil moisture by prompt planking for upcoming Rabi sowing. Avail state farm machinery subsidies on agrimachinery.nic.in.`,
       pa: `${stateName} ਵਿੱਚ ਖਰੀਫ਼ ਫਸਲਾਂ ਦੀ ਵਾਢੀ ਅਤੇ ਹਾੜ੍ਹੀ ਦੀ ਤਿਆਰੀ ਚੱਲ ਰਹੀ ਹੈ। ਦਾਣਿਆਂ ਨੂੰ ਚੰਗੀ ਤਰ੍ਹਾਂ ਸੁਕਾਓ ਅਤੇ ਨਮੀ ਦੀ ਸਾਂਭ-ਸੰਭਾਲ ਕਰੋ।`,
-      hi: `${stateName} में खरीफ फसलों की कटाई एवं रबी बुवाई की तैयारी जारी। अनाज को अच्छी तरह सुखाएं और अवशेष न जलाएं।`
+      hi: `${stateName} में खरीफ फसलों की कटाई एवं रबी बुवाई की तैयारी जारी। अनाज को अच्छी तरह सुखाएं और खेत में पाटा लगाकर नमी सुरक्षित रखें।`
     },
     todayActions: [
       {
@@ -597,14 +682,14 @@ export function getStateSeasonData(stateName = "Punjab") {
         badge: "urgent",
         icon: "🌾",
         title: {
-          en: "Harvest Maturity & Moisture Testing",
+          en: "Harvest Maturity & Grain Moisture Testing",
           pa: "ਫਸਲ ਦੀ ਵਾਢੀ ਅਤੇ ਨਮੀ ਦੀ ਜਾਂਚ",
           hi: "फसल कटाई एवं नमी परीक्षण"
         },
         desc: {
-          en: "Harvest mature Kharif crops at physiological maturity. Dry grain before loading for APMC mandis to secure official MSP.",
+          en: "Harvest mature Kharif crops at physiological maturity. Sun-dry grain before loading for APMC mandis to secure official MSP.",
           pa: "ਪੱਕੀ ਫਸਲ ਦੀ ਵਾਢੀ ਕਰੋ ਅਤੇ ਮੰਡੀ ਲਿਜਾਣ ਤੋਂ ਪਹਿਲਾਂ ਦਾਣੇ ਚੰਗੀ ਤਰ੍ਹਾਂ ਸੁਕਾਓ।",
-          hi: "परिपक्व फसलों की कटाई करें और मंडी लाने से पहले अनाज को सुखाएं।"
+          hi: "परिपक्व फसलों की कटाई करें और मंडी लाने से पहले अनाज को अच्छी तरह सुखाएं।"
         },
         actionLink: "/market-explorer",
         actionText: { en: "Check Mandi & MSP", pa: "ਮੰਡੀ ਤੇ ਐੱਮ.ਐੱਸ.ਪੀ ਦੇਖੋ", hi: "मंडी व एमएसपी देखें" }
@@ -620,12 +705,30 @@ export function getStateSeasonData(stateName = "Punjab") {
           hi: "रबी बुवाई हेतु प्रमाणित बीज का प्रबंध"
         },
         desc: {
-          en: "Procure verified seeds from government seed corporations or Krishi Kendras. Treat seed with recommended bio-fertilizers.",
+          en: "Procure verified seeds from government seed corporations or Krishi Vigyan Kendras (KVK). Treat seed with recommended bio-fertilizers.",
           pa: "ਸਰਕਾਰੀ ਖੇਤੀਬਾੜੀ ਕੇਂਦਰਾਂ ਤੋਂ ਪ੍ਰਮਾਣਿਤ ਬੀਜ ਲਵੋ ਅਤੇ ਬੀਜ ਸੋਧ ਕਰੋ।",
-          hi: "कृषि विज्ञान केंद्र से प्रमाणित बीज प्राप्त करें और बीजोपचार करें।"
+          hi: "कृषि विज्ञान केंद्र या सरकारी बीज निगम से प्रमाणित बीज प्राप्त करें और बीजोपचार करें।"
         },
         actionLink: "/crop-rec",
         actionText: { en: "Seed Advisory", pa: "ਬੀਜ ਸਲਾਹ", hi: "बीज सिफारिश देखें" }
+      },
+      {
+        id: "gen-act-3",
+        type: "moisture",
+        badge: "advisory",
+        icon: "💧",
+        title: {
+          en: "Conserve Soil Moisture for Sowing",
+          pa: "ਬਿਜਾਈ ਲਈ ਮਿੱਟੀ ਦੀ ਨਮੀ ਸੰਭਾਲੋ",
+          hi: "रबी बुवाई हेतु खेत की नमी संरक्षित करें"
+        },
+        desc: {
+          en: "Run a planker (pata) immediately after post-harvest tillage to prevent moisture loss from the topsoil layer.",
+          pa: "ਵਾਹੀ ਤੋਂ ਬਾਅਦ ਤੁਰੰਤ ਸੁਹਾਗਾ ਫੇਰੋ ਤਾਂ ਜੋ ਜ਼ਮੀਨ ਦੀ ਨਮੀ ਨਾ ਉੱਡੇ।",
+          hi: "जुताई के तुरंत बाद पाटा लगाएं ताकि ऊपरी मिट्टी की नमी उड़ने से बच सके।"
+        },
+        actionLink: "/schemes",
+        actionText: { en: "Govt Schemes", pa: "ਸਰਕਾਰੀ ਸਕੀਮਾਂ", hi: "सरकारी योजनाएं" }
       }
     ],
     alerts: [
@@ -633,9 +736,9 @@ export function getStateSeasonData(stateName = "Punjab") {
         id: "gen-alt-1",
         severity: "warning",
         icon: "⚠️",
-        sourceBadge: "State Agromet Advisory",
+        sourceBadge: "State Agromet Advisory (Issued: 03 Oct 2026)",
         title: {
-          en: `Rabi Soil Moisture & Pre-Sowing Protocol (${stateName})`,
+          en: `Rabi Soil Moisture & Pre-Sowing Field Steps (${stateName})`,
           pa: `ਹਾੜ੍ਹੀ ਫਸਲਾਂ ਲਈ ਨਮੀ ਸੰਭਾਲ ਸਲਾਹ (${stateName})`,
           hi: `रबी फसलों हेतु नमी संरक्षण सलाह (${stateName})`
         },

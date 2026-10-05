@@ -462,36 +462,114 @@ export const INDIA_ADMIN_HIERARCHY = {
         lat: 25.5941,
         lon: 85.1376,
         subDistricts: {
-          "Bihta": ["Maner", "Parew", "Danapur", "Shivala"],
-          "Barh": ["Bakhtiarpur", "Mokama", "Ghoswari", "Pandarak"],
-          "Masaurhi": ["Dhanarua", "Punpun", "Taregna", "Kadirganj"],
-          "Paliganj": ["Dulhin Bazar", "Bikram", "Sigori", "Mera"]
+          "Maner": {
+            lat: 25.6820,
+            lon: 84.8740,
+            villages: ["Maner", "Sherpur", "Haldia Chhapra", "Balua", "Sujalpur", "Bishunpura", "Magpalpur", "Darveshpur"]
+          },
+          "Bihta": {
+            lat: 25.5650,
+            lon: 84.8720,
+            villages: ["Bihta", "Parew", "Kanhauli", "Amhara", "Dayalpur Daulatpur", "Vishunpura", "Sadisopur"]
+          },
+          "Danapur": {
+            lat: 25.6333,
+            lon: 85.0333,
+            villages: ["Danapur", "Khagaul", "Shivala", "Saguna", "Tarachak", "Mustafapur"]
+          },
+          "Patna Sadar": {
+            lat: 25.5941,
+            lon: 85.1376,
+            villages: ["Digha", "Kankarbagh", "Pahari", "Ranipur", "Sabzibagh"]
+          },
+          "Bikram": {
+            lat: 25.4400,
+            lon: 84.8500,
+            villages: ["Bikram", "Dhanawan", "Gorakhri", "Maniyawan", "Bhadasi"]
+          },
+          "Paliganj": {
+            lat: 25.3300,
+            lon: 84.8100,
+            villages: ["Paliganj", "Dulhin Bazar", "Sigori", "Mera Patut", "Chandhos"]
+          },
+          "Masaurhi": {
+            lat: 25.3500,
+            lon: 85.0200,
+            villages: ["Masaurhi", "Taregna", "Dhanarua", "Punpun", "Baurhi"]
+          },
+          "Barh": {
+            lat: 25.4800,
+            lon: 85.7100,
+            villages: ["Barh", "Athmalgola", "Pandarak", "Salimpur", "Rana Bigha"]
+          },
+          "Bakhtiarpur": {
+            lat: 25.4600,
+            lon: 85.5200,
+            villages: ["Bakhtiarpur", "Salarpur", "Champa Nagar", "Harnaut border", "Karnauti"]
+          },
+          "Mokama": {
+            lat: 25.4000,
+            lon: 85.9200,
+            villages: ["Mokama", "Ghoswari", "Aunta", "Hathidah", "Maranchi"]
+          }
         }
       },
       Muzaffarpur: {
         lat: 26.1209,
         lon: 85.3647,
         subDistricts: {
-          "Kanti": ["Motipur", "Baruraj", "Minapur", "Panapur"],
-          "Sakra": ["Dholi", "Kudra", "Muraul", "Bandra"],
-          "Sahebganj": ["Paroo", "Saraiya", "Deoria", "Jaitpur"]
+          "Kanti": {
+            lat: 26.1950,
+            lon: 85.3110,
+            villages: ["Kanti", "Motipur", "Baruraj", "Minapur", "Panapur"]
+          },
+          "Sakra": {
+            lat: 25.9900,
+            lon: 85.4800,
+            villages: ["Sakra", "Dholi", "Kudra", "Muraul", "Bandra"]
+          },
+          "Sahebganj": {
+            lat: 26.2900,
+            lon: 85.0100,
+            villages: ["Sahebganj", "Paroo", "Saraiya", "Deoria", "Jaitpur"]
+          }
         }
       },
       Samastipur: {
         lat: 25.8629,
         lon: 85.7811,
         subDistricts: {
-          "Pusa": ["RPCAU Campus", "Mahmoodpur", "Kalyanpur", "Morwa"],
-          "Dalsinghsarai": ["Ujiarpur", "Bibhutipur", "Rosera", "Singhia"],
-          "Mohiuddinagar": ["Patori", "Mohanpur", "Shahpur Patori"]
+          "Pusa": {
+            lat: 25.9810,
+            lon: 85.6720,
+            villages: ["RPCAU Campus", "Pusa Farm", "Mahmoodpur", "Kalyanpur", "Morwa"]
+          },
+          "Dalsinghsarai": {
+            lat: 25.6660,
+            lon: 85.8330,
+            villages: ["Dalsinghsarai", "Ujiarpur", "Bibhutipur", "Rosera", "Singhia"]
+          },
+          "Mohiuddinagar": {
+            lat: 25.5900,
+            lon: 85.6800,
+            villages: ["Patori", "Mohanpur", "Shahpur Patori"]
+          }
         }
       },
       Gaya: {
         lat: 24.7955,
         lon: 85.0002,
         subDistricts: {
-          "Bodh Gaya": ["Sherghati", "Tekari", "Manpur", "Belaganj"],
-          "Wazirganj": ["Fatehpur", "Atri", "Mohanpur", "Barachatti"]
+          "Bodh Gaya": {
+            lat: 24.6960,
+            lon: 84.9870,
+            villages: ["Bodh Gaya", "Bakror", "Mastipur", "Tikar", "Belaganj"]
+          },
+          "Sherghati": {
+            lat: 24.5700,
+            lon: 84.7900,
+            villages: ["Sherghati", "Tekari", "Manpur", "Barachatti"]
+          }
         }
       }
     }
@@ -870,17 +948,26 @@ export function getVillages(stateName, districtName, subDistrictName) {
   if (!stateObj || !stateObj.districts || !stateObj.districts[districtName]) return [];
   const distObj = stateObj.districts[districtName];
   if (!distObj.subDistricts || !distObj.subDistricts[subDistrictName]) return [];
-  return distObj.subDistricts[subDistrictName] || [];
+  const val = distObj.subDistricts[subDistrictName];
+  if (Array.isArray(val)) return val;
+  if (val && Array.isArray(val.villages)) return val.villages;
+  return [];
 }
 
-// Helper: Get precise coordinates for a district or state
-export function getCoordinatesForLocation(stateName, districtName) {
+// Helper: Get precise coordinates for a sub-district, district or state
+export function getCoordinatesForLocation(stateName, districtName, subDistrictName = null) {
   const stateObj = INDIA_ADMIN_HIERARCHY[stateName];
   if (!stateObj) {
     return { lat: 28.6139, lon: 77.2090, label: "New Delhi, India" };
   }
   if (districtName && stateObj.districts && stateObj.districts[districtName]) {
     const dist = stateObj.districts[districtName];
+    if (subDistrictName && dist.subDistricts && dist.subDistricts[subDistrictName]) {
+      const sub = dist.subDistricts[subDistrictName];
+      if (typeof sub === "object" && !Array.isArray(sub) && sub.lat && sub.lon) {
+        return { lat: sub.lat, lon: sub.lon, label: `${subDistrictName}, ${districtName}` };
+      }
+    }
     return { lat: dist.lat, lon: dist.lon, label: `${districtName}, ${stateName}` };
   }
   return { lat: stateObj.lat, lon: stateObj.lon, label: stateName };

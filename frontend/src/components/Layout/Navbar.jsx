@@ -2,31 +2,75 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NotificationPanel from '../Notifications/NotificationPanel';
 
-const TICKERS = [
-  '🌾 Mandi: Paddy PR-126 trading at ₹2,380/qtl at Khanna mandi.',
-  '🚜 Advisory: Deploy Super Seeder for direct wheat sowing — zero stubble burning.',
-  '☀️ Weather: Clear skies ideal for combine harvesting & grain drying.',
-  '⚠️ Alert: Keep paddy moisture below 17% for maximum procurement price.',
-  '🌱 Tip: Treat wheat seed with Trichoderma / Vitavax before next week sowing.',
-  '🏛️ PM-KISAN: Next installment scheduled for release this month.'
-];
+const getLocationTickers = () => {
+  let state = "Punjab";
+  let dist = "Local";
+  try {
+    const loc = JSON.parse(localStorage.getItem("farmer_location") || "{}");
+    if (loc.state) state = loc.state;
+    if (loc.district) dist = loc.district;
+  } catch (e) {}
+
+  if (state === "Bihar") {
+    return [
+      `🌾 Bihar Mandi: KMS Paddy procurement active across ${dist} Mandis at official MSP ₹2,389/qtl.`,
+      `🚜 BAU Sabour & RPCAU Advisory: Drain standing water 10-12 days before combine harvesting.`,
+      `☀️ Weather: Sunny spells favorable for paddy grain ripening and field drying.`,
+      `🌱 Rabi Tip: Wheat sowing window in Bihar is mid-late Nov (Nov 15-Dec 10). Procure seeds (HD-2967, DBW-187) now.`,
+      `💧 Field Steps: Plank (pata) immediately after harvest to conserve moisture for Lentil/Mustard.`,
+      `🏛️ PM-KISAN: Verify DBT beneficiary bank account status on pmkisan.gov.in.`
+    ];
+  }
+
+  if (state === "Punjab" || state === "Haryana") {
+    return [
+      `🌾 Mandi: Grade A Paddy trading at ₹2,389/qtl official MSP across ${dist} Mandis.`,
+      `🚜 PAU Advisory: Recommended wheat sowing window is Oct 25 – Nov 15 when temp drops below 22°C.`,
+      `☀️ Weather: Clear skies ideal for combine harvesting & grain sun-drying.`,
+      `⚠️ Moisture: Keep paddy moisture below 17% for maximum government procurement price.`,
+      `🌱 CRM Advisory: Deploy Super Seeder / Smart Seeder for in-situ stubble management.`,
+      `🏛️ PM-KISAN: Verify DBT beneficiary status on official portal pmkisan.gov.in.`
+    ];
+  }
+
+  return [
+    `🌾 Mandi: Official KMS 2025-26 MSP benchmark at ₹2,369 (Common) and ₹2,389 (Grade A) per quintal.`,
+    `🚜 ICAR Advisory: Harvest mature Kharif crops and sun-dry grains below 17% moisture.`,
+    `☀️ Weather: Utilize clear weather windows for timely harvest and field preparation.`,
+    `🌱 Rabi Seed Tip: Procure certified seeds from State Seed Corporation or local KVK.`,
+    `💧 Soil Moisture: Conserve post-monsoon residual moisture by prompt planking.`,
+    `🏛️ PM-KISAN: Official DBT helpline: 155261 / 1800-115-526.`
+  ];
+};
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [time, setTime] = useState(new Date());
   const [tickerIndex, setTickerIndex] = useState(0);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [tickers, setTickers] = useState(getLocationTickers);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     const tickerTimer = setInterval(() => {
-      setTickerIndex((prev) => (prev + 1) % TICKERS.length);
+      setTickerIndex((prev) => (prev + 1) % tickers.length);
     }, 6000);
+
+    const handleLocationChange = () => {
+      const updated = getLocationTickers();
+      setTickers(updated);
+      setTickerIndex(0);
+    };
+    window.addEventListener('storage', handleLocationChange);
+    window.addEventListener('farmer_location_change', handleLocationChange);
+
     return () => {
       clearInterval(timer);
       clearInterval(tickerTimer);
+      window.removeEventListener('storage', handleLocationChange);
+      window.removeEventListener('farmer_location_change', handleLocationChange);
     };
-  }, []);
+  }, [tickers.length]);
 
   const formatTime = (n) => {
     let h = n.getHours(), m = n.getMinutes(), s = n.getSeconds(), ap = h >= 12 ? 'PM' : 'AM';

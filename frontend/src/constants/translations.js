@@ -57,19 +57,19 @@ export const TRANSLATIONS = {
     q1: "What's happening on my farm right now?",
     q2: "Is anything wrong?",
     q3: "What should I do today?",
-    q1Sub: "Live weather radar & registered farm crop telemetry",
-    q2Sub: "Satellite fire monitoring & mandi moisture guidelines",
-    q3Sub: "Harvesting, stubble management & PAU wheat sowing prep",
+    q1Sub: "Live weather and crop health at your farm",
+    q2Sub: "Government advisories & mandi moisture guidelines",
+    q3Sub: "Harvesting, moisture conservation & Rabi sowing prep",
     // Today's actions
     todaysActions: "Today's Priority Actions",
-    todaysActionsSub: "Agronomic recommendations for October (PAU & ICAR guidelines)",
+    todaysActionsSub: "State agricultural university recommendations for October",
     markDone: "Mark Done",
     completed: "Completed",
     urgent: "CRITICAL",
     recommended: "RECOMMENDED",
     advisory: "ADVISORY",
     // Top alerts
-    topAlerts: "Statutory Alerts & Guidelines",
+    topAlerts: "Government Advisories & Farm Alerts",
     // Crops & Soil
     pmKisan: "PM-KISAN Samman Nidhi",
     pmKisanDesc: "₹6,000/year DBT assistance directly to bank account",
@@ -99,7 +99,7 @@ export const TRANSLATIONS = {
     statusOnline: "System Status: Online",
     statusOffline: "System Status: Offline (Cached)",
     allServicesOperational: "All Systems Operational",
-    seasonTag: "October Kharif Harvest & Stubble Management Window",
+    seasonTag: "October Kharif Harvest & Rabi Field Preparation Window",
     aiDisclaimer: "AI Prediction: Verify with local KVK / Agriculture Officer before chemical application.",
     demoDataTag: "Demo / Reference Data: Verify spot bids at local APMC Mandi"
   },
@@ -161,19 +161,19 @@ export const TRANSLATIONS = {
     q1: "ਮੇਰੇ ਖੇਤ ਵਿੱਚ ਇਸ ਵੇਲੇ ਕੀ ਹੋ ਰਿਹਾ ਹੈ?",
     q2: "ਕੀ ਕੋਈ ਖ਼ਤਰਾ ਜਾਂ ਸਮੱਸਿਆ ਹੈ?",
     q3: "ਅੱਜ ਮੈਨੂੰ ਕੀ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ?",
-    q1Sub: "ਲਾਈਵ ਮੌਸਮ ਅਤੇ ਰਜਿਸਟਰਡ ਖੇਤਾਂ ਦੀ ਸੈਟੇਲਾਈਟ ਜਾਣਕਾਰੀ",
-    q2Sub: "ਸੈਟੇਲਾਈਟ ਪਰਾਲੀ ਨਿਗਰਾਨੀ ਅਤੇ ਸਰਕਾਰੀ ਮੰਡੀ ਨਿਯਮ",
-    q3Sub: "ਝੋਨੇ ਦੀ ਵਾਢੀ, ਪਰਾਲੀ ਪ੍ਰਬੰਧਨ ਅਤੇ ਕਣਕ ਬਿਜਾਈ ਦੀ ਤਿਆਰੀ",
+    q1Sub: "ਤੁਹਾਡੇ ਖੇਤ ਦਾ ਲਾਈਵ ਮੌਸਮ ਅਤੇ ਫਸਲ ਦੀ ਸਿਹਤ",
+    q2Sub: "ਸਰਕਾਰੀ ਖੇਤੀਬਾੜੀ ਸਲਾਹ ਅਤੇ ਮੰਡੀ ਨਿਯਮ",
+    q3Sub: "ਫਸਲ ਦੀ ਵਾਢੀ, ਨਮੀ ਸੰਭਾਲ ਅਤੇ ਹਾੜ੍ਹੀ ਬਿਜਾਈ ਦੀ ਤਿਆਰੀ",
     // Today's actions
     todaysActions: "ਅੱਜ ਦੇ ਜ਼ਰੂਰੀ ਕੰਮ",
-    todaysActionsSub: "ਅਕਤੂਬਰ ਮਹੀਨੇ ਦੀ ਖੇਤੀ ਸਲਾਹ (ਪੀ.ਏ.ਯੂ. ਲੁਧਿਆਣਾ ਦੀਆਂ ਸਿਫਾਰਸ਼ਾਂ ਅਨੁਸਾਰ)",
+    todaysActionsSub: "ਅਕਤੂਬਰ ਮਹੀਨੇ ਦੀ ਪ੍ਰਮਾਣਿਤ ਖੇਤੀਬਾੜੀ ਸਲਾਹ",
     markDone: "ਹੋ ਗਿਆ",
     completed: "ਮੁਕੰਮਲ",
     urgent: "ਜ਼ਰੂਰੀ",
     recommended: "ਸਿਫਾਰਸ਼",
     advisory: "ਸਲਾਹ",
     // Top alerts
-    topAlerts: "ਸਰਕਾਰੀ ਨਿਯਮ ਅਤੇ ਜ਼ਰੂਰੀ ਅਲਰਟ",
+    topAlerts: "ਸਰਕਾਰੀ ਖੇਤੀ ਸਲਾਹ ਅਤੇ ਜ਼ਰੂਰੀ ਅਲਰਟ",
     // Crops & Soil
     pmKisan: "ਪੀ.ਐੱਮ-ਕਿਸਾਨ ਸਨਮਾਨ ਨਿਧੀ",
     pmKisanDesc: "ਸਾਲਾਨਾ ₹6,000 ਸਿੱਧਾ ਬੈਂਕ ਖਾਤੇ ਵਿੱਚ (DBT ਰਾਹੀਂ)",
@@ -203,7 +203,7 @@ export const TRANSLATIONS = {
     statusOnline: "ਸਿਸਟਮ ਸਥਿਤੀ: ਆਨਲਾਈਨ",
     statusOffline: "ਸਿਸਟਮ ਸਥਿਤੀ: ਆਫਲਾਈਨ (ਕੈਸ਼ ਮੋਡ)",
     allServicesOperational: "ਸਾਰੀਆਂ ਸੇਵਾਵਾਂ ਚਾਲੂ ਹਨ",
-    seasonTag: "ਝੋਨੇ ਦੀ ਵਾਢੀ ਅਤੇ ਪਰਾਲੀ ਸਾਂਭ-ਸੰਭਾਲ (ਅਕਤੂਬਰ 2026)",
+    seasonTag: "ਖਰੀਫ਼ ਫਸਲਾਂ ਦੀ ਵਾਢੀ ਅਤੇ ਹਾੜ੍ਹੀ ਦੀ ਤਿਆਰੀ (ਅਕਤੂਬਰ 2026)",
     aiDisclaimer: "AI ਅਨੁਮਾਨ: ਕੋਈ ਵੀ ਦਵਾਈ ਪਾਉਣ ਤੋਂ ਪਹਿਲਾਂ ਖੇਤੀਬਾੜੀ ਅਧਿਕਾਰੀ ਜਾਂ ਕੇ.ਵੀ.ਕੇ ਤੋਂ ਸਲਾਹ ਲਵੋ।",
     demoDataTag: "ਨਮੂਨਾ ਅੰਕੜੇ: ਅਸਲ ਬੋਲੀ ਦਾ ਭਾਅ ਮੰਡੀ ਵਿੱਚ ਤਸਦੀਕ ਕਰੋ"
   },
@@ -265,9 +265,9 @@ export const TRANSLATIONS = {
     q1: "मेरे खेत में अभी क्या हो रहा है?",
     q2: "क्या कोई समस्या या खतरा है?",
     q3: "आज मुझे क्या करना चाहिए?",
-    q1Sub: "लाइव मौसम व पंजीकृत खेत की सैटेलाइट निगरानी",
-    q2Sub: "उपग्रह आग निगरानी एवं सरकारी खरीद नियम",
-    q3Sub: "धान कटाई, पराली प्रबंधन एवं गेहूं बुवाई तैयारी",
+    q1Sub: "लाइव मौसम व आपके खेत की फसल स्थिति",
+    q2Sub: "सरकारी कृषि सलाह एवं मौसम अलर्ट",
+    q3Sub: "धान कटाई, खेत की नमी संरक्षण एवं रबी बुवाई तैयारी",
     // Today's actions
     todaysActions: "आज के जरूरी कार्य",
     todaysActionsSub: "अक्टूबर माह की वैज्ञानिक कृषि सलाह (ICAR एवं राज्य विश्वविद्यालय)",
@@ -277,7 +277,7 @@ export const TRANSLATIONS = {
     recommended: "अनुशंसित",
     advisory: "सलाह",
     // Top alerts
-    topAlerts: "शीर्ष अलर्ट एवं वैधानिक दिशानिर्देश",
+    topAlerts: "सरकारी कृषि सलाह एवं मौसम अलर्ट",
     // Crops & Soil
     pmKisan: "पीएम-किसान सम्मान निधि",
     pmKisanDesc: "वार्षिक ₹6,000 डीबीटी सहायता सीधे बैंक खाते में",
@@ -307,7 +307,7 @@ export const TRANSLATIONS = {
     statusOnline: "सिस्टम स्थिति: ऑनलाइन",
     statusOffline: "सिस्टम स्थिति: ऑफलाइन (कैश्ड मोड)",
     allServicesOperational: "सभी सेवाएं सक्रिय हैं",
-    seasonTag: "धान कटाई एवं अवशेष प्रबंधन (अक्टूबर 2026)",
+    seasonTag: "खरीफ कटाई एवं रबी खेत तैयारी (अक्टूबर 2026)",
     aiDisclaimer: "AI अनुमान: रासायनिक छिड़काव से पहले कृषि अधिकारी से सलाह लें।",
     demoDataTag: "संदर्भ डाटा: वास्तविक बोली भाव स्थानीय मंडी में जांचें"
   }
