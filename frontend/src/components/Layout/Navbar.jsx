@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import NotificationPanel from '../Notifications/NotificationPanel';
 
 const TICKERS = [
-  'Forecast: 80% chance of light rain tomorrow evening.',
-  'Alert: PM-KISAN 16th installment credited to your account.',
-  'Tip: High moisture detected, skip morning irrigation for Farm A.',
-  'Market: Mustard prices up 2.4% today at Alwar mandi.',
-  'Advisory: Apply Zinc Sulphate to boost mustard yield by 12%.',
-  'Weather: Heavy rain expected Wed-Thu. Harvest wheat by Tuesday.'
+  '🌾 Mandi: Paddy PR-126 trading at ₹2,380/qtl at Khanna mandi.',
+  '🚜 Advisory: Deploy Super Seeder for direct wheat sowing — zero stubble burning.',
+  '☀️ Weather: Clear skies ideal for combine harvesting & grain drying.',
+  '⚠️ Alert: Keep paddy moisture below 17% for maximum procurement price.',
+  '🌱 Tip: Treat wheat seed with Trichoderma / Vitavax before next week sowing.',
+  '🏛️ PM-KISAN: Next installment scheduled for release this month.'
 ];
 
 const Navbar = () => {
@@ -21,7 +21,7 @@ const Navbar = () => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     const tickerTimer = setInterval(() => {
       setTickerIndex((prev) => (prev + 1) % TICKERS.length);
-    }, 7000);
+    }, 6000);
     return () => {
       clearInterval(timer);
       clearInterval(tickerTimer);
@@ -35,9 +35,9 @@ const Navbar = () => {
   };
 
   const formatDate = (n) => {
-    const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    return `${days[n.getDay()]}, ${n.getDate()} ${months[n.getMonth()]}`;
+    return `${days[n.getDay()]}, ${n.getDate()} ${months[n.getMonth()]} ${n.getFullYear()}`;
   };
 
   const handleLogout = () => {
@@ -47,26 +47,58 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const getUserInitials = () => {
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || '{}');
+      if (u.firstName) return u.firstName.substring(0, 2).toUpperCase();
+      if (u.name) return u.name.substring(0, 2).toUpperCase();
+    } catch (e) {}
+    return 'KS';
+  };
 
   return (
     <>
       <div className="topbar">
-        <div className="top-brand">DIGITAL KRISHI</div>
-        <div className="top-ticker">
-          <div className="ticker-dot"></div>
-          <span>{TICKERS[tickerIndex]}</span>
+        {/* Left: Hamburger (Mobile) + Brand */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('toggle-mobile-sidebar'))}
+            className="md:hidden p-1.5 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none"
+            aria-label="Toggle navigation menu"
+          >
+            <span className="text-xl">☰</span>
+          </button>
+          <div className="top-brand cursor-pointer" onClick={() => navigate('/')}>
+            🌾 DIGITAL KRISHI
+          </div>
         </div>
+
+        {/* Center: Live Ticker (hidden on small phones, visible on sm and up) */}
+        <div className="top-ticker hidden sm:flex">
+          <div className="ticker-dot shrink-0"></div>
+          <span className="truncate">{TICKERS[tickerIndex]}</span>
+        </div>
+
+        {/* Right: Real Date/Time + Notifications + User Avatar */}
         <div className="top-right">
           <div className="top-time">
             <div className="t1">{formatTime(time)}</div>
             <div className="t2">{formatDate(time)}</div>
           </div>
-          <div className="top-notif" onClick={() => setIsNotifOpen(true)}>
+          <div
+            className="top-notif"
+            onClick={() => setIsNotifOpen(true)}
+            title="Notifications"
+          >
             🔔<div className="notif-badge"></div>
           </div>
-          <div className="top-avatar" title="Click to Logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>
-            {user.firstName ? user.firstName.substring(0, 2).toUpperCase() : 'US'}
+          <div
+            className="top-avatar"
+            title="Click to Logout"
+            onClick={handleLogout}
+            style={{ cursor: 'pointer' }}
+          >
+            {getUserInitials()}
           </div>
         </div>
       </div>

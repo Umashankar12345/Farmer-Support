@@ -20,33 +20,54 @@ body {
   background-position: center;
   background-attachment: fixed;
   color: var(--text);
-  font-size: 13px;
-  overflow: hidden;
-  height: 100vh;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+@media (min-width: 768px) {
+  body {
+    overflow: hidden;
+    height: 100vh;
+  }
 }
 
 /* ── LAYOUT ── */
 .app-shell {
-  display: grid;
-  grid-template-columns: 228px 1fr;
-  grid-template-rows: auto 1fr auto;
-  height: 100vh;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .app-shell {
+    display: grid;
+    grid-template-columns: 256px 1fr;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
+    overflow: hidden;
+  }
 }
 
 /* ── TOPBAR ── */
 .topbar {
   grid-column: 1/3;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.90);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  height: 48px;
-  z-index: 50;
+  padding: 0 12px;
+  height: 52px;
+  z-index: 40;
+}
+
+@media (min-width: 768px) {
+  .topbar {
+    padding: 0 20px;
+  }
 }
 
 .top-brand {
@@ -54,7 +75,7 @@ body {
   font-size: 15px;
   color: var(--g1);
   letter-spacing: -0.5px;
-  width: 212px;
+  width: auto;
 }
 
 .top-ticker {
@@ -160,8 +181,16 @@ body {
 /* ── MAIN CONTENT ── */
 .main {
   background: transparent;
-  padding: 24px;
+  padding: 12px;
   overflow-y: auto;
+  padding-bottom: 72px;
+}
+
+@media (min-width: 768px) {
+  .main {
+    padding: 24px;
+    padding-bottom: 56px;
+  }
 }
 
 .grid { display: grid; gap: 16px; }

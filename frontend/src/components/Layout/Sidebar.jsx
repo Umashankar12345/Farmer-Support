@@ -5,15 +5,26 @@ import { TRANSLATIONS } from '../../constants/translations';
 const Sidebar = () => {
   const navigate = useNavigate();
   const [lang, setLang] = useState(localStorage.getItem('krishi_lang') || 'en');
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const handleStorage = () => {
       setLang(localStorage.getItem('krishi_lang') || 'en');
     };
+    const handleToggle = () => setMobileOpen(prev => !prev);
+    const handleClose = () => setMobileOpen(false);
+
     window.addEventListener('storage', handleStorage);
-    const interval = setInterval(handleStorage, 1000); // Polling as fallback for same-window changes
+    window.addEventListener('krishi_lang_change', handleStorage);
+    window.addEventListener('toggle-mobile-sidebar', handleToggle);
+    window.addEventListener('close-mobile-sidebar', handleClose);
+    const interval = setInterval(handleStorage, 1000);
+
     return () => {
       window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('krishi_lang_change', handleStorage);
+      window.removeEventListener('toggle-mobile-sidebar', handleToggle);
+      window.removeEventListener('close-mobile-sidebar', handleClose);
       clearInterval(interval);
     };
   }, []);
@@ -73,80 +84,132 @@ const Sidebar = () => {
   ];
 
   const handleLogout = () => {
-    localStorage.clear(); // Clear all for safety
+    localStorage.clear();
+    setMobileOpen(false);
     navigate('/login');
   };
 
-  return (
-    <aside className="w-64 bg-white h-screen border-r border-gray-100 flex flex-col sticky top-0 overflow-y-auto pt-4">
-      <div className="px-6 mb-8 mt-4">
-        <div className="bg-green-50 rounded-2xl p-4 flex items-center gap-3 border border-green-100 group hover:border-green-300 transition-all cursor-pointer">
-          <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white text-xl shadow-lg shadow-green-100">👨‍🌾</div>
+  const getFarmerName = () => {
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || '{}');
+      return u.firstName || (u.name ? u.name.split(' ')[0] : '') || t.farmerFallback || 'Gurpreet';
+    } catch (e) {
+      return t.farmerFallback || 'Gurpreet';
+    }
+  };
+
+  const sidebarContent = (
+    <div className="flex flex-col h-full">
+      {/* Header Profile */}
+      <div className="px-5 mb-6 mt-3">
+        <div className="flex items-center justify-between md:hidden mb-3">
+          <span className="font-bold text-base text-emerald-900">🌾 Digital Krishi</span>
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="p-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
+            aria-label="Close menu"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="bg-emerald-50 rounded-2xl p-4 flex items-center gap-3 border border-emerald-200 shadow-sm">
+          <div className="w-11 h-11 bg-emerald-600 rounded-xl flex items-center justify-center text-white text-2xl shadow-md">
+            👨‍🌾
+          </div>
           <div className="overflow-hidden">
-            <p className="text-sm font-bold text-gray-900 truncate">
-              {(() => {
-                try {
-                  const u = JSON.parse(localStorage.getItem('user') || '{}');
-                  return u.firstName || 'Farmer';
-                } catch (e) {
-                  return 'Farmer';
-                }
-              })()}
+            <p className="text-base font-extrabold text-slate-900 truncate">
+              {getFarmerName()}
             </p>
-            <div className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-              <p className="text-[10px] font-bold text-green-600 uppercase tracking-tighter">{t.partner}</p>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <p className="text-xs font-bold text-emerald-700 uppercase tracking-wide">
+                {t.partner}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 px-4 space-y-8">
+      {/* Navigation Sections */}
+      <nav className="flex-1 px-3 space-y-6 overflow-y-auto">
         {sections.map((section, idx) => (
           <div key={idx}>
-            <h4 className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-3">{section.title}</h4>
+            <h4 className="px-3 text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">
+              {section.title}
+            </h4>
             <ul className="space-y-1">
               {section.items.map((item, i) => (
                 <li key={i}>
                   <NavLink
                     to={item.path}
+                    onClick={() => setMobileOpen(false)}
                     className={({ isActive }) => `
-                      flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all group
+                      flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all group
                       ${isActive
-                        ? 'bg-green-50 text-green-700 shadow-sm border border-green-100'
-                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-slate-700 hover:bg-emerald-50 hover:text-emerald-900'}
                     `}
                   >
                     <span className="text-lg group-hover:scale-110 transition-transform">{item.icon}</span>
-                    {item.name}
+                    <span className="truncate">{item.name}</span>
                   </NavLink>
                 </li>
               ))}
             </ul>
           </div>
         ))}
-        
-        <div className="pt-4 border-t border-gray-100">
+
+        <div className="pt-4 border-t border-slate-200">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-all group"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-all"
           >
-            <span className="text-lg group-hover:scale-110 transition-transform">🚪</span>
+            <span className="text-lg">🚪</span>
             {t.logout}
           </button>
         </div>
       </nav>
 
+      {/* System Status Footprint */}
       <div className="p-4 mt-auto">
-        <div className="bg-gray-900 rounded-xl p-4 text-white relative overflow-hidden group">
-          <div className="relative z-10">
-            <p className="text-[10px] font-bold text-green-400 uppercase mb-1">System Health</p>
-            <p className="text-xs font-medium">Precision AI: 94.2%</p>
+        <div className="bg-slate-900 rounded-xl p-3.5 text-white">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+              {t.statusOnline}
+            </span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
           </div>
-          <div className="absolute -right-2 -bottom-2 opacity-10 text-4xl group-hover:scale-125 transition-transform">⚙️</div>
+          <p className="text-xs text-slate-300">
+            {t.allServicesOperational}
+          </p>
         </div>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sticky Sidebar */}
+      <aside className="hidden md:flex w-64 bg-white h-screen border-r border-slate-200 flex-col sticky top-0 overflow-y-auto pt-2 z-30 shadow-sm">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Slide-over Drawer */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+            onClick={() => setMobileOpen(false)}
+          ></div>
+
+          {/* Drawer content */}
+          <div className="relative w-4/5 max-w-xs bg-white h-full shadow-2xl z-10 flex flex-col pt-4">
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
