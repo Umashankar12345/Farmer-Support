@@ -47,6 +47,20 @@ export default function RoleSelectionPage() {
 
   return (
     <div className="role-page-container">
+      {/* Cinematic Farming Video Background */}
+      <div className="welcome-video-bg-wrap" aria-hidden="true">
+        <video
+          className="welcome-video-bg"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="/videos/wheat-field.mp4" type="video/mp4" />
+        </video>
+        <div className="welcome-video-overlay" />
+      </div>
+
       {/* Ambient background glows */}
       <div className="welcome-ambient-1" />
       <div className="welcome-ambient-2" />

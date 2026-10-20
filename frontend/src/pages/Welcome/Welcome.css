@@ -757,6 +757,115 @@
   background: #4ade80;
 }
 
+/* Background Video & Farming Live Canvas */
+.welcome-video-bg-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.welcome-video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  opacity: 0.22;
+  filter: saturate(1.25) brightness(1.05);
+  transition: opacity 0.5s ease;
+}
+
+.welcome-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 20%,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(240, 253, 244, 0.85) 50%,
+    rgba(248, 250, 252, 0.95) 100%
+  );
+  backdrop-filter: blur(1px);
+}
+
+/* Video Switcher Bar (Discreet & Interactive) */
+.farm-video-control-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  margin-top: 24px;
+  position: relative;
+  z-index: 5;
+}
+
+.farm-video-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #166534;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-right: 6px;
+  border-right: 1px solid #e2e8f0;
+}
+
+.farm-video-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.farm-video-pill:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.farm-video-pill.active {
+  background: #16a34a;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35);
+}
+
+.farm-video-toggle-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.farm-video-toggle-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
 /* Responsive tweaks */
 @media (max-width: 640px) {
   .welcome-navbar {
@@ -771,4 +880,10 @@
   .role-card {
     padding: 24px;
   }
+  .farm-video-control-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    border-radius: 16px;
+  }
 }
+

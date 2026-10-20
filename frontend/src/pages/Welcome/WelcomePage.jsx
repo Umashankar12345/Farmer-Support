@@ -3,10 +3,18 @@ import { useNavigate, Link } from 'react-router-dom';
 import { TRANSLATIONS, AVAILABLE_LANGUAGES } from '../../constants/translations';
 import './Welcome.css';
 
+const FARM_CLIPS = [
+  { id: 'wheat', label: '🌾 Wheat Field', file: '/videos/wheat-field.mp4' },
+  { id: 'tractor', label: '🚜 Tractor Farming', file: '/videos/tractor-farming.mp4' },
+  { id: 'paddy', label: '🌱 Paddy Field', file: '/videos/paddy-field.mp4' },
+];
+
 export default function WelcomePage() {
   const navigate = useNavigate();
   const [lang, setLang] = useState(localStorage.getItem('krishi_lang') || 'en');
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [selectedClip, setSelectedClip] = useState('wheat');
+  const [videoEnabled, setVideoEnabled] = useState(true);
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -32,6 +40,26 @@ export default function WelcomePage() {
 
   return (
     <div className="welcome-container">
+      {/* Cinematic Farming Video Background */}
+      {videoEnabled && (
+        <div className="welcome-video-bg-wrap" aria-hidden="true">
+          <video
+            key={selectedClip}
+            className="welcome-video-bg"
+            autoPlay
+            loop
+            muted
+            playsInline
+          >
+            <source
+              src={FARM_CLIPS.find((c) => c.id === selectedClip)?.file || '/videos/wheat-field.mp4'}
+              type="video/mp4"
+            />
+          </video>
+          <div className="welcome-video-overlay" />
+        </div>
+      )}
+
       {/* Ambient background glows */}
       <div className="welcome-ambient-1" />
       <div className="welcome-ambient-2" />
@@ -136,6 +164,36 @@ export default function WelcomePage() {
               {lang === 'hi' ? 'सीधे लॉगिन करें' : lang === 'pa' ? 'ਸਿੱਧਾ ਲੌਗਇਨ ਕਰੋ' : 'Sign In directly'}
             </Link>
           </div>
+        </div>
+
+        {/* Interactive Farm Video Selector */}
+        <div className="farm-video-control-bar" role="toolbar" aria-label="Farm Video Live View">
+          <span className="farm-video-label">
+            <span>🎥</span>
+            <span>Live Farm View:</span>
+          </span>
+          {FARM_CLIPS.map((clip) => (
+            <button
+              key={clip.id}
+              type="button"
+              className={`farm-video-pill ${selectedClip === clip.id && videoEnabled ? 'active' : ''}`}
+              onClick={() => {
+                setSelectedClip(clip.id);
+                setVideoEnabled(true);
+              }}
+              title={`Switch to ${clip.label}`}
+            >
+              {clip.label}
+            </button>
+          ))}
+          <button
+            type="button"
+            className="farm-video-toggle-btn"
+            onClick={() => setVideoEnabled((prev) => !prev)}
+            title={videoEnabled ? "Turn off background video" : "Turn on background video"}
+          >
+            {videoEnabled ? "Pause ⏸" : "Play ▶"}
+          </button>
         </div>
 
         {/* 4 Feature Highlight Cards */}

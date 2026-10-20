@@ -24,3 +24,7 @@ npm-debug.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+# Large media assets (downloaded on demand via npm run download:videos)
+frontend/public/videos/*.mp4
+!frontend/public/videos/.gitkeep
