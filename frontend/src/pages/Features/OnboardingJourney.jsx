@@ -34,7 +34,7 @@ export default function OnboardingJourney({ onOnboardingComplete }) {
       setIsSubmitting(true);
       try {
         // Send actual field metadata to Express backend
-        const response = await fetch("http://localhost:5000/api/journey/setup-field", {
+        const response = await fetch("/api/journey/setup-field", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),

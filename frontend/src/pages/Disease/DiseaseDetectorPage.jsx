@@ -3,7 +3,7 @@ import DiseaseDetector from '../Query/components/DiseaseDetector';
 
 export default function DiseaseDetectorPage() {
   const [history, setHistory] = useState([]);
-  const API_BASE = window.location.origin.includes('localhost') ? 'http://localhost:5000' : '';
+  const API_BASE = import.meta.env.VITE_API_URL || '';
 
   useEffect(() => {
     fetchHistory();

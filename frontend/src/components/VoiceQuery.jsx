@@ -48,7 +48,7 @@ export default function VoiceQuery({ onTelemetryUpdate }) {
     setAiResponse("Analyzing agronomic query...");
 
     try {
-      const response = await fetch("http://localhost:5000/api/ai/groq-query", {
+      const response = await fetch("/api/ai/groq-query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: transcript }),

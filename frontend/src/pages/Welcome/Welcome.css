@@ -1,0 +1,774 @@
+/* Welcome & Role Selection Pages Styling */
+.welcome-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 50%, #ecfdf5 100%);
+  position: relative;
+  overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #0f172a;
+}
+
+/* Atmospheric Ambient Background Blobs */
+.welcome-ambient-1 {
+  position: absolute;
+  top: -120px;
+  right: -100px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.18) 0%, rgba(34, 197, 94, 0) 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.welcome-ambient-2 {
+  position: absolute;
+  bottom: -150px;
+  left: -120px;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(217, 119, 6, 0.08) 50%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Top Navbar */
+.welcome-navbar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 36px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.welcome-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.welcome-logo-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
+  transition: transform 0.25s ease;
+}
+
+.welcome-brand:hover .welcome-logo-badge {
+  transform: rotate(5deg) scale(1.05);
+}
+
+.welcome-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-brand-title {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #0f1f14;
+}
+
+.welcome-brand-sub {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #16a34a;
+}
+
+.welcome-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Language Selector */
+.lang-selector-wrapper {
+  position: relative;
+}
+
+.lang-selector-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lang-selector-btn:hover {
+  border-color: #16a34a;
+  color: #15803d;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.15);
+}
+
+.lang-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 170px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.lang-dropdown-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.lang-dropdown-item:hover {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.lang-dropdown-item.active {
+  background: #dcfce7;
+  color: #15803d;
+  font-weight: 700;
+}
+
+.nav-github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #181717;
+  color: #f8fafc;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-github-link:hover {
+  background: #24292f;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.nav-github-link svg {
+  fill: currentColor;
+}
+
+.nav-signin-link {
+  font-size: 13px;
+  font-weight: 700;
+  color: #16a34a;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.nav-signin-link:hover {
+  background: #f0fdf4;
+}
+
+/* Main Hero Area */
+.welcome-hero-section {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 24px 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: rgba(220, 252, 231, 0.85);
+  border: 1px solid rgba(134, 239, 172, 0.6);
+  color: #15803d;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.08);
+}
+
+.welcome-hero-title {
+  font-size: clamp(34px, 5.5vw, 56px);
+  font-weight: 800;
+  letter-spacing: -1.2px;
+  line-height: 1.15;
+  color: #0f1f14;
+  margin-bottom: 18px;
+}
+
+.welcome-hero-title span {
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 60%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-tagline {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 18px;
+  line-height: 1.35;
+}
+
+.welcome-tagline em {
+  font-style: normal;
+  color: #15803d;
+  position: relative;
+  display: inline-block;
+}
+
+.welcome-tagline em::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 4px;
+  background: #86efac;
+  border-radius: 2px;
+  z-index: -1;
+}
+
+.welcome-subtext {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #64748b;
+  max-width: 680px;
+  margin: 0 auto 36px;
+}
+
+/* Call to Action Button */
+.welcome-cta-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 50px;
+}
+
+.welcome-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 42px;
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 10px 25px -4px rgba(22, 163, 74, 0.45), 0 4px 10px -2px rgba(22, 163, 74, 0.25);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.welcome-btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 32px -4px rgba(22, 163, 74, 0.55), 0 6px 12px -2px rgba(22, 163, 74, 0.3);
+}
+
+.welcome-btn-primary:active {
+  transform: translateY(1px);
+}
+
+.welcome-cta-secondary {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.welcome-cta-secondary a {
+  color: #15803d;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.welcome-cta-secondary a:hover {
+  text-decoration: underline;
+}
+
+/* Feature Preview Grid */
+.welcome-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 960px;
+  margin-top: 10px;
+}
+
+.welcome-feature-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 14px;
+  text-align: left;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.welcome-feature-card:hover {
+  transform: translateY(-2px);
+  background: white;
+  border-color: #86efac;
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.1);
+}
+
+.feature-card-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.feature-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.feature-card-sub {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ──────────────────────────────────────────────────────────
+   ROLE SELECTION PAGE ("Are you a farmer?")
+   ────────────────────────────────────────────────────────── */
+
+.role-page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 50%, #eff6ff 100%);
+  position: relative;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #0f172a;
+}
+
+.role-header-nav {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 36px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.role-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.role-back-btn:hover {
+  border-color: #94a3b8;
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.role-main-section {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 24px 60px;
+  max-width: 1050px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.role-question-heading {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: #0f172a;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.role-question-sub {
+  font-size: 16px;
+  color: #64748b;
+  text-align: center;
+  max-width: 580px;
+  margin: 0 auto 40px;
+}
+
+/* Two Cards Grid */
+.role-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 28px;
+  width: 100%;
+  max-width: 940px;
+}
+
+/* Individual Role Card */
+.role-card {
+  position: relative;
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  border: 2px solid transparent;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: #cbd5e1;
+  transition: background 0.25s ease;
+}
+
+/* Farmer Card Special Accent */
+.role-card-farmer {
+  border-color: #dcfce7;
+}
+
+.role-card-farmer::before {
+  background: linear-gradient(90deg, #15803d, #22c55e);
+}
+
+.role-card-farmer:hover {
+  transform: translateY(-4px);
+  border-color: #86efac;
+  box-shadow: 0 20px 35px -5px rgba(22, 163, 74, 0.15), 0 8px 16px -4px rgba(22, 163, 74, 0.08);
+}
+
+/* Visitor / Expert Card Special Accent */
+.role-card-visitor {
+  border-color: #e0e7ff;
+}
+
+.role-card-visitor::before {
+  background: linear-gradient(90deg, #4f46e5, #06b6d4);
+}
+
+.role-card-visitor:hover {
+  transform: translateY(-4px);
+  border-color: #a5b4fc;
+  box-shadow: 0 20px 35px -5px rgba(79, 70, 229, 0.15), 0 8px 16px -4px rgba(79, 70, 229, 0.08);
+}
+
+/* Top Icon & Badge */
+.role-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.role-card-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+}
+
+.role-avatar-farmer {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.role-avatar-visitor {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+}
+
+.role-pill-recommended {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.role-card-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.role-card-tagline {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 22px;
+}
+
+/* Highlights List */
+.role-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.role-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #334155;
+}
+
+.role-check-icon {
+  font-size: 14px;
+  font-weight: 800;
+  color: #16a34a;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.role-check-icon-blue {
+  color: #4f46e5;
+}
+
+/* Button Options within Cards */
+.role-actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.btn-farmer-primary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+}
+
+.btn-farmer-primary:hover {
+  background: linear-gradient(135deg, #166534 0%, #15803d 100%);
+  transform: translateY(-1px);
+}
+
+.btn-farmer-outline {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 20px;
+  background: white;
+  color: #15803d;
+  border: 1.5px solid #86efac;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-farmer-outline:hover {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+.btn-visitor-primary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.btn-visitor-primary:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-1px);
+}
+
+.btn-visitor-outline {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 20px;
+  background: white;
+  color: #3b82f6;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-visitor-outline:hover {
+  background: #eff6ff;
+  border-color: #60a5fa;
+}
+
+/* Visitor Banner on App */
+.visitor-mode-banner {
+  background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
+  color: white;
+  padding: 10px 20px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.visitor-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.visitor-banner-btn {
+  background: #22c55e;
+  color: #0f172a;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.visitor-banner-btn:hover {
+  background: #4ade80;
+}
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  .welcome-navbar {
+    padding: 14px 20px;
+  }
+  .welcome-hero-section {
+    padding: 36px 16px 50px;
+  }
+  .role-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .role-card {
+    padding: 24px;
+  }
+}

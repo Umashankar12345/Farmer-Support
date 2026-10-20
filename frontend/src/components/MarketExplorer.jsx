@@ -12,7 +12,7 @@ export default function MarketExplorer() {
   const fetchPrices = () => {
     setLoading(true);
     const query = new URLSearchParams({ search: searchTerm, state: selectedState }).toString();
-    fetch(`http://localhost:5000/api/market-prices?${query}`)
+    fetch(`/api/market-prices?${query}`)
       .then((res) => res.json())
       .then((data) => {
         setPrices(data.records || []);

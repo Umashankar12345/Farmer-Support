@@ -84,15 +84,20 @@ const Navbar = () => {
     return `${days[n.getDay()]}, ${n.getDate()} ${months[n.getMonth()]} ${n.getFullYear()}`;
   };
 
+  const isGuest = localStorage.getItem('guest_mode') === 'true';
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('krishi_jwt');
-    navigate('/login');
+    localStorage.removeItem('guest_mode');
+    localStorage.removeItem('user_role');
+    navigate('/welcome');
   };
 
   const getUserInitials = () => {
     try {
+      if (localStorage.getItem('guest_mode') === 'true') return 'GU';
       const u = JSON.parse(localStorage.getItem('user') || '{}');
       if (u.firstName) return u.firstName.substring(0, 2).toUpperCase();
       if (u.name) return u.name.substring(0, 2).toUpperCase();
@@ -102,6 +107,19 @@ const Navbar = () => {
 
   return (
     <>
+      {isGuest && (
+        <div className="visitor-mode-banner">
+          <div className="visitor-banner-content">
+            <span>👀 <strong>Visitor Mode:</strong> Viewing public mandi prices, weather and schemes.</span>
+          </div>
+          <button
+            onClick={() => navigate('/signup?role=Farmer')}
+            className="visitor-banner-btn"
+          >
+            Register as Farmer →
+          </button>
+        </div>
+      )}
       <div className="topbar">
         {/* Left: Hamburger (Mobile) + Brand */}
         <div className="flex items-center gap-2">

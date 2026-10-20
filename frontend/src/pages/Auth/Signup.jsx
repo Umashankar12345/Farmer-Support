@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import PasswordStrengthBar from './components/PasswordStrengthBar';
 import { authAPI } from '../../services/api';
 import illustration from '../../assets/auth-illustration.png';
@@ -15,6 +15,8 @@ const features = [
 
 const Signup = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const roleParam = new URLSearchParams(location.search).get('role') || 'Farmer';
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
@@ -34,7 +36,8 @@ const Signup = () => {
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: roleParam
   });
 
   const handleChange = (e) => {
@@ -62,9 +65,24 @@ const Signup = () => {
       const { confirmPassword, ...data } = formData;
       await authAPI.signup(data);
       // Redirect to login after successful registration
-      navigate('/login', { state: { message: 'Registration successful! Please sign in.' } });
+      navigate(`/login?role=${roleParam}`, { state: { message: 'Registration successful! Please sign in.' } });
     } catch (err) {
       setError(err.message || 'Authentication service is currently unavailable. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGithubSignup = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await authAPI.githubLogin({ role: roleParam || 'Farmer' });
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      navigate('/');
+    } catch (err) {
+      setError(err.message || 'GitHub sign up failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -74,12 +92,14 @@ const Signup = () => {
     <div className="auth-page">
       {/* Top Navbar */}
       <div className="auth-navbar">
-        <div className="nav-logo">
+        <div className="nav-logo" onClick={() => navigate('/welcome')} style={{ cursor: 'pointer' }}>
           <span className="nav-icon">🌾</span>
-          <span className="nav-brand">KrishiOfficer</span>
+          <span className="nav-brand">Digital Krishi Officer</span>
         </div>
         <div className="nav-links">
-          <span className="nav-item">🌐 English</span>
+          <Link to="/are-you-a-farmer" className="nav-item" style={{ textDecoration: 'none' }}>
+            ← Change Role
+          </Link>
           <span className="nav-item">Help</span>
         </div>
       </div>
@@ -130,6 +150,25 @@ const Signup = () => {
 
             <div className="card-body">
               {error && <div className="error-msg">{error}</div>}
+
+              <button 
+                type="button" 
+                onClick={handleGithubSignup} 
+                className="btn-github" 
+                disabled={loading}
+                id="btn-github-signup"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                </svg>
+                <span>Sign up with GitHub</span>
+              </button>
+
+              <div className="divider">
+                <div className="divider-line"></div>
+                <div className="divider-text">OR ENTER DETAILS</div>
+                <div className="divider-line"></div>
+              </div>
 
               <div className="animate-fade-in">
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
@@ -208,7 +247,12 @@ const Signup = () => {
                   {loading ? <span className="animate-spin loader-white"></span> : 'Create Account'}
                 </button>
                 <div className="signup-link">
-                  Already have an account? <Link to="/login">Sign in</Link>
+                  Already have an account? <Link to={roleParam ? `/login?role=${roleParam}` : "/login"}>Sign in</Link>
+                </div>
+                <div style={{ marginTop: '12px', textAlign: 'center', fontSize: '13px' }}>
+                  <Link to="/are-you-a-farmer" style={{ color: '#64748b', textDecoration: 'none' }}>
+                    ← Change Role (Farmer / Visitor / Expert)
+                  </Link>
                 </div>
               </div>
             </div>

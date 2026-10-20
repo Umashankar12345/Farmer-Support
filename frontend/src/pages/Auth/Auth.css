@@ -240,6 +240,38 @@
   height: 20px;
 }
 
+.btn-github {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  background: #181717;
+  color: white;
+  border: 1px solid #181717;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  margin-top: 10px;
+}
+
+.btn-github:hover {
+  background: #24292f;
+  border-color: #24292f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-github svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
 .divider {
   display: flex;
   align-items: center;

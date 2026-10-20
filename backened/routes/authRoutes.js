@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, sendOTP, verifyOTP, googleLoginSim } = require('../controllers/authController');
+const { register, login, sendOTP, verifyOTP, googleLoginSim, githubLoginSim } = require('../controllers/authController');
 
 // OTP routes
 router.post('/send-otp', sendOTP);
 router.post('/verify-otp', verifyOTP);
 
-// Google simulation route
+// Social login simulation routes
 router.post('/google', googleLoginSim);
+router.post('/github', githubLoginSim);
 
 // Register route
 router.post('/signup', register);

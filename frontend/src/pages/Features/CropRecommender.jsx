@@ -33,7 +33,7 @@ const CropRecommender = () => {
         rainfall: Number(formData.rainfall)
       };
       
-      const res = await fetch("http://localhost:5000/api/farmer-query", {
+      const res = await fetch("/api/farmer-query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

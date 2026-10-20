@@ -8,7 +8,7 @@ export default function DiseaseDetector() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const API_BASE = window.location.origin.includes('localhost') ? 'http://localhost:5000' : '';
+  const API_BASE = import.meta.env.VITE_API_URL || '';
 
   const startCamera = async () => {
     try {

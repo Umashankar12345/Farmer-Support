@@ -1,13 +1,11 @@
 // Automatically determine the correct API URL based on environment
-let API_URL = '/api';
+let API_URL = import.meta.env.VITE_API_URL || '/api';
 
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
-  API_URL = 'http://localhost:5000/api';
-} else if (import.meta.env.VITE_API_URL) {
-  API_URL = import.meta.env.VITE_API_URL;
-} else if (window.location.hostname.includes('github.io') || window.location.hostname.includes('vercel.app')) {
+if (window.location.protocol === 'file:') {
+  API_URL = 'http://localhost:5001/api';
+} else if (!import.meta.env.VITE_API_URL && (window.location.hostname.includes('github.io') || window.location.hostname.includes('vercel.app'))) {
   // Fallback for static hosting if no env var is set
-  API_URL = 'https://farmer-support-backend.onrender.com/api'; // Replace with actual backend URL
+  API_URL = 'https://farmer-support-backend.onrender.com/api';
 }
 
 export const apiRequest = async (endpoint, method = 'GET', data = null) => {
@@ -68,6 +66,7 @@ export const authAPI = {
   sendOTP: (phoneData) => apiRequest('/auth/send-otp', 'POST', phoneData),
   verifyOTP: (otpData) => apiRequest('/auth/verify-otp', 'POST', otpData),
   googleLogin: () => apiRequest('/auth/google', 'POST'),
+  githubLogin: (data = {}) => apiRequest('/auth/github', 'POST', data),
 };
 
 export const locationAPI = {

@@ -5,7 +5,7 @@ export default function WeatherForecasting() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/weather")
+    fetch("/api/weather")
       .then((res) => res.json())
       .then((data) => {
         setWeather(data);

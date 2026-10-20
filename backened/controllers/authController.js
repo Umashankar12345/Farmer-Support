@@ -123,6 +123,53 @@ exports.googleLoginSim = async (req, res) => {
   }
 };
 
+// Simulated GitHub Login for demo & oauth
+exports.githubLoginSim = async (req, res) => {
+  try {
+    const { 
+      email = `github_${Date.now()}@farmer.support`, 
+      firstName = 'GitHub', 
+      lastName = 'User',
+      role = 'Farmer'
+    } = req.body || {};
+    
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        firstName,
+        lastName,
+        email,
+        phone: `GH-${Date.now()}`,
+        password: 'github-login-placeholder',
+        role: role || 'Farmer',
+        registrationNo: `FS-GH-${Date.now()}`
+      });
+    }
+
+    res.json({
+      success: true,
+      token: generateToken(user._id),
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+    // Record Visitor
+    await Visitor.create({
+      userId: user._id,
+      userName: `${user.firstName} ${user.lastName}`,
+      email: user.email
+    });
+  } catch (error) {
+    console.error('GitHub login error:', error);
+    res.status(500).json({ error: 'GitHub login failed' });
+  }
+};
+
 // Register new user
 exports.register = async (req, res) => {
   try {

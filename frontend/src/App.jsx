@@ -29,10 +29,13 @@ import OfflineMode from './pages/Features/OfflineMode';
 import DiseaseDetectorPage from './pages/Disease/DiseaseDetectorPage';
 import FarmDashboard from './pages/MyFarm/FarmDashboard';
 import MarketAdvisorPrototype from './pages/Features/MarketAdvisorPrototype';
+import WelcomePage from './pages/Welcome/WelcomePage';
+import RoleSelectionPage from './pages/Welcome/RoleSelectionPage';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-  return token ? (
+  const isGuest = localStorage.getItem('guest_mode') === 'true';
+  return (token || isGuest) ? (
     <div className="app-shell">
       <Navbar />
       <Sidebar />
@@ -41,13 +44,16 @@ const ProtectedRoute = ({ children }) => {
       </div>
       <PerformanceTicker />
     </div>
-  ) : <Navigate to="/login" />;
+  ) : <Navigate to="/welcome" />;
 };
 
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
+        <Route path="/welcome" element={<WelcomePage />} />
+        <Route path="/are-you-a-farmer" element={<RoleSelectionPage />} />
+        <Route path="/role-select" element={<RoleSelectionPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         
