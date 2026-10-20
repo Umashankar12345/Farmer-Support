@@ -138,7 +138,7 @@ const Navbar = () => {
         {/* Center: Live Ticker (hidden on small phones, visible on sm and up) */}
         <div className="top-ticker hidden sm:flex">
           <div className="ticker-dot shrink-0"></div>
-          <span className="truncate">{TICKERS[tickerIndex]}</span>
+          <span className="truncate">{tickers[tickerIndex] || tickers[0] || '🌾 Digital Krishi System Active'}</span>
         </div>
 
         {/* Right: Real Date/Time + Notifications + User Avatar */}
